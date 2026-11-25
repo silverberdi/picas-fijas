@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Picas y Fijas Party - Configurar Partida</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "cream-bg": "#FFF6E8",
+            "lavender-card": "#E9DFFF",
+            "lavender-light": "#F5EFFF",
+            "grape": "#7047EB",
+            "grape-dark": "#5529D6",
+            "sunny-yellow": "#FFD15C",
+            "sunny-yellow-dark": "#F2BF36",
+            "peach-coral": "#FF7868",
+            "peach-dark": "#E55C4C",
+            "mint": "#35C994",
+            "mint-dark": "#24AC7B",
+            "party-navy": "#211437",
+            "party-muted": "#68597F"
+          },
+          fontFamily: {
+            headline: ["Outfit", "sans-serif"],
+            body: ["Quicksand", "sans-serif"]
+          },
+          boxShadow: {
+            "bubbly-sm": "0 4px 0 #00000015",
+            "bubbly-grape": "0 6px 0 #4a21ba, 0 10px 18px rgba(112,71,235,0.35)",
+            "bubbly-card": "0 6px 0 rgba(112,71,235,0.12), 0 8px 16px rgba(0,0,0,0.04)",
+            "bubbly-selected": "0 6px 0 #5726D2, 0 10px 20px rgba(112,71,235,0.22)"
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #FFF6E8;
+      color: #211437;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 100dvh;
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 12px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 8px); }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-cream-bg font-body text-party-navy flex flex-col min-h-screen selection:bg-sunny-yellow selection:text-party-navy">
+<!-- Header Joyful & Colorful -->
+<header class="sticky top-0 z-40 bg-cream-bg/90 backdrop-blur-md px-4 pt-safe pb-2 border-b border-lavender-card">
+<div class="h-14 max-w-[420px] mx-auto flex items-center justify-between gap-3">
+<!-- Back Pill Button -->
+<button aria-label="Volver atrás" class="h-10 px-3.5 rounded-full bg-white border-2 border-lavender-card shadow-bubbly-sm flex items-center justify-center gap-1 text-grape font-headline font-bold text-sm hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+<span class="text-xs">Atrás</span>
+</button>
+<!-- Center Logo & Party Tag -->
+<div class="flex items-center gap-2">
+<div class="w-9 h-9 rounded-2xl bg-sunny-yellow flex items-center justify-center shadow-bubbly-sm transform -rotate-3 text-party-navy">
+<span class="material-symbols-outlined text-[22px]">extension</span>
+</div>
+<div class="flex flex-col text-center">
+<span class="font-headline font-black text-base text-party-navy tracking-tight leading-none">Picas y Fijas</span>
+<span class="font-headline font-extrabold text-[10px] text-grape tracking-wider uppercase mt-0.5">Party Edition 🎈</span>
+</div>
+</div>
+<!-- Sounds & Profile -->
+<div class="flex items-center gap-1.5">
+<button aria-label="Sonido" class="w-9 h-9 rounded-full bg-white border border-lavender-card shadow-bubbly-sm flex items-center justify-center text-party-navy hover:text-grape active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+<button aria-label="Ayuda" class="w-9 h-9 rounded-full bg-sunny-yellow text-party-navy shadow-bubbly-sm flex items-center justify-center font-headline font-bold text-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[18px]">help</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Game Configuration Container -->
+<main class="flex-1 w-full max-w-[420px] mx-auto px-4 pt-3 pb-32 flex flex-col gap-4">
+<!-- Screen Title + Cheerful Badge Banner -->
+<div class="rounded-3xl bg-gradient-to-r from-lavender-card via-[#F2EAFF] to-lavender-card p-4 border-2 border-white shadow-bubbly-card flex items-center justify-between">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-grape text-white font-headline font-bold text-[11px] w-max mb-1 shadow-sm">
+<span>🎯</span> Modo Desafío 1v1
+        </span>
+<h1 class="font-headline font-black text-2xl text-party-navy leading-tight">Elige tu Desafío</h1>
+<p class="font-body font-semibold text-xs text-party-muted mt-0.5">¡Adivina el código secreto del bot!</p>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-white/80 border border-white shadow-inner flex items-center justify-center text-3xl transform rotate-6 animate-pulse">
+        🎲
+      </div>
+</div>
+<!-- Difficulty Section Title -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-sunny-yellow"></span>
+<h2 class="font-headline font-black text-lg text-party-navy tracking-tight">Niveles de Juego</h2>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-white text-grape font-headline font-bold text-xs border border-lavender-card shadow-sm">4 Modos</span>
+</div>
+<!-- Tactile Rounded-3xl Difficulty Cards Grid -->
+<div class="flex flex-col gap-3" id="presets-list">
+<!-- Principiante (3 Dígitos) -->
+<div class="level-card cursor-pointer rounded-3xl bg-white border-2 border-transparent p-4 transition-all duration-150 active:scale-[0.98] shadow-bubbly-card hover:border-mint" onclick="selectLevel(this, 'Principiante (3 Dígitos)')">
+<div class="flex items-center gap-3">
+<div class="w-13 h-13 p-3 rounded-2xl bg-[#E8FAF2] text-mint border-2 border-mint/20 flex flex-col items-center justify-center flex-shrink-0">
+<span class="font-headline font-black text-lg leading-none">3D</span>
+<span class="text-[9px] font-bold tracking-wider">FÁCIL</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-extrabold text-base text-party-navy truncate">Principiante (3 Dígitos)</h3>
+<span class="text-sm">🐣</span>
+</div>
+<p class="font-body font-semibold text-xs text-party-muted leading-tight mt-0.5">Ideal para peques y primerizos, sin repetir cifras.</p>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="px-2 py-0.5 rounded-full bg-cream-bg text-mint-dark font-headline font-bold text-[10px]">✨ 3 Cifras</span>
+<span class="px-2 py-0.5 rounded-full bg-cream-bg text-party-muted font-headline font-bold text-[10px]">∞ Intentos</span>
+</div>
+</div>
+<div class="radio-bubble w-6 h-6 rounded-full border-2 border-lavender-card bg-cream-bg flex items-center justify-center">
+<div class="dot w-3 h-3 rounded-full bg-transparent"></div>
+</div>
+</div>
+</div>
+<!-- Clásico Favorito (4 Dígitos) - Selected by Default -->
+<div class="level-card selected cursor-pointer rounded-3xl bg-lavender-light border-2 border-grape p-4 transition-all duration-150 active:scale-[0.98] shadow-bubbly-selected relative overflow-hidden" onclick="selectLevel(this, 'Clásico Favorito (4 Dígitos)')">
+<div class="absolute -right-3 -top-3 w-12 h-12 bg-sunny-yellow rounded-full flex items-end justify-start pl-2.5 pb-2 shadow-sm">
+<span class="text-xs">⭐</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-13 h-13 p-3 rounded-2xl bg-grape text-white border-2 border-grape-dark flex flex-col items-center justify-center flex-shrink-0 shadow-sm">
+<span class="font-headline font-black text-lg leading-none">4D</span>
+<span class="text-[9px] font-extrabold tracking-wider text-sunny-yellow">TOP</span>
+</div>
+<div class="flex-1 min-w-0 pr-4">
+<div class="flex items-center gap-1.5">
+<h3 class="font-headline font-extrabold text-base text-party-navy truncate">Clásico Favorito (4 Dígitos)</h3>
+</div>
+<p class="font-body font-semibold text-xs text-party-muted leading-tight mt-0.5">El juego tradicional, ¡pura diversión y lógica!</p>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="px-2 py-0.5 rounded-full bg-grape text-white font-headline font-bold text-[10px]">★ Más jugado</span>
+<span class="px-2 py-0.5 rounded-full bg-white text-grape font-headline font-bold text-[10px]">Sin repetidos</span>
+</div>
+</div>
+<div class="radio-bubble w-6 h-6 rounded-full border-2 border-grape bg-grape flex items-center justify-center shadow-inner">
+<div class="dot w-2.5 h-2.5 rounded-full bg-white"></div>
+</div>
+</div>
+</div>
+<!-- Avanzado Divertido (5 Dígitos) -->
+<div class="level-card cursor-pointer rounded-3xl bg-white border-2 border-transparent p-4 transition-all duration-150 active:scale-[0.98] shadow-bubbly-card hover:border-peach-coral" onclick="selectLevel(this, 'Avanzado Divertido (5 Dígitos)')">
+<div class="flex items-center gap-3">
+<div class="w-13 h-13 p-3 rounded-2xl bg-[#FFF0EE] text-peach-coral border-2 border-peach-coral/20 flex flex-col items-center justify-center flex-shrink-0">
+<span class="font-headline font-black text-lg leading-none">5D</span>
+<span class="text-[9px] font-bold tracking-wider">PRO</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-extrabold text-base text-party-navy truncate">Avanzado Divertido (5 Dígitos)</h3>
+<span class="text-sm">🔥</span>
+</div>
+<p class="font-body font-semibold text-xs text-party-muted leading-tight mt-0.5">Para mentes curiosas con ganas de retos picantes.</p>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="px-2 py-0.5 rounded-full bg-cream-bg text-peach-dark font-headline font-bold text-[10px]">5 dígitos</span>
+<span class="px-2 py-0.5 rounded-full bg-cream-bg text-party-muted font-headline font-bold text-[10px]">20 intentos</span>
+</div>
+</div>
+<div class="radio-bubble w-6 h-6 rounded-full border-2 border-lavender-card bg-cream-bg flex items-center justify-center">
+<div class="dot w-3 h-3 rounded-full bg-transparent"></div>
+</div>
+</div>
+</div>
+<!-- Super Cerebro (6 Dígitos) -->
+<div class="level-card cursor-pointer rounded-3xl bg-white border-2 border-transparent p-4 transition-all duration-150 active:scale-[0.98] shadow-bubbly-card hover:border-sunny-yellow" onclick="selectLevel(this, 'Super Cerebro (6 Dígitos)')">
+<div class="flex items-center gap-3">
+<div class="w-13 h-13 p-3 rounded-2xl bg-[#FFF8E6] text-sunny-yellow-dark border-2 border-sunny-yellow/30 flex flex-col items-center justify-center flex-shrink-0">
+<span class="font-headline font-black text-lg leading-none">6D</span>
+<span class="text-[9px] font-black tracking-wider text-party-navy">MÁX</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-extrabold text-base text-party-navy truncate">Super Cerebro (6 Dígitos)</h3>
+<span class="text-sm">🧠⚡</span>
+</div>
+<p class="font-body font-semibold text-xs text-party-muted leading-tight mt-0.5">¡El reto definitivo para maestros del cálculo deductivo!</p>
+<div class="flex flex-wrap gap-1.5 mt-2">
+<span class="px-2 py-0.5 rounded-full bg-cream-bg text-party-navy font-headline font-bold text-[10px]">Gran Desafío</span>
+<span class="px-2 py-0.5 rounded-full bg-peach-coral/15 text-peach-dark font-headline font-bold text-[10px]">12 intentos</span>
+</div>
+</div>
+<div class="radio-bubble w-6 h-6 rounded-full border-2 border-lavender-card bg-cream-bg flex items-center justify-center">
+<div class="dot w-3 h-3 rounded-full bg-transparent"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bot Rival Selector with Friendly Faces -->
+<div class="mt-2 flex flex-col gap-2.5">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-peach-coral"></span>
+<h2 class="font-headline font-black text-lg text-party-navy tracking-tight">Tu Rival Robot</h2>
+</div>
+<span class="font-body font-bold text-xs text-party-muted">Elige tu oponente</span>
+</div>
+<div class="grid grid-cols-3 gap-2.5" id="bots-container">
+<!-- Robot Gui (Fácil) -->
+<button class="bot-card text-left p-3 rounded-3xl bg-white border-2 border-transparent shadow-bubbly-card transition-all duration-150 active:scale-95 flex flex-col items-center text-center" onclick="selectBot(this, 'Robot Gui')" type="button">
+<div class="w-12 h-12 rounded-2xl bg-mint/20 border-2 border-mint text-2xl flex items-center justify-center mb-1.5 shadow-sm transform group-hover:scale-110">
+            🤖
+          </div>
+<span class="font-headline font-black text-xs text-party-navy leading-tight">Robot Gui</span>
+<span class="px-1.5 py-0.5 mt-1 rounded-full bg-mint/15 text-mint-dark font-headline font-bold text-[9px]">Fácil / Amigo</span>
+<p class="font-body text-[10px] text-party-muted font-semibold mt-1">Pistas tiernas</p>
+</button>
+<!-- Robot Tito (Equilibrado - Selected) -->
+<button class="bot-card selected text-left p-3 rounded-3xl bg-lavender-light border-2 border-grape shadow-bubbly-selected transition-all duration-150 active:scale-95 flex flex-col items-center text-center relative" onclick="selectBot(this, 'Robot Tito')" type="button">
+<div class="absolute -top-2 px-2 py-0.5 rounded-full bg-grape text-white font-headline font-extrabold text-[8px] uppercase tracking-wider">
+            Recomendado
+          </div>
+<div class="w-12 h-12 rounded-2xl bg-sunny-yellow border-2 border-sunny-yellow-dark text-2xl flex items-center justify-center mb-1.5 shadow-sm">
+            👾
+          </div>
+<span class="font-headline font-black text-xs text-party-navy leading-tight">Robot Tito</span>
+<span class="px-1.5 py-0.5 mt-1 rounded-full bg-sunny-yellow/30 text-party-navy font-headline font-bold text-[9px]">Equilibrado</span>
+<p class="font-body text-[10px] text-party-muted font-semibold mt-1">Juega limpio</p>
+</button>
+<!-- Robot Sabio (Experto) -->
+<button class="bot-card text-left p-3 rounded-3xl bg-white border-2 border-transparent shadow-bubbly-card transition-all duration-150 active:scale-95 flex flex-col items-center text-center" onclick="selectBot(this, 'Robot Sabio')" type="button">
+<div class="w-12 h-12 rounded-2xl bg-peach-coral/20 border-2 border-peach-coral text-2xl flex items-center justify-center mb-1.5 shadow-sm">
+            🦾
+          </div>
+<span class="font-headline font-black text-xs text-party-navy leading-tight">Robot Sabio</span>
+<span class="px-1.5 py-0.5 mt-1 rounded-full bg-peach-coral/20 text-peach-dark font-headline font-bold text-[9px]">Experto</span>
+<p class="font-body text-[10px] text-party-muted font-semibold mt-1">Deduce veloz</p>
+</button>
+</div>
+</div>
+<!-- Extra Friendly Options Accordion -->
+<div class="rounded-3xl bg-white border border-lavender-card shadow-bubbly-card p-3.5">
+<button class="w-full flex items-center justify-between text-left" onclick="toggleCustomSettings()" type="button">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-xl bg-lavender-card text-grape flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<div>
+<span class="font-headline font-black text-sm text-party-navy block">Ajustes Personalizados</span>
+<span class="font-body font-semibold text-xs text-party-muted">Repeticiones, temporizador e intentos</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-grape transition-transform duration-200" id="custom-chevron">expand_more</span>
+</button>
+<!-- Collapsible panel -->
+<div class="hidden pt-3 mt-3 border-t border-lavender-light flex-col gap-3" id="custom-panel">
+<!-- Toggle Repetidos -->
+<div class="flex items-center justify-between">
+<div>
+<span class="font-headline font-bold text-xs text-party-navy block">Permitir dígitos repetidos</span>
+<span class="font-body font-semibold text-[11px] text-party-muted">Ejemplo: 4421 o 9980</span>
+</div>
+<button class="w-12 h-7 rounded-full bg-lavender-card p-1 transition-colors relative flex items-center" id="rep-switch" onclick="toggleRepeatSetting()" type="button">
+<div class="w-5 h-5 rounded-full bg-white shadow-md transform transition-transform translate-x-0" id="rep-dot"></div>
+</button>
+</div>
+<!-- Timer Pill Options -->
+<div>
+<span class="font-headline font-bold text-xs text-party-navy block mb-1.5">Tiempo por turno</span>
+<div class="grid grid-cols-3 gap-2 text-center">
+<button class="py-1.5 rounded-2xl bg-grape text-white font-headline font-bold text-xs" type="button">Sin prisa</button>
+<button class="py-1.5 rounded-2xl bg-cream-bg text-party-navy font-headline font-bold text-xs border border-lavender-card" type="button">45 seg</button>
+<button class="py-1.5 rounded-2xl bg-cream-bg text-party-navy font-headline font-bold text-xs border border-lavender-card" type="button">30 seg ⏱️</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Joyful Big Spongy CTA -->
+<footer class="fixed bottom-0 inset-x-0 z-50 bg-cream-bg/95 backdrop-blur-lg border-t-2 border-white/80 pb-safe pt-2.5 px-4 shadow-[0_-8px_25px_rgba(112,71,235,0.08)]">
+<div class="max-w-[420px] mx-auto flex flex-col gap-2">
+<!-- Big Tactile Grape Button with 3D sponginess -->
+<button class="group relative w-full h-15 py-3.5 px-6 rounded-3xl bg-grape text-white font-headline font-black text-xl tracking-wide shadow-bubbly-grape border-2 border-[#8E6BF3] active:translate-y-1 active:shadow-bubbly-sm transition-all duration-100 flex items-center justify-center gap-3 overflow-hidden" id="start-btn" type="button">
+<!-- Gloss top effect -->
+<span class="absolute inset-x-0 top-0 h-1/2 bg-white/20 rounded-t-3xl pointer-events-none"></span>
+<span class="relative z-10 text-2xl transform group-hover:scale-125 transition-transform">🚀</span>
+<span class="relative z-10 drop-shadow-sm" id="start-btn-text">¡Empezar a Jugar!</span>
+</button>
+<!-- Mini Party Navigation -->
+<nav class="flex items-center justify-around h-11 pt-1 text-party-muted font-headline font-bold text-[11px]">
+<button class="flex flex-col items-center text-grape">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">videogame_asset</span>
+<span>Jugar</span>
+</button>
+<button class="flex flex-col items-center hover:text-grape transition-colors">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span>Reglas</span>
+</button>
+<button class="flex flex-col items-center hover:text-grape transition-colors">
+<span class="material-symbols-outlined text-[20px]">emoji_events</span>
+<span>Premios</span>
+</button>
+<button class="flex flex-col items-center hover:text-grape transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>Ajustes</span>
+</button>
+</nav>
+</div>
+</footer>
+<!-- Simple Interactive Scripts -->
+<script>
+    let selectedMode = "Clásico Favorito (4 Dígitos)";
+    let selectedBotName = "Robot Tito";
+    let repeatsAllowed = false;
+
+    function selectLevel(element, name) {
+      document.querySelectorAll('.level-card').forEach(card => {
+        card.classList.remove('selected', 'bg-lavender-light', 'border-grape', 'shadow-bubbly-selected');
+        card.classList.add('bg-white', 'border-transparent', 'shadow-bubbly-card');
+        const bubble = card.querySelector('.radio-bubble');
+        if (bubble) {
+          bubble.className = 'radio-bubble w-6 h-6 rounded-full border-2 border-lavender-card bg-cream-bg flex items-center justify-center';
+          bubble.querySelector('.dot').className = 'dot w-3 h-3 rounded-full bg-transparent';
+        }
+      });
+
+      element.classList.add('selected', 'bg-lavender-light', 'border-grape', 'shadow-bubbly-selected');
+      element.classList.remove('bg-white', 'border-transparent', 'shadow-bubbly-card');
+      const activeBubble = element.querySelector('.radio-bubble');
+      if (activeBubble) {
+        activeBubble.className = 'radio-bubble w-6 h-6 rounded-full border-2 border-grape bg-grape flex items-center justify-center shadow-inner';
+        activeBubble.querySelector('.dot').className = 'dot w-2.5 h-2.5 rounded-full bg-white';
+      }
+
+      selectedMode = name;
+      updateCTA();
+    }
+
+    function selectBot(element, botName) {
+      document.querySelectorAll('.bot-card').forEach(btn => {
+        btn.classList.remove('selected', 'bg-lavender-light', 'border-grape', 'shadow-bubbly-selected');
+        btn.classList.add('bg-white', 'border-transparent', 'shadow-bubbly-card');
+      });
+
+      element.classList.add('selected', 'bg-lavender-light', 'border-grape', 'shadow-bubbly-selected');
+      element.classList.remove('bg-white', 'border-transparent', 'shadow-bubbly-card');
+      selectedBotName = botName;
+      updateCTA();
+    }
+
+    function toggleCustomSettings() {
+      const panel = document.getElementById('custom-panel');
+      const chevron = document.getElementById('custom-chevron');
+      if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        panel.classList.add('flex');
+        chevron.style.transform = 'rotate(180deg)';
+      } else {
+        panel.classList.add('hidden');
+        panel.classList.remove('flex');
+        chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function toggleRepeatSetting() {
+      repeatsAllowed = !repeatsAllowed;
+      const sw = document.getElementById('rep-switch');
+      const dot = document.getElementById('rep-dot');
+      if (repeatsAllowed) {
+        sw.classList.remove('bg-lavender-card');
+        sw.classList.add('bg-mint');
+        dot.classList.add('translate-x-5');
+      } else {
+        sw.classList.add('bg-lavender-card');
+        sw.classList.remove('bg-mint');
+        dot.classList.remove('translate-x-5');
+      }
+    }
+
+    function updateCTA() {
+      const label = document.getElementById('start-btn-text');
+      if (label) {
+        label.textContent = `¡Jugar contra ${selectedBotName}! 🚀`;
+      }
+    }
+
+    // Set initial text
+    updateCTA();
+  </script>
+</body></html>
