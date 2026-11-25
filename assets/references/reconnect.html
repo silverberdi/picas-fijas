@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_blank" name="shell-type"/>
+<title>Reconectando con tu partida</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "plum-deep": "#30234D",
+            "plum-card": "#3B2C5E",
+            "plum-surface": "#473670",
+            "plum-dark": "#24193B",
+            "sunny": "#FFD15C",
+            "sunny-dark": "#E5A91A",
+            "coral": "#FF7868",
+            "coral-dark": "#D95344",
+            "grape": "#7047EB",
+            "grape-light": "#8D6BF2",
+            "mint": "#35C994",
+            "mint-dark": "#24A375",
+            "ink": "#FFFFFF",
+            "ink-muted": "#D4C9EB",
+          },
+          fontFamily: {
+            display: ["Outfit", "sans-serif"],
+            body: ["Quicksand", "sans-serif"],
+          },
+          borderRadius: {
+            "xl": "1.5rem",
+            "2xl": "2rem",
+            "3xl": "2.5rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #30234D;
+        color: #FFFFFF;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+        min-height: max(844px, 100dvh);
+      }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-plum-deep font-body text-ink flex flex-col min-h-screen selection:bg-grape selection:text-white">
+<main class="relative flex flex-col w-full max-w-[440px] mx-auto min-h-screen px-5 pt-safe pb-safe items-center justify-center overflow-hidden">
+<!-- Ambient Party Glows -->
+<div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-grape opacity-25 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-20 -right-16 w-72 h-72 rounded-full bg-coral opacity-20 blur-3xl pointer-events-none"></div>
+<!-- Main Tactile Card -->
+<div class="relative w-full bg-plum-card rounded-3xl p-6 shadow-2xl border-2 border-white/10 flex flex-col items-center gap-5 z-10">
+<!-- Top Friendly Status Pill -->
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-plum-dark/80 border border-sunny/30 shadow-inner">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sunny opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-sunny"></span>
+</span>
+<span class="font-display font-bold text-xs tracking-wide text-sunny uppercase">
+          Partida en pausa
+        </span>
+</div>
+<!-- Friendly Lost Connection Icon -->
+<div class="relative flex items-center justify-center my-1">
+<div class="absolute w-28 h-28 rounded-full bg-sunny/15 animate-pulse"></div>
+<div class="relative w-24 h-24 rounded-full bg-plum-surface border-4 border-sunny/40 shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-5xl text-sunny" style="font-variation-settings: 'FILL' 1;">
+            wifi_off
+          </span>
+<!-- Small playful badge -->
+<div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-coral border-2 border-plum-card flex items-center justify-center shadow">
+<span class="material-symbols-outlined text-base text-white font-bold">
+              priority_high
+            </span>
+</div>
+</div>
+</div>
+<!-- Title & Clear Message -->
+<div class="text-center flex flex-col gap-2">
+<h1 class="font-display font-extrabold text-2xl sm:text-[28px] leading-tight text-white">
+          Reconectando con tu partida...
+        </h1>
+<p class="font-body font-semibold text-sm sm:text-base text-ink-muted leading-relaxed px-2">
+          Se perdió la conexión con tu rival. Estamos intentando volver a conectarte para que sigas jugando.
+        </p>
+</div>
+<!-- Large 60-Second Circular Timer -->
+<div class="w-full bg-plum-dark/70 rounded-2xl p-5 border border-white/10 flex flex-col items-center shadow-inner">
+<div class="relative w-40 h-40 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 120 120">
+<circle class="text-plum-surface" cx="60" cy="60" fill="transparent" r="50" stroke="currentColor" stroke-width="10"></circle>
+<circle class="text-sunny transition-all duration-1000 ease-linear" cx="60" cy="60" fill="transparent" id="countdown-circle" r="50" stroke="currentColor" stroke-dasharray="314.159" stroke-dashoffset="0" stroke-linecap="round" stroke-width="10"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-display font-extrabold text-4xl text-sunny tracking-tight leading-none" id="countdown-number">
+              60s
+            </span>
+<span class="font-body font-bold text-xs text-ink-muted uppercase tracking-wider mt-1">
+              Tiempo restante
+            </span>
+</div>
+</div>
+</div>
+<!-- Soft Coral Warning Card -->
+<div class="w-full bg-coral/15 border-2 border-coral/40 rounded-2xl p-4 flex items-start gap-3">
+<div class="flex-shrink-0 w-9 h-9 rounded-xl bg-coral text-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">
+            timer
+          </span>
+</div>
+<p class="font-body font-semibold text-sm text-white/95 leading-snug">
+          Si el contador de <span class="font-bold text-coral">60 segundos</span> llega a <span class="font-bold text-coral">0</span>, se dará la partida por perdida automáticamente.
+        </p>
+</div>
+<!-- Tactile Action Buttons -->
+<div class="w-full flex flex-col gap-3 mt-1">
+<!-- Primary Mint Button -->
+<button class="group w-full h-14 bg-mint hover:bg-mint/95 text-plum-dark rounded-2xl border-b-4 border-mint-dark font-display font-extrabold text-lg flex items-center justify-center gap-2 shadow-lg transition-all active:border-b-0 active:translate-y-1" id="btn-reconnect" type="button">
+<span class="material-symbols-outlined text-2xl transition-transform group-active:rotate-180" id="reconnect-icon">
+            refresh
+          </span>
+<span>Reintentar ahora</span>
+</button>
+<!-- Secondary Abandon Button -->
+<button class="w-full h-12 bg-plum-surface hover:bg-coral/20 text-coral rounded-2xl border-2 border-coral/30 font-display font-bold text-base flex items-center justify-center gap-2 transition-all active:scale-[0.98]" id="btn-abandon" type="button">
+<span class="material-symbols-outlined text-xl">flag</span>
+<span>Abandonar partida</span>
+</button>
+</div>
+</div>
+</main>
+<script>
+    (function () {
+      let timeLeft = 60;
+      const totalTime = 60;
+      const circumference = 2 * Math.PI * 50;
+
+      const countDisplay = document.getElementById('countdown-number');
+      const circle = document.getElementById('countdown-circle');
+      const reconnectBtn = document.getElementById('btn-reconnect');
+      const reconnectIcon = document.getElementById('reconnect-icon');
+      const abandonBtn = document.getElementById('btn-abandon');
+
+      function updateTimer() {
+        if (!countDisplay || !circle) return;
+        countDisplay.textContent = timeLeft + 's';
+
+        const ratio = Math.max(0, timeLeft / totalTime);
+        const offset = circumference - ratio * circumference;
+        circle.style.strokeDashoffset = offset.toString();
+
+        if (timeLeft <= 15) {
+          countDisplay.classList.remove('text-sunny');
+          countDisplay.classList.add('text-coral');
+          circle.classList.remove('text-sunny');
+          circle.classList.add('text-coral');
+        }
+      }
+
+      const interval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(interval);
+        }
+        updateTimer();
+      }, 1000);
+
+      updateTimer();
+
+      if (reconnectBtn && reconnectIcon) {
+        reconnectBtn.addEventListener('click', () => {
+          reconnectIcon.classList.add('animate-spin');
+          reconnectBtn.disabled = true;
+          reconnectBtn.classList.add('opacity-80');
+          setTimeout(() => {
+            reconnectIcon.classList.remove('animate-spin');
+            reconnectBtn.disabled = false;
+            reconnectBtn.classList.remove('opacity-80');
+          }, 1200);
+        });
+      }
+
+      if (abandonBtn) {
+        abandonBtn.addEventListener('click', () => {
+          abandonBtn.classList.add('opacity-60');
+        });
+      }
+    })();
+  </script>
+</body></html>
