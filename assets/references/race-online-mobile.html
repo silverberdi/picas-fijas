@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_stack" name="shell-type"/>
+<title>Carrera Online Simultánea - Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            lavender: "#E9DFFF",
+            "lavender-dark": "#D4C2FF",
+            grape: "#7047EB",
+            "grape-dark": "#5726D2",
+            coral: "#FF7868",
+            "coral-dark": "#E05545",
+            sunny: "#FFD15C",
+            "sunny-dark": "#E5B035",
+            mint: "#35C994",
+            "mint-dark": "#22A374",
+            ink: "#211437",
+            "ink-muted": "#5E5175"
+          },
+          fontFamily: {
+            outfit: ["Outfit", "sans-serif"],
+            quicksand: ["Quicksand", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    html, body {
+      height: 100dvh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FFF6E8;
+      color: #211437;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 8px);
+    }
+    .tactile-tile {
+      box-shadow: 0 4px 0 #D4C2FF;
+    }
+    .tactile-tile:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #D4C2FF;
+    }
+    .tactile-grape {
+      box-shadow: 0 4px 0 #5726D2;
+    }
+    .tactile-grape:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #5726D2;
+    }
+    .tactile-coral {
+      box-shadow: 0 4px 0 #E05545;
+    }
+    .tactile-coral:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #E05545;
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D4C2FF;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="font-outfit bg-cream text-ink flex flex-col items-center justify-center">
+<!-- Outer Mobile Shell: Fixed 100dvh, min-height: 0, overflow: hidden -->
+<div class="w-full max-w-[440px] h-[100dvh] min-h-0 overflow-hidden flex flex-col px-3 pt-safe pb-safe gap-2.5">
+<!-- 1. Compact Top Bar: Exit, Timer, Mode Title & Compact Rival Progress -->
+<header class="shrink-0 flex flex-col gap-2 pt-1">
+<div class="flex items-center justify-between gap-2">
+<button aria-label="Salir de la partida" class="w-10 h-10 rounded-2xl bg-white border-2 border-lavender-dark flex items-center justify-center text-ink-muted hover:text-coral active:scale-95 transition-transform shadow-sm shrink-0" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[22px]">close</span>
+</button>
+<div class="flex flex-col items-center min-w-0">
+<span class="text-[11px] font-bold uppercase tracking-wider text-grape bg-lavender px-2.5 py-0.5 rounded-full">
+            Carrera Online Simultánea
+          </span>
+</div>
+<div class="flex items-center gap-1.5 bg-white border-2 border-lavender-dark px-3 py-1.5 rounded-2xl shadow-sm shrink-0">
+<span class="material-symbols-outlined text-grape text-[18px]">timer</span>
+<span class="font-outfit font-extrabold text-[16px] text-ink tabular-nums" id="race-chrono">01:31.2</span>
+</div>
+</div>
+<!-- Compact Rival Progress Pill (No guesses or feedback exposed) -->
+<div class="bg-lavender rounded-2xl px-3 py-2 flex items-center justify-between gap-2 border border-lavender-dark/60">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-mint shrink-0"></span>
+<span class="text-[13px] font-extrabold text-ink truncate">Tú: Intento #6</span>
+</div>
+<span class="text-[11px] font-extrabold uppercase text-ink-muted bg-white/80 px-2 py-0.5 rounded-full shrink-0">VS</span>
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="text-[13px] font-extrabold text-ink truncate">Sofía: Intento #5</span>
+<span class="w-2.5 h-2.5 rounded-full bg-coral shrink-0"></span>
+</div>
+</div>
+</header>
+<!-- 2. Active Guess Slots (4 digits) + Full Tactile Numeric Keypad (ALWAYS visible above history) -->
+<section class="shrink-0 bg-lavender rounded-3xl p-3 border-2 border-lavender-dark/50 flex flex-col gap-2.5 shadow-sm">
+<div class="flex items-center justify-between px-1">
+<span class="text-[12px] font-extrabold uppercase tracking-wide text-grape flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+          Intento #06
+        </span>
+<span class="text-[12px] font-bold text-ink-muted">4 dígitos únicos</span>
+</div>
+<!-- 4 Digit Slots -->
+<div class="grid grid-cols-4 gap-2 max-w-[300px] w-full mx-auto">
+<div class="h-12 rounded-2xl bg-white border-2 border-grape flex items-center justify-center text-[24px] font-extrabold text-ink shadow-inner transition-all" id="slot-0">
+<span class="select-none" id="slot-val-0"></span>
+</div>
+<div class="h-12 rounded-2xl bg-white/80 border-2 border-lavender-dark flex items-center justify-center text-[24px] font-extrabold text-ink shadow-inner transition-all" id="slot-1">
+<span class="select-none" id="slot-val-1"></span>
+</div>
+<div class="h-12 rounded-2xl bg-white/80 border-2 border-lavender-dark flex items-center justify-center text-[24px] font-extrabold text-ink shadow-inner transition-all" id="slot-2">
+<span class="select-none" id="slot-val-2"></span>
+</div>
+<div class="h-12 rounded-2xl bg-white/80 border-2 border-lavender-dark flex items-center justify-center text-[24px] font-extrabold text-ink shadow-inner transition-all" id="slot-3">
+<span class="select-none" id="slot-val-3"></span>
+</div>
+</div>
+<!-- Tactile Numeric Keypad -->
+<div class="grid grid-cols-3 gap-2">
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('1')" type="button">1</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('2')" type="button">2</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('3')" type="button">3</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('4')" type="button">4</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('5')" type="button">5</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('6')" type="button">6</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('7')" type="button">7</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('8')" type="button">8</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('9')" type="button">9</button>
+<button aria-label="Borrar" class="h-11 rounded-2xl bg-coral text-white font-bold text-[14px] flex items-center justify-center gap-1 tactile-coral transition-all" onclick="handleBackspace()" type="button">
+<span class="material-symbols-outlined text-[18px]">backspace</span>
+<span>Borrar</span>
+</button>
+<button class="h-11 rounded-2xl bg-white text-ink font-extrabold text-[20px] tactile-tile transition-all" onclick="handleDigit('0')" type="button">0</button>
+<button aria-label="¡Enviar!" class="h-11 rounded-2xl bg-grape text-white font-extrabold text-[15px] flex items-center justify-center gap-1 tactile-grape transition-all" id="submit-btn" onclick="handleSubmitStrike()" type="button">
+<span>¡Enviar!</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</section>
+<!-- 3. Remaining Space: Internally Scrollable History (ONLY your own attempts, newest first) -->
+<section class="flex-1 min-h-0 flex flex-col gap-1.5">
+<div class="shrink-0 flex items-center justify-between px-1">
+<span class="text-[12px] font-extrabold uppercase tracking-wider text-ink-muted">Tus Intentos</span>
+<span class="text-[12px] font-bold text-ink-muted" id="history-count">3 anteriores</span>
+</div>
+<div class="flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 pr-0.5 pb-1" id="history-list">
+<!-- Attempt #05 -->
+<div class="bg-lavender/70 rounded-2xl p-2.5 flex items-center justify-between border border-lavender-dark/50 shrink-0">
+<div class="flex items-center gap-2.5">
+<span class="text-[12px] font-extrabold text-ink-muted w-7">#05</span>
+<div class="flex items-center gap-1.5">
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">3</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">8</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">1</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">4</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="bg-mint text-white px-2.5 py-1 rounded-xl text-[12px] font-extrabold shadow-sm">2 Fijas</span>
+<span class="bg-sunny text-ink px-2.5 py-1 rounded-xl text-[12px] font-extrabold shadow-sm">1 Pica</span>
+</div>
+</div>
+<!-- Attempt #04 -->
+<div class="bg-lavender/70 rounded-2xl p-2.5 flex items-center justify-between border border-lavender-dark/50 shrink-0">
+<div class="flex items-center gap-2.5">
+<span class="text-[12px] font-extrabold text-ink-muted w-7">#04</span>
+<div class="flex items-center gap-1.5">
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">3</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">9</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">7</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">0</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="bg-mint text-white px-2.5 py-1 rounded-xl text-[12px] font-extrabold shadow-sm">1 Fija</span>
+<span class="bg-white/80 text-ink-muted px-2.5 py-1 rounded-xl text-[12px] font-bold">0 Picas</span>
+</div>
+</div>
+<!-- Attempt #03 -->
+<div class="bg-lavender/70 rounded-2xl p-2.5 flex items-center justify-between border border-lavender-dark/50 shrink-0">
+<div class="flex items-center gap-2.5">
+<span class="text-[12px] font-extrabold text-ink-muted w-7">#03</span>
+<div class="flex items-center gap-1.5">
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">6</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">2</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">5</span>
+<span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center font-extrabold text-[16px] text-ink shadow-sm">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="bg-white/80 text-ink-muted px-2.5 py-1 rounded-xl text-[12px] font-bold">0 Fijas</span>
+<span class="bg-sunny text-ink px-2.5 py-1 rounded-xl text-[12px] font-extrabold shadow-sm">2 Picas</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+    (function initPartyEngine() {
+      let currentInput = [];
+      const maxDigits = 4;
+
+      // Running Chronometer starting at 01:31.2
+      let startTime = Date.now() - 91200;
+      const chronoEl = document.getElementById('race-chrono');
+      if (chronoEl) {
+        setInterval(() => {
+          const elapsed = Date.now() - startTime;
+          const totalSeconds = Math.floor(elapsed / 1000);
+          const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+          const secs = String(totalSeconds % 60).padStart(2, '0');
+          const tenths = Math.floor((elapsed % 1000) / 100);
+          chronoEl.textContent = `${mins}:${secs}.${tenths}`;
+        }, 100);
+      }
+
+      function updateSlotsUI() {
+        for (let i = 0; i < maxDigits; i++) {
+          const valEl = document.getElementById(`slot-val-${i}`);
+          const slotBox = document.getElementById(`slot-${i}`);
+          if (valEl) {
+            valEl.textContent = currentInput[i] !== undefined ? currentInput[i] : '';
+          }
+          if (slotBox) {
+            if (i === currentInput.length) {
+              slotBox.classList.add('border-grape', 'bg-white');
+              slotBox.classList.remove('border-lavender-dark', 'bg-white/80');
+            } else if (currentInput[i] !== undefined) {
+              slotBox.classList.add('border-mint', 'bg-white');
+              slotBox.classList.remove('border-lavender-dark', 'border-grape', 'bg-white/80');
+            } else {
+              slotBox.classList.add('border-lavender-dark', 'bg-white/80');
+              slotBox.classList.remove('border-grape', 'border-mint', 'bg-white');
+            }
+          }
+        }
+      }
+
+      window.handleDigit = function (num) {
+        if (currentInput.length < maxDigits && !currentInput.includes(num)) {
+          currentInput.push(num);
+          updateSlotsUI();
+        }
+      };
+
+      window.handleBackspace = function () {
+        if (currentInput.length > 0) {
+          currentInput.pop();
+          updateSlotsUI();
+        }
+      };
+
+      window.handleSubmitStrike = function () {
+        if (currentInput.length === maxDigits) {
+          currentInput = [];
+          updateSlotsUI();
+        }
+      };
+
+      updateSlotsUI();
+    })();
+  </script>
+</body></html>
