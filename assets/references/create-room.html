@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            lavender: "#E9DFFF",
+            grape: "#7047EB",
+            "grape-dark": "#5630C7",
+            coral: "#FF7868",
+            "coral-dark": "#E05848",
+            sunny: "#FFD15C",
+            "sunny-dark": "#E5B035",
+            mint: "#35C994",
+            "mint-dark": "#22A374",
+            plum: "#30234D",
+            "plum-soft": "#6B5B8E",
+          },
+          fontFamily: {
+            sans: ["Outfit", "sans-serif"],
+          },
+          boxShadow: {
+            "tactile": "0 4px 0 0 rgba(48, 35, 77, 0.12)",
+            "tactile-grape": "0 4px 0 0 #5630C7",
+            "tactile-mint": "0 4px 0 0 #22A374",
+            "tactile-coral": "0 4px 0 0 #E05848",
+            "tactile-sunny": "0 4px 0 0 #E5B035",
+            "card": "0 6px 20px -4px rgba(112, 71, 235, 0.10), 0 2px 0 0 rgba(233, 223, 255, 0.9)",
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #FFF6E8;
+        color: #30234D;
+        font-family: 'Outfit', sans-serif;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+        min-height: max(884px, 100dvh);
+      }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-cream text-plum flex flex-col min-h-screen selection:bg-sunny selection:text-plum">
+<!-- Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-cream/90 backdrop-blur-md border-b-2 border-lavender pt-safe">
+<div class="h-16 px-4 max-w-[480px] mx-auto flex items-center justify-between gap-2">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-10 h-10 rounded-2xl bg-grape flex items-center justify-center shadow-tactile-grape flex-shrink-0">
+<span class="material-symbols-outlined text-white text-[22px]" style="font-variation-settings: 'FILL' 1;">extension</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-extrabold text-xl tracking-tight text-plum truncate">Picas y Fijas</span>
+<span class="px-2 py-0.5 rounded-full bg-sunny text-plum text-[10px] font-extrabold uppercase tracking-wide">Party</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+<span class="text-xs font-bold text-plum-soft truncate">Sala Privada</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button aria-label="Silenciar sonido" class="w-10 h-10 flex items-center justify-center rounded-2xl bg-white border-2 border-lavender text-plum-soft hover:text-grape active:translate-y-0.5 transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">volume_up</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex flex-col relative w-full px-4 pt-20 pb-28 max-w-[480px] mx-auto min-h-screen">
+<div class="flex flex-col w-full space-y-4">
+<!-- Pestañas: Crear Sala / Unirse con Código -->
+<div class="flex p-1.5 bg-lavender/70 rounded-2xl border-2 border-lavender">
+<button class="flex-1 py-2.5 px-3 rounded-xl bg-white text-grape font-extrabold text-sm shadow-sm flex items-center justify-center gap-1.5 transition-all" id="tab-create" type="button">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+          Crear Sala
+        </button>
+<button class="flex-1 py-2.5 px-3 rounded-xl text-plum-soft font-bold text-sm hover:text-plum flex items-center justify-center gap-1.5 transition-all" id="tab-join" type="button">
+<span class="material-symbols-outlined text-[18px]">login</span>
+          Unirse con Código
+        </button>
+</div>
+<!-- Tu Apodo Editable -->
+<div class="p-3.5 rounded-3xl bg-white border-2 border-lavender shadow-card flex items-center justify-between gap-2">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-11 h-11 rounded-2xl bg-sunny text-plum flex items-center justify-center font-black text-xl shadow-tactile-sunny flex-shrink-0">
+            C
+          </div>
+<div class="min-w-0 flex flex-col">
+<span class="text-[11px] font-extrabold text-plum-soft uppercase tracking-wider">Tu Apodo</span>
+<div class="flex items-center gap-2">
+<span class="text-lg font-extrabold text-plum truncate" id="player-nickname">CriptoLover99</span>
+<span class="px-2 py-0.5 rounded-full bg-lavender text-grape font-extrabold text-[10px] uppercase">Anfitrión</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1.5 flex-shrink-0">
+<button class="w-9 h-9 rounded-xl bg-cream border-2 border-lavender text-plum-soft hover:text-grape active:translate-y-0.5 flex items-center justify-center transition-all" id="btn-edit-nick" title="Editar apodo" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-9 h-9 rounded-xl bg-cream border-2 border-lavender text-plum-soft hover:text-coral active:translate-y-0.5 flex items-center justify-center transition-all" id="btn-random-nick" title="Apodo aleatorio" type="button">
+<span class="material-symbols-outlined text-[18px]">casino</span>
+</button>
+</div>
+</div>
+<!-- Código de Sala Privada Grande y Táctil -->
+<div class="rounded-3xl bg-white border-2 border-lavender p-4 shadow-card flex flex-col items-center text-center">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2.5 h-2.5 rounded-full bg-coral animate-ping"></span>
+<span class="text-xs font-extrabold text-plum-soft uppercase tracking-wider">Código de tu Sala Privada</span>
+</div>
+<!-- Fichas del Código -->
+<div class="flex items-center justify-center gap-1.5 my-2">
+<div class="w-11 h-13 py-2 rounded-2xl bg-lavender/60 border-b-4 border-grape/30 flex items-center justify-center text-2xl font-black text-grape">P</div>
+<div class="w-11 h-13 py-2 rounded-2xl bg-lavender/60 border-b-4 border-grape/30 flex items-center justify-center text-2xl font-black text-grape">F</div>
+<span class="text-plum-soft font-black text-2xl px-0.5">-</span>
+<div class="w-11 h-13 py-2 rounded-2xl bg-sunny/30 border-b-4 border-sunny-dark/40 flex items-center justify-center text-2xl font-black text-plum">8</div>
+<div class="w-11 h-13 py-2 rounded-2xl bg-sunny/30 border-b-4 border-sunny-dark/40 flex items-center justify-center text-2xl font-black text-plum">4</div>
+<div class="w-11 h-13 py-2 rounded-2xl bg-sunny/30 border-b-4 border-sunny-dark/40 flex items-center justify-center text-2xl font-black text-plum">9</div>
+<div class="w-11 h-13 py-2 rounded-2xl bg-sunny/30 border-b-4 border-sunny-dark/40 flex items-center justify-center text-2xl font-black text-plum">2</div>
+</div>
+<!-- Botones Copiar y Compartir -->
+<div class="grid grid-cols-2 gap-2.5 w-full mt-3">
+<button class="w-full py-2.5 px-3 rounded-2xl bg-lavender/50 hover:bg-lavender text-plum font-extrabold text-sm flex items-center justify-center gap-1.5 active:translate-y-0.5 transition-all border-b-4 border-lavender" id="btn-copy-code" type="button">
+<span class="material-symbols-outlined text-[18px] text-grape">content_copy</span>
+<span id="copy-text">Copiar Código</span>
+</button>
+<button class="w-full py-2.5 px-3 rounded-2xl bg-coral text-white font-extrabold text-sm flex items-center justify-center gap-1.5 active:translate-y-0.5 transition-all shadow-tactile-coral" id="btn-share" type="button">
+<span class="material-symbols-outlined text-[18px]">share</span>
+<span>Compartir Enlace</span>
+</button>
+</div>
+</div>
+<!-- Lista de Jugadores -->
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between px-1">
+<span class="text-xs font-extrabold text-plum-soft uppercase tracking-wider">Jugadores en la Sala</span>
+<span class="text-xs font-extrabold text-mint-dark bg-mint/15 px-2.5 py-0.5 rounded-full">1 de 2 Listos</span>
+</div>
+<div class="space-y-2.5">
+<!-- Jugador 1 (Tú) -->
+<div class="p-3 rounded-2xl bg-white border-2 border-mint/40 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-2xl bg-mint/20 flex items-center justify-center text-mint-dark">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">face</span>
+</div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-sunny flex items-center justify-center text-plum shadow-sm">
+<span class="material-symbols-outlined text-[11px] font-bold" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-extrabold text-base text-plum">CriptoLover99</span>
+<span class="text-xs font-extrabold text-grape">(Tú)</span>
+</div>
+<span class="text-xs font-semibold text-plum-soft">Número secreto listo [••••]</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-mint/15 text-mint-dark">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+<span class="text-[11px] font-extrabold uppercase">Listo</span>
+</div>
+</div>
+<!-- Jugador 2 (Esperando a tu amigo) -->
+<div class="p-3 rounded-2xl bg-white/60 border-2 border-dashed border-lavender flex items-center justify-between" id="player-2-card">
+<div class="flex items-center gap-3">
+<div class="relative w-10 h-10 rounded-2xl bg-lavender/50 flex items-center justify-center text-grape">
+<span class="absolute inset-0 rounded-2xl bg-coral/15 animate-ping"></span>
+<span class="material-symbols-outlined text-[20px] text-coral">person_search</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-base text-plum">Esperando a tu amigo...</span>
+<span class="text-xs font-semibold text-plum-soft">Comparte el código PF-8492</span>
+</div>
+</div>
+<div class="flex items-center justify-center w-7 h-7">
+<span class="material-symbols-outlined text-coral animate-spin text-[20px]">progress_activity</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Configuración Sencilla de Partida -->
+<div class="p-4 rounded-3xl bg-white border-2 border-lavender shadow-card space-y-3.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-grape text-[20px]">tune</span>
+<span class="font-extrabold text-base text-plum">Configuración de Partida</span>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-lavender/70 text-grape font-extrabold text-[10px] uppercase">Anfitrión</span>
+</div>
+<!-- Modalidad -->
+<div class="space-y-1.5">
+<span class="text-[11px] font-extrabold text-plum-soft uppercase tracking-wider">Modalidad</span>
+<div class="grid grid-cols-2 gap-2">
+<button class="mode-btn py-2.5 px-3 rounded-2xl bg-grape text-white font-extrabold text-sm flex items-center justify-center gap-1.5 shadow-tactile-grape active:translate-y-0.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+              Por Turnos
+            </button>
+<button class="mode-btn py-2.5 px-3 rounded-2xl bg-cream border-2 border-lavender text-plum-soft font-bold text-sm flex items-center justify-center gap-1.5 hover:text-plum active:translate-y-0.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+              Simultáneo
+            </button>
+</div>
+</div>
+<!-- Cifras y Tiempo por Turno -->
+<div class="grid grid-cols-2 gap-2.5 pt-1">
+<div class="p-3 rounded-2xl bg-cream border-2 border-lavender flex flex-col gap-1">
+<span class="text-[11px] font-extrabold text-plum-soft uppercase">Cifras Únicas</span>
+<div class="flex items-center justify-between">
+<span class="text-2xl font-black text-plum">4</span>
+<span class="px-2 py-0.5 rounded-lg bg-white text-grape font-extrabold text-xs border border-lavender">0 al 9</span>
+</div>
+</div>
+<div class="p-3 rounded-2xl bg-cream border-2 border-lavender flex flex-col gap-1">
+<span class="text-[11px] font-extrabold text-plum-soft uppercase">Tiempo por Turno</span>
+<div class="flex items-center justify-between">
+<span class="text-2xl font-black text-coral">60<span class="text-sm font-bold text-plum-soft">s</span></span>
+<button class="p-1.5 rounded-xl bg-white border border-lavender hover:text-coral text-plum-soft transition-colors" id="btn-toggle-time" type="button">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Elección de Número Secreto -->
+<div class="p-4 rounded-3xl bg-white border-2 border-lavender shadow-card space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-extrabold text-plum uppercase tracking-wider">Tu Número Secreto</span>
+<span class="text-xs font-extrabold text-mint-dark bg-mint/15 px-2.5 py-1 rounded-full flex items-center gap-1" id="secret-status-tag">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+            7391
+          </span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<button class="py-3 px-3 rounded-2xl bg-cream hover:bg-lavender/40 border-2 border-lavender text-plum font-extrabold text-sm flex flex-col items-center justify-center gap-1 active:translate-y-0.5 transition-all text-center" id="btn-gen-random" type="button">
+<span class="material-symbols-outlined text-[22px] text-mint-dark">shuffle</span>
+<span>Aleatorio</span>
+</button>
+<button class="py-3 px-3 rounded-2xl bg-cream hover:bg-lavender/40 border-2 border-lavender text-plum font-extrabold text-sm flex flex-col items-center justify-center gap-1 active:translate-y-0.5 transition-all text-center" id="btn-manual-code" type="button">
+<span class="material-symbols-outlined text-[22px] text-coral">edit_note</span>
+<span>Elegir manualmente</span>
+</button>
+</div>
+</div>
+<!-- Botón Grande ¡Iniciar Partida! -->
+<div class="pt-1 flex flex-col gap-2">
+<button class="w-full py-4 rounded-2xl bg-lavender/70 text-plum-soft/60 font-black text-xl flex items-center justify-center gap-2 cursor-not-allowed transition-all border-b-4 border-lavender" disabled="" id="btn-start-game" type="button">
+<span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+          ¡Iniciar Partida!
+        </button>
+<p class="text-center text-xs font-semibold text-plum-soft">
+          Podrás iniciar la partida en cuanto se una tu amigo.
+        </p>
+</div>
+<!-- Botón de demostración interactiva -->
+<div class="flex justify-center pt-1">
+<button class="text-xs text-grape hover:text-coral underline underline-offset-4 font-bold" id="btn-simulate-join" type="button">
+          [Simular llegada de tu amigo]
+        </button>
+</div>
+</div>
+<!-- Modal para elegir número secreto manualmente -->
+<div class="fixed inset-0 z-50 bg-plum/40 backdrop-blur-sm hidden items-center justify-center px-4" id="modal-code">
+<div class="w-full max-w-[360px] p-5 rounded-3xl bg-cream border-4 border-white shadow-2xl space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xl font-black text-plum">Tu Número Secreto</span>
+<button class="w-8 h-8 rounded-full bg-lavender/60 text-plum flex items-center justify-center hover:bg-coral hover:text-white transition-colors" id="btn-close-modal" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="text-sm font-semibold text-plum-soft">
+          Escribe 4 dígitos diferentes del 0 al 9. ¡Tu amigo intentará adivinarlos!
+        </p>
+<div class="flex justify-center gap-2.5 my-2">
+<input class="slot-input w-13 h-14 rounded-2xl bg-white border-2 border-lavender text-center text-2xl font-black text-grape outline-none focus:border-grape shadow-sm" inputmode="numeric" maxlength="1" type="text" value="7"/>
+<input class="slot-input w-13 h-14 rounded-2xl bg-white border-2 border-lavender text-center text-2xl font-black text-grape outline-none focus:border-grape shadow-sm" inputmode="numeric" maxlength="1" type="text" value="3"/>
+<input class="slot-input w-13 h-14 rounded-2xl bg-white border-2 border-lavender text-center text-2xl font-black text-grape outline-none focus:border-grape shadow-sm" inputmode="numeric" maxlength="1" type="text" value="9"/>
+<input class="slot-input w-13 h-14 rounded-2xl bg-white border-2 border-lavender text-center text-2xl font-black text-grape outline-none focus:border-grape shadow-sm" inputmode="numeric" maxlength="1" type="text" value="1"/>
+</div>
+<button class="w-full py-3.5 rounded-2xl bg-mint text-white font-black text-base shadow-tactile-mint active:translate-y-0.5 transition-all" id="btn-save-code" type="button">
+          Guardar Número Secreto
+        </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-white/95 backdrop-blur-md border-t-2 border-lavender">
+<div class="flex justify-around items-center h-16 max-w-[480px] mx-auto px-2">
+<a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-grape font-extrabold relative" href="#">
+<span class="w-8 h-1 rounded-full bg-grape absolute top-0"></span>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">casino</span>
+<span class="text-[11px]">Jugar</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-plum-soft hover:text-grape font-bold relative transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">menu_book</span>
+<span class="text-[11px]">Reglas</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-plum-soft hover:text-grape font-bold relative transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-[11px]">Ajustes</span>
+</a>
+</div>
+</nav>
+<script>
+    (function() {
+      const btnCopy = document.getElementById('btn-copy-code');
+      const copyText = document.getElementById('copy-text');
+      const btnShare = document.getElementById('btn-share');
+      const btnRandomNick = document.getElementById('btn-random-nick');
+      const btnEditNick = document.getElementById('btn-edit-nick');
+      const playerNickname = document.getElementById('player-nickname');
+      const btnGenRandom = document.getElementById('btn-gen-random');
+      const secretTag = document.getElementById('secret-status-tag');
+      const btnManual = document.getElementById('btn-manual-code');
+      const modalCode = document.getElementById('modal-code');
+      const btnCloseModal = document.getElementById('btn-close-modal');
+      const btnSaveCode = document.getElementById('btn-save-code');
+      const btnSimulate = document.getElementById('btn-simulate-join');
+      const player2Card = document.getElementById('player-2-card');
+      const btnStart = document.getElementById('btn-start-game');
+
+      const randomNicks = ['CriptoLover99', 'PicaMaster', 'FijaHunter', 'Adivinador', 'Estrella42', 'MenteAgil'];
+
+      if (btnCopy) {
+        btnCopy.addEventListener('click', () => {
+          navigator.clipboard?.writeText('PF-8492');
+          copyText.textContent = '¡Copiado!';
+          setTimeout(() => { copyText.textContent = 'Copiar Código'; }, 1800);
+        });
+      }
+
+      if (btnShare) {
+        btnShare.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({
+              title: 'Picas y Fijas Party',
+              text: '¡Únete a mi sala privada en Picas y Fijas! Código: PF-8492',
+              url: window.location.href
+            }).catch(() => {});
+          } else {
+            navigator.clipboard?.writeText('https://picasyfijas.app/sala/PF-8492');
+            btnShare.querySelector('span:last-child').textContent = '¡Enlace Copiado!';
+            setTimeout(() => { btnShare.querySelector('span:last-child').textContent = 'Compartir Enlace'; }, 1800);
+          }
+        });
+      }
+
+      if (btnRandomNick) {
+        btnRandomNick.addEventListener('click', () => {
+          const next = randomNicks[Math.floor(Math.random() * randomNicks.length)];
+          playerNickname.textContent = next;
+        });
+      }
+
+      if (btnEditNick) {
+        btnEditNick.addEventListener('click', () => {
+          const nuevo = prompt('Escribe tu nuevo apodo:', playerNickname.textContent);
+          if (nuevo && nuevo.trim()) {
+            playerNickname.textContent = nuevo.trim().substring(0, 15);
+          }
+        });
+      }
+
+      if (btnGenRandom) {
+        btnGenRandom.addEventListener('click', () => {
+          const digits = ['0','1','2','3','4','5','6','7','8','9'];
+          for (let i = digits.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [digits[i], digits[j]] = [digits[j], digits[i]];
+          }
+          const code = digits.slice(0, 4).join('');
+          secretTag.innerHTML = '<span class="material-symbols-outlined text-[14px]">lock</span> ' + code;
+        });
+      }
+
+      if (btnManual && modalCode) {
+        btnManual.addEventListener('click', () => {
+          modalCode.classList.remove('hidden');
+          modalCode.classList.add('flex');
+        });
+      }
+
+      if (btnCloseModal && modalCode) {
+        btnCloseModal.addEventListener('click', () => {
+          modalCode.classList.add('hidden');
+          modalCode.classList.remove('flex');
+        });
+      }
+
+      if (btnSaveCode && modalCode) {
+        btnSaveCode.addEventListener('click', () => {
+          const inputs = modalCode.querySelectorAll('.slot-input');
+          let code = '';
+          inputs.forEach(inp => code += inp.value || '0');
+          secretTag.innerHTML = '<span class="material-symbols-outlined text-[14px]">lock</span> ' + code;
+          modalCode.classList.add('hidden');
+          modalCode.classList.remove('flex');
+        });
+      }
+
+      if (btnSimulate) {
+        btnSimulate.addEventListener('click', () => {
+          player2Card.className = 'p-3 rounded-2xl bg-white border-2 border-mint/40 flex items-center justify-between shadow-sm transition-all duration-300';
+          player2Card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-coral/20 flex items-center justify-center text-coral">
+                <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">mood</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-base text-plum">Amigo_88</span>
+                  <span class="px-2 py-0.5 rounded-full bg-lavender text-grape font-extrabold text-[10px]">CONECTADO</span>
+                </div>
+                <span class="text-xs font-semibold text-plum-soft">Número secreto listo [••••]</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-mint/15 text-mint-dark">
+              <span class="w-2 h-2 rounded-full bg-mint"></span>
+              <span class="text-[11px] font-extrabold uppercase">Listo</span>
+            </div>
+          `;
+
+          btnStart.removeAttribute('disabled');
+          btnStart.className = 'w-full py-4 rounded-2xl bg-mint hover:bg-mint-dark text-white font-black text-xl flex items-center justify-center gap-2 active:translate-y-0.5 transition-all shadow-tactile-mint';
+          btnSimulate.remove();
+        });
+      }
+    })();
+  </script>
+</body></html>
