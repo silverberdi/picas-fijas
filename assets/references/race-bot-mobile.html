@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Picas y Fijas Party - Carrera vs Máquina</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&amp;family=Quicksand:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            lavender: "#E9DFFF",
+            "lavender-dark": "#D5C4FF",
+            grape: "#7047EB",
+            "grape-dark": "#5726D2",
+            coral: "#FF7868",
+            "coral-dark": "#E05545",
+            sunny: "#FFD15C",
+            "sunny-dark": "#E5B235",
+            mint: "#35C994",
+            "mint-dark": "#22A374",
+            ink: "#211437",
+            "ink-muted": "#5E5275",
+          },
+          fontFamily: {
+            display: ["Outfit", "sans-serif"],
+            body: ["Quicksand", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    html, body {
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FFF6E8;
+      color: #211437;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D5C4FF;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="font-body select-none">
+<div class="h-[100dvh] w-full max-w-[480px] mx-auto flex flex-col overflow-hidden bg-cream pt-safe pb-safe px-3.5 py-2.5 gap-2.5">
+<!-- 1. Compact Top Bar -->
+<header class="shrink-0 flex flex-col gap-2">
+<!-- Top Controls Row -->
+<div class="flex items-center justify-between gap-2">
+<button aria-label="Salir" class="h-10 px-3 rounded-2xl bg-white border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none flex items-center gap-1 text-ink font-display font-bold text-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-coral">close</span>
+<span>Salir</span>
+</button>
+<div class="flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-2xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF]">
+<span class="material-symbols-outlined text-[18px] text-grape">timer</span>
+<span class="font-display font-extrabold text-lg text-ink tracking-tight tabular-nums" id="race-timer">01:17.5</span>
+</div>
+<button aria-label="Notas" class="h-10 px-3 rounded-2xl bg-sunny border-2 border-sunny-dark shadow-[0_3px_0_#E5B235] active:translate-y-0.5 active:shadow-none flex items-center gap-1 text-ink font-display font-bold text-sm transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span>Notas</span>
+</button>
+</div>
+<!-- Compact Rival Progress Bar -->
+<div class="bg-lavender rounded-2xl p-2.5 border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-xs font-display font-bold">
+<span class="text-grape-dark uppercase tracking-wide">Carrera vs Máquina (Simultáneo Ciego)</span>
+<span class="text-ink-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Secreto</span>
+</span>
+</div>
+<div class="flex items-center justify-between text-xs font-display font-extrabold">
+<div class="flex items-center gap-1 text-grape">
+<span class="w-2 h-2 rounded-full bg-mint"></span>
+<span>Tú: Intento #7</span>
+</div>
+<div class="flex items-center gap-1 text-coral-dark">
+<span>Robot Tito: Intento #6</span>
+<span class="material-symbols-outlined text-[15px]">smart_toy</span>
+</div>
+</div>
+<div class="h-2.5 w-full bg-white rounded-full overflow-hidden flex p-0.5 gap-0.5 border border-lavender-dark">
+<div class="h-full bg-mint rounded-full transition-all duration-300" style="width: 58%;"></div>
+<div class="h-full bg-coral/70 rounded-full ml-auto transition-all duration-300" style="width: 48%;"></div>
+</div>
+</div>
+</header>
+<!-- 2. Active Guess Slots & Tactile Numeric Keypad (Always visible above history) -->
+<section class="shrink-0 flex flex-col gap-2">
+<!-- Active Guess Card -->
+<div class="bg-white rounded-2xl p-2.5 border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] flex flex-col gap-2">
+<div class="flex items-center justify-between px-1">
+<span class="font-display font-extrabold text-xs text-grape uppercase tracking-wider">Intento Actual #07</span>
+<button class="font-display font-bold text-xs text-coral hover:text-coral-dark flex items-center gap-0.5 active:scale-95 transition-transform" id="btn-clear-all" type="button">
+<span class="material-symbols-outlined text-[15px]">restart_alt</span>
+<span>Limpiar</span>
+</button>
+</div>
+<!-- 4 Chunky Digit Slots -->
+<div class="grid grid-cols-4 gap-2.5 px-2">
+<div class="h-13 py-2 bg-lavender rounded-xl border-2 border-grape/40 shadow-[0_3px_0_#D5C4FF] flex items-center justify-center" id="slot-0">
+<span class="digit-text font-display font-extrabold text-2xl text-ink">6</span>
+</div>
+<div class="h-13 py-2 bg-lavender rounded-xl border-2 border-grape/40 shadow-[0_3px_0_#D5C4FF] flex items-center justify-center" id="slot-1">
+<span class="digit-text font-display font-extrabold text-2xl text-ink">9</span>
+</div>
+<div class="h-13 py-2 bg-cream rounded-xl border-2 border-grape shadow-[0_3px_0_#7047EB] flex items-center justify-center" id="slot-2">
+<span class="digit-text font-display font-extrabold text-2xl text-grape animate-pulse">_</span>
+</div>
+<div class="h-13 py-2 bg-cream/70 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] flex items-center justify-center" id="slot-3">
+<span class="digit-text font-display font-extrabold text-2xl text-ink-muted/50">_</span>
+</div>
+</div>
+</div>
+<!-- Full Tactile Numeric Keypad -->
+<div class="grid grid-cols-3 gap-2">
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">1</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">2</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">3</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">4</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">5</button>
+<button class="key-pad h-11 bg-lavender/60 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] font-display font-extrabold text-xl text-ink-muted/50 cursor-not-allowed" type="button">6</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">7</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">8</button>
+<button class="key-pad h-11 bg-lavender/60 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] font-display font-extrabold text-xl text-ink-muted/50 cursor-not-allowed" type="button">9</button>
+<!-- Bottom Row: Borrar, 0, ¡Enviar! -->
+<button class="h-11 bg-coral rounded-xl border-2 border-coral-dark shadow-[0_3px_0_#E05545] active:translate-y-0.5 active:shadow-none flex items-center justify-center gap-1 font-display font-bold text-sm text-white transition-all" id="btn-backspace" type="button">
+<span class="material-symbols-outlined text-[18px]">backspace</span>
+<span>Borrar</span>
+</button>
+<button class="key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all" type="button">0</button>
+<button class="h-11 bg-grape rounded-xl border-2 border-grape-dark shadow-[0_3px_0_#5726D2] active:translate-y-0.5 active:shadow-none flex items-center justify-center gap-1 font-display font-extrabold text-sm text-white transition-all" id="btn-submit" type="button">
+<span>¡Enviar!</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</section>
+<!-- 3. Internally Scrollable History (Remaining space below) -->
+<section class="flex-1 min-h-0 flex flex-col bg-lavender/60 rounded-2xl p-2.5 border-2 border-lavender-dark">
+<div class="shrink-0 flex items-center justify-between px-1 pb-2">
+<span class="font-display font-extrabold text-xs text-ink uppercase tracking-wider">Tus Intentos</span>
+<div class="flex items-center gap-2.5 text-xs font-display font-bold">
+<span class="flex items-center gap-1 text-ink">
+<span class="w-2.5 h-2.5 rounded-full bg-mint inline-block"></span>
+            Fijas
+          </span>
+<span class="flex items-center gap-1 text-ink">
+<span class="w-2.5 h-2.5 rounded-full bg-sunny inline-block border border-sunny-dark"></span>
+            Picas
+          </span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto space-y-1.5 pr-1" id="history-stream">
+<!-- Attempt #06 -->
+<div class="flex items-center justify-between bg-white px-2.5 py-2 rounded-xl border-2 border-lavender-dark shadow-[0_2px_0_#D5C4FF]">
+<div class="flex items-center gap-2">
+<span class="font-display font-extrabold text-xs text-ink-muted w-6">#06</span>
+<div class="flex gap-1.5">
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">5</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">9</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">2</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-lg bg-mint text-white font-display font-extrabold text-xs shadow-[0_2px_0_#22A374]">2 F</span>
+<span class="px-2 py-0.5 rounded-lg bg-sunny text-ink font-display font-extrabold text-xs shadow-[0_2px_0_#E5B235]">1 P</span>
+</div>
+</div>
+<!-- Attempt #05 -->
+<div class="flex items-center justify-between bg-white px-2.5 py-2 rounded-xl border-2 border-lavender-dark shadow-[0_2px_0_#D5C4FF]">
+<div class="flex items-center gap-2">
+<span class="font-display font-extrabold text-xs text-ink-muted w-6">#05</span>
+<div class="flex gap-1.5">
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">5</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">7</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">2</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">0</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-lg bg-mint text-white font-display font-extrabold text-xs shadow-[0_2px_0_#22A374]">1 F</span>
+<span class="px-2 py-0.5 rounded-lg bg-sunny text-ink font-display font-extrabold text-xs shadow-[0_2px_0_#E5B235]">2 P</span>
+</div>
+</div>
+<!-- Attempt #04 -->
+<div class="flex items-center justify-between bg-white px-2.5 py-2 rounded-xl border-2 border-lavender-dark shadow-[0_2px_0_#D5C4FF]">
+<div class="flex items-center gap-2">
+<span class="font-display font-extrabold text-xs text-ink-muted w-6">#04</span>
+<div class="flex gap-1.5">
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">3</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">1</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">4</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">6</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-lg bg-lavender text-ink-muted font-display font-extrabold text-xs">0 F</span>
+<span class="px-2 py-0.5 rounded-lg bg-sunny text-ink font-display font-extrabold text-xs shadow-[0_2px_0_#E5B235]">1 P</span>
+</div>
+</div>
+<!-- Attempt #03 -->
+<div class="flex items-center justify-between bg-white px-2.5 py-2 rounded-xl border-2 border-lavender-dark shadow-[0_2px_0_#D5C4FF]">
+<div class="flex items-center gap-2">
+<span class="font-display font-extrabold text-xs text-ink-muted w-6">#03</span>
+<div class="flex gap-1.5">
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">8</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">4</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">1</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">3</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-lg bg-lavender text-ink-muted font-display font-extrabold text-xs">0 F</span>
+<span class="px-2 py-0.5 rounded-lg bg-sunny text-ink font-display font-extrabold text-xs shadow-[0_2px_0_#E5B235]">1 P</span>
+</div>
+</div>
+<!-- Attempt #02 -->
+<div class="flex items-center justify-between bg-white px-2.5 py-2 rounded-xl border-2 border-lavender-dark shadow-[0_2px_0_#D5C4FF]">
+<div class="flex items-center gap-2">
+<span class="font-display font-extrabold text-xs text-ink-muted w-6">#02</span>
+<div class="flex gap-1.5">
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">1</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">2</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">3</span>
+<span class="w-7 h-7 bg-cream rounded-lg border border-lavender-dark flex items-center justify-center font-display font-extrabold text-base text-ink">4</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-lg bg-mint text-white font-display font-extrabold text-xs shadow-[0_2px_0_#22A374]">1 F</span>
+<span class="px-2 py-0.5 rounded-lg bg-lavender text-ink-muted font-display font-extrabold text-xs">0 P</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+    (() => {
+      let currentDigits = ['6', '9'];
+      const maxDigits = 4;
+      const slots = [
+        document.getElementById('slot-0'),
+        document.getElementById('slot-1'),
+        document.getElementById('slot-2'),
+        document.getElementById('slot-3')
+      ];
+
+      const updateSlots = () => {
+        slots.forEach((slot, index) => {
+          const textSpan = slot.querySelector('.digit-text');
+          if (index < currentDigits.length) {
+            textSpan.textContent = currentDigits[index];
+            textSpan.className = 'digit-text font-display font-extrabold text-2xl text-ink';
+            slot.className = 'h-13 py-2 bg-lavender rounded-xl border-2 border-grape/40 shadow-[0_3px_0_#D5C4FF] flex items-center justify-center';
+          } else if (index === currentDigits.length) {
+            textSpan.textContent = '_';
+            textSpan.className = 'digit-text font-display font-extrabold text-2xl text-grape animate-pulse';
+            slot.className = 'h-13 py-2 bg-cream rounded-xl border-2 border-grape shadow-[0_3px_0_#7047EB] flex items-center justify-center';
+          } else {
+            textSpan.textContent = '_';
+            textSpan.className = 'digit-text font-display font-extrabold text-2xl text-ink-muted/50';
+            slot.className = 'h-13 py-2 bg-cream/70 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] flex items-center justify-center';
+          }
+        });
+
+        document.querySelectorAll('.key-pad').forEach(btn => {
+          const digit = btn.textContent.trim();
+          if (currentDigits.includes(digit)) {
+            btn.className = 'key-pad h-11 bg-lavender/60 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] font-display font-extrabold text-xl text-ink-muted/50 cursor-not-allowed';
+          } else {
+            btn.className = 'key-pad h-11 bg-white hover:bg-lavender/50 rounded-xl border-2 border-lavender-dark shadow-[0_3px_0_#D5C4FF] active:translate-y-0.5 active:shadow-none font-display font-extrabold text-xl text-ink transition-all';
+          }
+        });
+      };
+
+      let startTime = performance.now() - (77.5 * 1000);
+      const timerElement = document.getElementById('race-timer');
+      if (timerElement) {
+        setInterval(() => {
+          const elapsed = performance.now() - startTime;
+          const totalSeconds = Math.floor(elapsed / 1000);
+          const minutes = Math.floor(totalSeconds / 60);
+          const seconds = totalSeconds % 60;
+          const tenths = Math.floor((elapsed % 1000) / 100);
+          timerElement.textContent =
+            `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${tenths}`;
+        }, 100);
+      }
+
+      document.querySelectorAll('.key-pad').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const digit = btn.textContent.trim();
+          if (currentDigits.length < maxDigits && !currentDigits.includes(digit)) {
+            currentDigits.push(digit);
+            updateSlots();
+          }
+        });
+      });
+
+      const backspaceBtn = document.getElementById('btn-backspace');
+      if (backspaceBtn) {
+        backspaceBtn.addEventListener('click', () => {
+          if (currentDigits.length > 0) {
+            currentDigits.pop();
+            updateSlots();
+          }
+        });
+      }
+
+      const clearAllBtn = document.getElementById('btn-clear-all');
+      if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+          currentDigits = [];
+          updateSlots();
+        });
+      }
+    })();
+  </script>
+</body></html>
