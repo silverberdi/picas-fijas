@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF7EC",
+            creamDark: "#F7EADA",
+            plum: "#30234D",
+            plumDark: "#23173B",
+            lavender: "#EBE3FF",
+            lavenderCard: "#FFFFFF",
+            grape: "#7047EB",
+            grapeDark: "#5726D2",
+            grapeShadow: "#431DA7",
+            peach: "#FF7868",
+            peachShadow: "#D44939",
+            sunny: "#FFD15C",
+            sunnyDark: "#E5B032",
+            mint: "#35C994",
+            mintShadow: "#1FA372",
+            cardBg: "#FFFFFF",
+            subtleBorder: "#E8DEFA",
+            textMain: "#24163E",
+            textMuted: "#716588",
+          },
+          fontFamily: {
+            sans: ['Outfit', 'Quicksand', 'sans-serif'],
+            quicksand: ['Quicksand', 'sans-serif'],
+          },
+          boxShadow: {
+            'pop-sm': '0 3px 0 0 rgba(0,0,0,0.12)',
+            'pop-key': '0 4px 0 0 #D4C9EB',
+            'pop-grape': '0 4px 0 0 #431DA7',
+            'pop-mint': '0 4px 0 0 #1FA372',
+            'pop-peach': '0 4px 0 0 #D44939',
+            'pop-card': '0 6px 16px -2px rgba(112, 71, 235, 0.08), 0 2px 4px rgba(0,0,0,0.04)',
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    html, body {
+      width: 100vw;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FFF7EC;
+      color: #24163E;
+      font-family: 'Outfit', sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-cream flex items-center justify-center">
+<!-- Mobile Shell Frame (Strictly 390x844 max, height 100dvh, no scroll) -->
+<div class="relative w-full max-w-[390px] h-[100dvh] max-h-[844px] flex flex-col bg-cream overflow-hidden shadow-2xl">
+<!-- Top Compact Header & Status Bar -->
+<header class="pt-safe flex-shrink-0 bg-cream/90 backdrop-blur-md px-3 pt-2 pb-1.5 border-b border-subtleBorder/60 z-30">
+<!-- Row 1: Brand & Sound -->
+<div class="flex items-center justify-between h-9 mb-1.5">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-xl bg-grape text-white flex items-center justify-center font-extrabold text-base shadow-pop-grape">
+            🎲
+          </div>
+<div>
+<h1 class="text-base font-extrabold text-textMain tracking-tight leading-none flex items-center gap-1">
+              Picas y Fijas <span class="bg-sunny/30 text-sunnyDark text-[10px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wide">Party</span>
+</h1>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<button aria-label="Sonido" class="w-8 h-8 rounded-full bg-white text-grape flex items-center justify-center border border-lavender shadow-sm active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+</button>
+<button aria-label="Notas de Deducción" class="h-8 px-2.5 rounded-full bg-lavender text-grape font-bold text-xs flex items-center gap-1 border border-grape/20 active:scale-95 transition-transform shadow-sm" id="notes-btn-top" type="button">
+<span>📝</span>
+<span>Notas</span>
+</button>
+<button aria-label="Salir" class="h-8 px-2 rounded-full bg-peach/15 text-peach font-bold text-xs flex items-center gap-0.5 hover:bg-peach/25 active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span class="text-[11px]">Salir</span>
+</button>
+</div>
+</div>
+<!-- Row 2: Match Status Chips -->
+<div class="flex items-center justify-between bg-white rounded-2xl px-3 py-1.5 border border-subtleBorder shadow-pop-card">
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-grape text-white text-xs font-black shadow-sm tracking-wide">
+            Turno 6
+          </span>
+<span class="text-xs font-bold text-textMuted flex items-center gap-1 bg-cream rounded-full px-2 py-0.5">
+            ⏱️ <span class="font-extrabold text-textMain">02:45</span>
+</span>
+</div>
+<div class="text-[11px] font-bold text-grape flex items-center gap-1 bg-lavender/60 px-2 py-0.5 rounded-full">
+<span>🔒 4 Dígitos Secretos</span>
+</div>
+</div>
+</header>
+<!-- Upper Section: Slots + Keypad (ALWAYS VISIBLE, NO HISTORY ABOVE) -->
+<div class="flex-shrink-0 px-3 pt-2 pb-1.5 flex flex-col gap-2">
+<!-- Active Guess Slots (Chunky, playful, colorful borders) -->
+<div class="bg-white rounded-2xl p-2.5 border-2 border-lavender shadow-pop-card flex flex-col items-center">
+<div class="flex items-center justify-between w-full mb-1.5 px-1">
+<span class="text-[11px] font-extrabold text-grape uppercase tracking-wider flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span> Tu Intento Actual
+          </span>
+<span class="text-[11px] font-bold text-textMuted">Toca teclas para llenar</span>
+</div>
+<div class="flex items-center justify-center gap-2.5 w-full">
+<!-- Slot 1 -->
+<div class="w-14 h-14 rounded-2xl bg-lavender/30 border-2 border-grape text-grape font-black text-2xl flex items-center justify-center shadow-inner relative">
+<span>4</span>
+<span class="absolute bottom-1 w-5 h-1 rounded-full bg-grape/30"></span>
+</div>
+<!-- Slot 2 -->
+<div class="w-14 h-14 rounded-2xl bg-lavender/30 border-2 border-grape text-grape font-black text-2xl flex items-center justify-center shadow-inner relative">
+<span>2</span>
+<span class="absolute bottom-1 w-5 h-1 rounded-full bg-grape/30"></span>
+</div>
+<!-- Slot 3 -->
+<div class="w-14 h-14 rounded-2xl bg-lavender/30 border-2 border-grape text-grape font-black text-2xl flex items-center justify-center shadow-inner relative">
+<span>8</span>
+<span class="absolute bottom-1 w-5 h-1 rounded-full bg-grape/30"></span>
+</div>
+<!-- Slot 4 (Active/Waiting) -->
+<div class="w-14 h-14 rounded-2xl bg-sunny/20 border-2 border-dashed border-sunnyDark text-sunnyDark font-black text-2xl flex items-center justify-center relative animate-pulse shadow-sm">
+<span class="opacity-40">?</span>
+<span class="absolute bottom-2 w-6 h-1 rounded-full bg-sunnyDark animate-bounce"></span>
+</div>
+</div>
+</div>
+<!-- Quick Deduction Scratchpad Bar (0-9 tap states: Neutral -> Green Confirm -> Red Discard) -->
+<div class="bg-lavender/40 border border-lavender rounded-xl px-2 py-1 flex items-center justify-between gap-1 shadow-sm" id="notes-bar">
+<span class="text-[10px] font-extrabold text-grape uppercase flex-shrink-0 mr-1">Deduce:</span>
+<div class="flex-1 grid grid-cols-10 gap-1 justify-items-center">
+<!-- 0: Neutral -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-white border border-subtleBorder text-textMain font-bold text-xs flex items-center justify-center active:scale-90 transition-all" type="button">0</button>
+<!-- 1: Discarded Red -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-peach/20 border border-peach text-peach font-bold text-xs flex items-center justify-center line-through active:scale-90 transition-all" type="button">1</button>
+<!-- 2: Confirmed Green -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-mint/25 border border-mint text-mintShadow font-black text-xs flex items-center justify-center active:scale-90 transition-all" type="button">2</button>
+<!-- 3: Discarded Red -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-peach/20 border border-peach text-peach font-bold text-xs flex items-center justify-center line-through active:scale-90 transition-all" type="button">3</button>
+<!-- 4: Confirmed Green -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-mint/25 border border-mint text-mintShadow font-black text-xs flex items-center justify-center active:scale-90 transition-all" type="button">4</button>
+<!-- 5: Discarded Red -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-peach/20 border border-peach text-peach font-bold text-xs flex items-center justify-center line-through active:scale-90 transition-all" type="button">5</button>
+<!-- 6: Discarded Red -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-peach/20 border border-peach text-peach font-bold text-xs flex items-center justify-center line-through active:scale-90 transition-all" type="button">6</button>
+<!-- 7: Neutral -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-white border border-subtleBorder text-textMain font-bold text-xs flex items-center justify-center active:scale-90 transition-all" type="button">7</button>
+<!-- 8: Confirmed Green -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-mint/25 border border-mint text-mintShadow font-black text-xs flex items-center justify-center active:scale-90 transition-all" type="button">8</button>
+<!-- 9: Neutral -->
+<button class="deduce-pill w-6 h-6 rounded-md bg-white border border-subtleBorder text-textMain font-bold text-xs flex items-center justify-center active:scale-90 transition-all" type="button">9</button>
+</div>
+</div>
+<!-- Tactile 3D Keypad & Primary Actions (ALWAYS VISIBLE AT TOP/MIDDLE) -->
+<div class="bg-white rounded-2xl p-2 border border-subtleBorder shadow-pop-card flex flex-col gap-1.5">
+<div class="grid grid-cols-3 gap-1.5 w-full">
+<!-- Row 1: 1, 2, 3 -->
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            1
+          </button>
+<button class="h-10 rounded-xl bg-lavender/30 border border-lavender/40 font-extrabold text-lg text-textMuted/40 cursor-not-allowed flex items-center justify-center" disabled="" type="button">
+            2
+          </button>
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            3
+          </button>
+<!-- Row 2: 4, 5, 6 -->
+<button class="h-10 rounded-xl bg-lavender/30 border border-lavender/40 font-extrabold text-lg text-textMuted/40 cursor-not-allowed flex items-center justify-center" disabled="" type="button">
+            4
+          </button>
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            5
+          </button>
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            6
+          </button>
+<!-- Row 3: 7, 8, 9 -->
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            7
+          </button>
+<button class="h-10 rounded-xl bg-lavender/30 border border-lavender/40 font-extrabold text-lg text-textMuted/40 cursor-not-allowed flex items-center justify-center" disabled="" type="button">
+            8
+          </button>
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            9
+          </button>
+<!-- Row 4: Delete, 0, Submit Guess -->
+<button aria-label="Borrar" class="h-10 rounded-xl bg-peach text-white font-black text-sm shadow-pop-peach active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[19px]">backspace</span>
+<span class="text-xs">Borrar</span>
+</button>
+<button class="h-10 rounded-xl bg-white border border-lavender font-extrabold text-lg text-textMain shadow-pop-key active:translate-y-1 active:shadow-none transition-all flex items-center justify-center" type="button">
+            0
+          </button>
+<button aria-label="Enviar Conjetura" class="h-10 rounded-xl bg-mint text-white font-black text-sm shadow-pop-mint active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-[19px]">check_circle</span>
+<span class="text-xs tracking-tight">¡Adivinar!</span>
+</button>
+</div>
+</div>
+</div>
+<!-- History Section: ALLOCATED TO REMAINING SPACE BELOW KEYPAD (flex-1 overflow-y-auto) -->
+<div class="flex-1 flex flex-col min-h-0 px-3 pb-16 pt-1">
+<div class="flex items-center justify-between mb-1 px-1 flex-shrink-0">
+<div class="flex items-center gap-1">
+<span class="text-sm">📜</span>
+<span class="text-xs font-black uppercase tracking-wider text-textMain">Historial de Intentos</span>
+<span class="text-[10px] text-textMuted font-bold">(Recientes arriba)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-extrabold text-mintShadow bg-mint/15 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
+            🎯 Fija
+          </span>
+<span class="text-[10px] font-extrabold text-sunnyDark bg-sunny/20 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
+            🔄 Pica
+          </span>
+</div>
+</div>
+<!-- Scrollable List of Past Guesses -->
+<div class="flex-1 overflow-y-auto pr-0.5 space-y-1.5">
+<!-- Row #5 (Newest first) -->
+<div class="flex items-center justify-between bg-white rounded-xl p-2 border border-subtleBorder shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-extrabold text-xs text-textMuted w-5">#05</span>
+<div class="flex items-center gap-1">
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">7</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">4</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">0</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full bg-sunny/25 text-sunnyDark font-extrabold text-xs flex items-center gap-0.5 shadow-sm">
+              🔄 3 Picas
+            </span>
+<span class="px-2 py-0.5 rounded-full bg-lavender/50 text-textMuted font-bold text-xs">
+              0 Fijas
+            </span>
+</div>
+</div>
+<!-- Row #4 -->
+<div class="flex items-center justify-between bg-white rounded-xl p-2 border border-subtleBorder shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-extrabold text-xs text-textMuted w-5">#04</span>
+<div class="flex items-center gap-1">
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">2</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">7</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">4</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full bg-mint/20 text-mintShadow font-extrabold text-xs flex items-center gap-0.5 shadow-sm">
+              🎯 1 Fija
+            </span>
+<span class="px-2 py-0.5 rounded-full bg-sunny/25 text-sunnyDark font-extrabold text-xs flex items-center gap-0.5 shadow-sm">
+              🔄 2 Picas
+            </span>
+</div>
+</div>
+<!-- Row #3 -->
+<div class="flex items-center justify-between bg-white rounded-xl p-2 border border-subtleBorder shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-extrabold text-xs text-textMuted w-5">#03</span>
+<div class="flex items-center gap-1">
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">1</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">5</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">9</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">0</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full bg-sunny/25 text-sunnyDark font-extrabold text-xs flex items-center gap-0.5">
+              🔄 1 Pica
+            </span>
+<span class="px-2 py-0.5 rounded-full bg-lavender/50 text-textMuted font-bold text-xs">
+              0 Fijas
+            </span>
+</div>
+</div>
+<!-- Row #2 -->
+<div class="flex items-center justify-between bg-white rounded-xl p-2 border border-subtleBorder shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-extrabold text-xs text-textMuted w-5">#02</span>
+<div class="flex items-center gap-1">
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">5</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">6</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">7</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full bg-mint/20 text-mintShadow font-extrabold text-xs flex items-center gap-0.5">
+              🎯 1 Fija
+            </span>
+<span class="px-2 py-0.5 rounded-full bg-sunny/25 text-sunnyDark font-extrabold text-xs flex items-center gap-0.5">
+              🔄 1 Pica
+            </span>
+</div>
+</div>
+<!-- Row #1 -->
+<div class="flex items-center justify-between bg-white rounded-xl p-2 border border-subtleBorder shadow-sm">
+<div class="flex items-center gap-2">
+<span class="font-extrabold text-xs text-textMuted w-5">#01</span>
+<div class="flex items-center gap-1">
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">1</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">2</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">3</span>
+<span class="w-7 h-7 rounded-lg bg-cream font-black text-sm text-textMain flex items-center justify-center border border-lavender">4</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded-full bg-mint/20 text-mintShadow font-extrabold text-xs flex items-center gap-0.5">
+              🎯 1 Fija
+            </span>
+<span class="px-2 py-0.5 rounded-full bg-lavender/50 text-textMuted font-bold text-xs">
+              0 Picas
+            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Navigation Bar (Docked bottom) -->
+<nav class="absolute bottom-0 inset-x-0 pb-safe bg-white/95 backdrop-blur-md border-t border-subtleBorder shadow-[0_-4px_16px_rgba(0,0,0,0.06)] z-40">
+<div class="flex justify-around items-center h-14 max-w-[390px] mx-auto px-2">
+<a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] text-grape font-bold" data-path="juego" href="#">
+<span class="w-5 h-1 rounded-full bg-grape mb-0.5"></span>
+<span class="material-symbols-outlined text-[20px]">casino</span>
+<span class="text-[10px]">Partida</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] text-textMuted hover:text-textMain font-semibold" data-path="reglas" href="#">
+<span class="w-5 h-1 rounded-full bg-transparent mb-0.5"></span>
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span class="text-[10px]">Reglas</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] text-textMuted hover:text-textMain font-semibold" data-path="estadisticas" href="#">
+<span class="w-5 h-1 rounded-full bg-transparent mb-0.5"></span>
+<span class="material-symbols-outlined text-[20px]">trophy</span>
+<span class="text-[10px]">Récords</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] text-textMuted hover:text-textMain font-semibold" data-path="ajustes" href="#">
+<span class="w-5 h-1 rounded-full bg-transparent mb-0.5"></span>
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-[10px]">Ajustes</span>
+</a>
+</div>
+</nav>
+</div>
+<!-- Interactive script for scratchpad pill cycling -->
+<script>
+    document.querySelectorAll('.deduce-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.innerText.replace(/[^0-9]/g, '');
+        const isPeach = btn.classList.contains('bg-peach/20');
+        const isMint = btn.classList.contains('bg-mint/25');
+
+        if (!isPeach && !isMint) {
+          // Change to Discarded (Red/Peach)
+          btn.className = "deduce-pill w-6 h-6 rounded-md bg-peach/20 border border-peach text-peach font-bold text-xs flex items-center justify-center line-through active:scale-90 transition-all";
+          btn.innerText = val;
+        } else if (isPeach) {
+          // Change to Confirmed (Mint Green)
+          btn.className = "deduce-pill w-6 h-6 rounded-md bg-mint/25 border border-mint text-mintShadow font-black text-xs flex items-center justify-center active:scale-90 transition-all";
+          btn.innerText = val;
+        } else {
+          // Change to Neutral (White)
+          btn.className = "deduce-pill w-6 h-6 rounded-md bg-white border border-subtleBorder text-textMain font-bold text-xs flex items-center justify-center active:scale-90 transition-all";
+          btn.innerText = val;
+        }
+      });
+    });
+  </script>
+</body></html>
