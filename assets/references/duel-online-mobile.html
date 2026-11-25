@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Duelo Online 1v1 Activo - Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "cream": "#FFF6E8",
+            "lavender": "#E9DFFF",
+            "lavender-light": "#F5EFFF",
+            "plum": "#211437",
+            "plum-muted": "#5E4F78",
+            "grape": "#7047EB",
+            "grape-dark": "#5726D2",
+            "coral": "#FF7868",
+            "coral-dark": "#E05545",
+            "sunny": "#FFD15C",
+            "sunny-dark": "#E5B235",
+            "mint": "#35C994",
+            "mint-dark": "#22A677"
+          },
+          fontFamily: {
+            "outfit": ["Outfit", "sans-serif"],
+            "quicksand": ["Quicksand", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    html, body {
+      height: 100dvh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #FFF6E8;
+      color: #211437;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 8px);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="font-outfit select-none">
+<!-- Fixed 100dvh Outer Shell -->
+<div class="h-[100dvh] w-full max-w-[480px] mx-auto flex flex-col min-h-0 overflow-hidden bg-cream pt-safe pb-safe px-3 gap-2.5">
+<!-- 1. Compact Top Bar -->
+<header class="shrink-0 flex flex-col gap-2 pt-1">
+<!-- Row 1: Back, Turn Indicator, Notas -->
+<div class="flex items-center justify-between gap-2">
+<button aria-label="Salir del duelo" class="w-10 h-10 rounded-2xl bg-lavender border-b-4 border-[#D0C0F5] text-plum flex items-center justify-center active:translate-y-0.5 active:border-b-2 transition-all" onclick="openSurrenderModal()" type="button">
+<span class="material-symbols-outlined text-[22px] font-bold">arrow_back</span>
+</button>
+<div class="flex-1 flex flex-col items-center justify-center min-w-0">
+<span class="text-[11px] font-quicksand font-bold uppercase tracking-wider text-plum-muted leading-none mb-1">Duelo Online 1v1 Activo</span>
+<div class="inline-flex items-center gap-1.5 bg-mint/20 border-2 border-mint px-3 py-0.5 rounded-full">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse"></span>
+<span class="text-[13px] font-extrabold text-plum leading-tight" id="turn-timer-badge">¡Tu Turno! • 39s</span>
+</div>
+</div>
+<button class="h-10 px-3 rounded-2xl bg-sunny border-b-4 border-sunny-dark text-plum font-bold text-[13px] flex items-center gap-1 active:translate-y-0.5 active:border-b-2 transition-all" onclick="openNotesModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+<span>Notas</span>
+</button>
+</div>
+<!-- Row 2: Compact Rival Status & Secret Defensive Code -->
+<div class="bg-lavender rounded-2xl p-2 flex items-center justify-between gap-2 border-b-4 border-[#D6C6FA]">
+<!-- Rival Status -->
+<div class="flex items-center gap-2 min-w-0">
+<div class="flex items-center -space-x-2">
+<div class="w-8 h-8 rounded-full bg-grape text-white font-extrabold text-[12px] flex items-center justify-center ring-2 ring-cream">TÚ</div>
+<div class="w-8 h-8 rounded-full bg-coral text-white font-extrabold text-[12px] flex items-center justify-center ring-2 ring-cream">SO</div>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1 text-[13px] font-extrabold text-plum truncate">
+<span>Tú</span>
+<span class="text-plum-muted font-quicksand text-[11px]">vs</span>
+<span class="text-coral-dark">Sofía</span>
+</div>
+<span class="text-[11px] font-quicksand font-bold text-plum-muted leading-none">Rival conectada</span>
+</div>
+</div>
+<!-- Secret Defensive Code Badge -->
+<div class="flex items-center gap-1.5 bg-cream px-2.5 py-1.5 rounded-xl border-2 border-[#E0D2FF] shrink-0">
+<span class="material-symbols-outlined text-[15px] text-grape">lock</span>
+<span class="text-[11px] font-quicksand font-bold text-plum-muted">Tu código:</span>
+<span class="text-[13px] font-extrabold tracking-widest text-plum">4 9 1 7</span>
+</div>
+</div>
+</header>
+<!-- 2. Active Guess Slots & Full Tactile Numeric Keypad (ALWAYS visible near top) -->
+<section class="shrink-0 flex flex-col gap-2.5 bg-lavender-light rounded-3xl p-3 border-2 border-lavender">
+<!-- 4 Active Guess Slots -->
+<div class="flex items-center justify-center gap-2.5">
+<div class="w-14 h-14 rounded-2xl bg-cream border-2 border-[#D6C6FA] border-b-4 flex items-center justify-center text-[28px] font-extrabold text-grape transition-all" id="slot-0"></div>
+<div class="w-14 h-14 rounded-2xl bg-cream border-2 border-[#D6C6FA] border-b-4 flex items-center justify-center text-[28px] font-extrabold text-grape transition-all" id="slot-1"></div>
+<div class="w-14 h-14 rounded-2xl bg-cream border-2 border-[#D6C6FA] border-b-4 flex items-center justify-center text-[28px] font-extrabold text-grape transition-all" id="slot-2"></div>
+<div class="w-14 h-14 rounded-2xl bg-cream border-2 border-[#D6C6FA] border-b-4 flex items-center justify-center text-[28px] font-extrabold text-grape transition-all" id="slot-3"></div>
+</div>
+<!-- Tactile Numeric Keypad (1-9, Borrar, 0, ¡Enviar!) -->
+<div class="grid grid-cols-3 gap-2">
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('1')" type="button">1</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('2')" type="button">2</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('3')" type="button">3</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('4')" type="button">4</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('5')" type="button">5</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('6')" type="button">6</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('7')" type="button">7</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('8')" type="button">8</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('9')" type="button">9</button>
+<button aria-label="Borrar" class="h-11 rounded-2xl bg-coral/20 border-b-4 border-coral/40 text-coral-dark font-bold text-[14px] flex items-center justify-center gap-1 active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleBackspace()" type="button">
+<span class="material-symbols-outlined text-[20px]">backspace</span>
+<span>Borrar</span>
+</button>
+<button class="h-11 rounded-2xl bg-cream border-b-4 border-[#D6C6FA] text-plum font-extrabold text-[22px] active:translate-y-0.5 active:border-b-2 transition-all" onclick="handleKeyPress('0')" type="button">0</button>
+<button class="h-11 rounded-2xl bg-grape border-b-4 border-grape-dark text-white font-extrabold text-[15px] flex items-center justify-center gap-1 opacity-50 cursor-not-allowed transition-all" id="btn-submit" onclick="submitAttempt()" type="button">
+<span>¡Enviar!</span>
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</section>
+<!-- 3. Internally Scrollable Turn-by-Turn History (Remaining Space) -->
+<section class="flex-1 min-h-0 flex flex-col bg-lavender/60 rounded-3xl p-3 border-2 border-lavender">
+<div class="shrink-0 flex items-center justify-between mb-2 px-1">
+<span class="text-[12px] font-extrabold uppercase tracking-wider text-plum-muted">Historial de Turnos</span>
+<div class="flex items-center gap-2.5 text-[11px] font-bold">
+<span class="flex items-center gap-1 text-mint-dark">
+<span class="w-2.5 h-2.5 rounded-full bg-mint"></span> Fijas
+          </span>
+<span class="flex items-center gap-1 text-sunny-dark">
+<span class="w-2.5 h-2.5 rounded-full bg-sunny"></span> Picas
+          </span>
+</div>
+</div>
+<!-- Scrollable List: Newest Turn First (T3, T2, T1) -->
+<div class="flex-1 min-h-0 overflow-y-auto no-scrollbar flex flex-col gap-2 pr-0.5" id="history-list">
+<!-- T3 - Current Turn -->
+<div class="bg-cream rounded-2xl p-2.5 flex items-center justify-between border-2 border-mint">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-lg bg-mint text-white font-extrabold text-[11px]">T3</span>
+<span class="text-[13px] font-bold text-plum">Tú:</span>
+<span class="text-[13px] font-quicksand font-semibold text-plum-muted italic">Elige 4 cifras...</span>
+</div>
+<span class="text-[11px] font-extrabold text-mint-dark bg-mint/15 px-2.5 py-1 rounded-full">EN CURSO</span>
+</div>
+<!-- T2 - Sofía (Rival) -->
+<div class="bg-cream rounded-2xl p-2.5 flex items-center justify-between border-b-2 border-[#E0D2FF]">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-lg bg-coral/20 text-coral-dark font-extrabold text-[11px]">T2</span>
+<span class="text-[13px] font-bold text-coral-dark">Sofía:</span>
+<div class="flex gap-1">
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">1</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">4</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">8</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">3</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-1 rounded-xl bg-lavender text-plum-muted font-extrabold text-[11px]">0 F</span>
+<span class="px-2 py-1 rounded-xl bg-sunny text-plum font-extrabold text-[11px] border-b-2 border-sunny-dark">2 P</span>
+</div>
+</div>
+<!-- T2 - Tú -->
+<div class="bg-cream rounded-2xl p-2.5 flex items-center justify-between border-b-2 border-[#E0D2FF]">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-lg bg-grape/15 text-grape font-extrabold text-[11px]">T2</span>
+<span class="text-[13px] font-bold text-grape">Tú:</span>
+<div class="flex gap-1">
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">5</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">2</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">9</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">7</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-1 rounded-xl bg-mint text-white font-extrabold text-[11px] border-b-2 border-mint-dark">1 F</span>
+<span class="px-2 py-1 rounded-xl bg-sunny text-plum font-extrabold text-[11px] border-b-2 border-sunny-dark">1 P</span>
+</div>
+</div>
+<!-- T1 - Sofía (Rival) -->
+<div class="bg-cream/85 rounded-2xl p-2.5 flex items-center justify-between border-b-2 border-[#E0D2FF]">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-lg bg-coral/20 text-coral-dark font-extrabold text-[11px]">T1</span>
+<span class="text-[13px] font-bold text-coral-dark">Sofía:</span>
+<div class="flex gap-1">
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">7</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">0</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">2</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">9</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-1 rounded-xl bg-mint text-white font-extrabold text-[11px] border-b-2 border-mint-dark">1 F</span>
+<span class="px-2 py-1 rounded-xl bg-lavender text-plum-muted font-extrabold text-[11px]">0 P</span>
+</div>
+</div>
+<!-- T1 - Tú -->
+<div class="bg-cream/85 rounded-2xl p-2.5 flex items-center justify-between border-b-2 border-[#E0D2FF]">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-lg bg-grape/15 text-grape font-extrabold text-[11px]">T1</span>
+<span class="text-[13px] font-bold text-grape">Tú:</span>
+<div class="flex gap-1">
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">0</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">3</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">6</span>
+<span class="w-6 h-7 rounded-lg bg-lavender-light border-b-2 border-[#D6C6FA] flex items-center justify-center font-extrabold text-[14px] text-plum">8</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-1 rounded-xl bg-lavender text-plum-muted font-extrabold text-[11px]">0 F</span>
+<span class="px-2 py-1 rounded-xl bg-lavender text-plum-muted font-extrabold text-[11px]">0 P</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Notas (Scratchpad) Modal -->
+<div class="fixed inset-0 z-50 bg-plum/50 backdrop-blur-sm hidden items-center justify-center p-4" id="notes-modal">
+<div class="bg-cream rounded-3xl p-5 w-full max-w-[340px] flex flex-col gap-4 border-b-4 border-[#D6C6FA] shadow-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sunny-dark text-[24px]">edit_note</span>
+<span class="text-[18px] font-extrabold text-plum">Bloc de Notas</span>
+</div>
+<button class="w-8 h-8 rounded-xl bg-lavender text-plum flex items-center justify-center" onclick="closeNotesModal()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<p class="text-[12px] font-quicksand font-bold text-plum-muted">Toca un número para marcarlo como descartado o posible:</p>
+<div class="grid grid-cols-5 gap-2">
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">0</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">1</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">2</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">3</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">4</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">5</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">6</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">7</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">8</button>
+<button class="h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all" onclick="cycleScratch(this)" type="button">9</button>
+</div>
+<button class="w-full py-2.5 rounded-2xl bg-grape border-b-4 border-grape-dark text-white font-extrabold text-[14px] active:translate-y-0.5 transition-all" onclick="closeNotesModal()" type="button">Listo</button>
+</div>
+</div>
+<!-- Surrender Confirmation Modal -->
+<div class="fixed inset-0 z-50 bg-plum/50 backdrop-blur-sm hidden items-center justify-center p-4" id="surrender-modal">
+<div class="bg-cream rounded-3xl p-5 w-full max-w-[320px] flex flex-col gap-3 border-b-4 border-[#D6C6FA] shadow-2xl">
+<div class="flex items-center gap-2 text-coral-dark">
+<span class="material-symbols-outlined text-[26px]">flag</span>
+<span class="text-[18px] font-extrabold">¿Salir del duelo?</span>
+</div>
+<p class="font-quicksand font-semibold text-[13px] text-plum leading-snug">
+        Si abandonas la partida ahora, <strong class="text-coral-dark">Sofía</strong> ganará automáticamente este duelo.
+      </p>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="px-4 py-2 rounded-2xl bg-lavender border-b-4 border-[#D6C6FA] text-plum font-bold text-[13px] active:translate-y-0.5 transition-all" onclick="closeSurrenderModal()" type="button">Seguir jugando</button>
+<button class="px-4 py-2 rounded-2xl bg-coral border-b-4 border-coral-dark text-white font-extrabold text-[13px] active:translate-y-0.5 transition-all" onclick="confirmSurrender()" type="button">Rendirse</button>
+</div>
+</div>
+</div>
+<script>
+    let currentDigits = [];
+    let timeLeft = 39;
+    const turnTimerBadge = document.getElementById('turn-timer-badge');
+    const submitBtn = document.getElementById('btn-submit');
+    const surrenderModal = document.getElementById('surrender-modal');
+    const notesModal = document.getElementById('notes-modal');
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        turnTimerBadge.innerText = '¡Tu Turno! • 0s';
+      } else {
+        turnTimerBadge.innerText = `¡Tu Turno! • ${timeLeft}s`;
+      }
+    }, 1000);
+
+    function updateSlots() {
+      for (let i = 0; i < 4; i++) {
+        const slot = document.getElementById('slot-' + i);
+        if (currentDigits[i] !== undefined) {
+          slot.innerText = currentDigits[i];
+          slot.classList.add('border-grape', 'bg-white');
+          slot.classList.remove('border-[#D6C6FA]', 'bg-cream');
+        } else {
+          slot.innerText = '';
+          slot.classList.remove('border-grape', 'bg-white');
+          slot.classList.add('border-[#D6C6FA]', 'bg-cream');
+        }
+      }
+
+      if (currentDigits.length === 4) {
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.add('active:translate-y-0.5', 'active:border-b-2');
+      } else {
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        submitBtn.classList.remove('active:translate-y-0.5', 'active:border-b-2');
+      }
+    }
+
+    function handleKeyPress(digit) {
+      if (currentDigits.length < 4 && !currentDigits.includes(digit)) {
+        currentDigits.push(digit);
+        updateSlots();
+      }
+    }
+
+    function handleBackspace() {
+      if (currentDigits.length > 0) {
+        currentDigits.pop();
+        updateSlots();
+      }
+    }
+
+    function submitAttempt() {
+      if (currentDigits.length === 4) {
+        currentDigits = [];
+        updateSlots();
+      }
+    }
+
+    function cycleScratch(button) {
+      if (!button.dataset.state || button.dataset.state === 'neutral') {
+        button.dataset.state = 'discarded';
+        button.className = 'h-11 rounded-xl bg-coral/20 border-b-4 border-coral/40 font-extrabold text-[18px] text-coral-dark line-through active:translate-y-0.5 transition-all';
+      } else if (button.dataset.state === 'discarded') {
+        button.dataset.state = 'confirmed';
+        button.className = 'h-11 rounded-xl bg-mint border-b-4 border-mint-dark font-extrabold text-[18px] text-white active:translate-y-0.5 transition-all';
+      } else {
+        button.dataset.state = 'neutral';
+        button.className = 'h-11 rounded-xl bg-lavender border-b-4 border-[#D6C6FA] font-extrabold text-[18px] text-plum active:translate-y-0.5 transition-all';
+      }
+    }
+
+    function openNotesModal() {
+      notesModal.classList.remove('hidden');
+      notesModal.classList.add('flex');
+    }
+
+    function closeNotesModal() {
+      notesModal.classList.add('hidden');
+      notesModal.classList.remove('flex');
+    }
+
+    function openSurrenderModal() {
+      surrenderModal.classList.remove('hidden');
+      surrenderModal.classList.add('flex');
+    }
+
+    function closeSurrenderModal() {
+      surrenderModal.classList.add('hidden');
+      surrenderModal.classList.remove('flex');
+    }
+
+    function confirmSurrender() {
+      closeSurrenderModal();
+      window.history.back();
+    }
+  </script>
+</body></html>
