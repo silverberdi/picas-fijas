@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            grape: {
+              DEFAULT: "#7047EB",
+              dark: "#5726D2",
+              light: "#E9DFFF",
+              surface: "#F4EEFF"
+            },
+            coral: {
+              DEFAULT: "#FF7868",
+              dark: "#E35A4A",
+              light: "#FFEAE6"
+            },
+            sunny: {
+              DEFAULT: "#FFD15C",
+              dark: "#F4B828",
+              light: "#FFF8E0"
+            },
+            mint: {
+              DEFAULT: "#35C994",
+              dark: "#20A876",
+              light: "#E4FAF1"
+            },
+            bubble: "#2A1856"
+          },
+          fontFamily: {
+            fredoka: ["Fredoka", "sans-serif"],
+            outfit: ["Outfit", "sans-serif"],
+            quicksand: ["Quicksand", "sans-serif"]
+          },
+          boxShadow: {
+            'bouncy': '0 6px 0 0 rgba(0,0,0,0.12)',
+            'bouncy-sm': '0 4px 0 0 rgba(0,0,0,0.1)',
+            'grape-3d': '0 6px 0 0 #5726D2',
+            'sunny-3d': '0 6px 0 0 #DDA317',
+            'coral-3d': '0 5px 0 0 #D74A3A',
+            'mint-3d': '0 5px 0 0 #1B9767',
+            'card-soft': '0 8px 20px -4px rgba(112, 71, 235, 0.08), 0 4px 0 0 #DBCFFF'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #FFF6E8;
+        color: #2A1856;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 12px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 8px);
+      }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-cream font-quicksand text-bubble flex flex-col min-h-screen antialiased selection:bg-sunny selection:text-bubble">
+<!-- Floating Friendly Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-[#FFF6E8]/90 backdrop-blur-md border-b-2 border-grape-light/70 pt-safe">
+<div class="h-16 px-4 flex items-center justify-between max-w-[440px] mx-auto">
+<!-- Brand & Party Badge -->
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-grape to-grape-dark flex items-center justify-center shadow-bouncy-sm text-white">
+<span class="font-fredoka text-xl font-bold tracking-tight">🎯</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-fredoka text-xl font-bold tracking-tight text-bubble">Picas &amp; Fijas</span>
+<span class="px-2 py-0.5 rounded-full bg-sunny text-[#654300] font-fredoka text-xs font-bold uppercase tracking-wider shadow-sm">PARTY</span>
+</div>
+<span class="text-[12px] font-fredoka font-semibold text-mint-dark flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse inline-block"></span> ¡Adivina el código!
+          </span>
+</div>
+</div>
+<!-- Action Toggles -->
+<div class="flex items-center gap-2">
+<button aria-label="Sonido activo" class="w-10 h-10 rounded-2xl bg-white border-2 border-grape-light flex items-center justify-center text-grape shadow-bouncy-sm active:translate-y-1 active:shadow-none transition-all" type="button">
+<span class="material-symbols-outlined text-[22px]">volume_up</span>
+</button>
+<button aria-label="Perfil Amigo" class="w-10 h-10 rounded-2xl bg-coral flex items-center justify-center text-white shadow-coral-3d active:translate-y-1 active:shadow-none transition-all" type="button">
+<span class="font-fredoka text-base font-bold">🐻</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Container -->
+<main class="flex flex-col relative w-full px-4 pt-20 pb-28 max-w-[414px] mx-auto min-h-screen gap-4"><div class="flex flex-col w-full gap-5 pb-6">
+<!-- Friendly Page Badge & Title (Contextual, No Duplicate Shell Header) -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">tune</span>
+</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Ajustes del Juego</h2>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-bold shadow-sm">
+      v2.4 Party
+    </span>
+</div>
+<!-- 1. Perfil del Jugador Local -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex items-center justify-between gap-3 relative overflow-hidden">
+<div class="flex items-center gap-3.5 min-w-0">
+<div class="relative shrink-0">
+<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary shadow-md text-2xl font-tile-digit select-none">
+          🐻
+        </div>
+<span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface truncate">Jugador Amigo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Rango Detective 5
+        </span>
+</div>
+</div>
+<button class="shrink-0 px-3.5 py-2 rounded-full bg-primary-fixed text-primary font-label-md text-label-md shadow-sm active:scale-95 transition-transform flex items-center gap-1 cursor-pointer" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Editar</span>
+</button>
+</div>
+<!-- 2. Sección: Apariencia y Tema -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-1.5 px-1">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">palette</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Apariencia y Tema</h3>
+</div>
+<!-- Theme Switcher Cards -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Light Theme (Active) -->
+<button class="group flex flex-col p-3 rounded-lg bg-surface-container-lowest text-left shadow-md transition-all active:scale-[0.98] cursor-pointer relative overflow-hidden" onclick="selectTheme(this)" type="button">
+<div class="w-full h-16 rounded-md bg-surface-container-high p-2 flex flex-col justify-between mb-2 shadow-inner">
+<div class="flex items-center justify-between">
+<span class="w-4 h-4 rounded-full bg-secondary-container inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-tertiary-fixed inline-block"></span>
+</div>
+<div class="flex gap-1.5">
+<span class="w-6 h-3 rounded-full bg-primary inline-block"></span>
+<span class="w-4 h-3 rounded-full bg-surface-container inline-block"></span>
+</div>
+</div>
+<div class="flex items-center justify-between w-full">
+<span class="font-label-md text-label-md text-on-surface">Party Fiesta</span>
+<span class="theme-check w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Modo Claro</span>
+</button>
+<!-- Plum Night Theme -->
+<button class="group flex flex-col p-3 rounded-lg bg-inverse-surface text-left shadow-md transition-all active:scale-[0.98] cursor-pointer relative overflow-hidden" onclick="selectTheme(this)" type="button">
+<div class="w-full h-16 rounded-md bg-on-background p-2 flex flex-col justify-between mb-2 shadow-inner">
+<div class="flex items-center justify-between">
+<span class="w-4 h-4 rounded-full bg-primary-fixed-dim inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-tertiary-fixed-dim inline-block"></span>
+</div>
+<div class="flex gap-1.5">
+<span class="w-6 h-3 rounded-full bg-secondary-container inline-block"></span>
+<span class="w-4 h-3 rounded-full bg-surface-container-high/40 inline-block"></span>
+</div>
+</div>
+<div class="flex items-center justify-between w-full">
+<span class="font-label-md text-label-md text-inverse-on-surface">Ciruela Noche</span>
+<span class="theme-check hidden w-5 h-5 rounded-full bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline-variant">Para descansar</span>
+</button>
+</div>
+<!-- Extra Large Numbers Switch -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm flex items-center justify-between gap-3">
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Números extra grandes</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Fichas gigantes para pulsación fácil</span>
+</div>
+<button aria-checked="true" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-primary p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-6 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</span>
+</button>
+</div>
+</div>
+<!-- 3. Sección: Sonido y Vibración -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-1.5 px-1">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Sonido y Vibración</h3>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-4">
+<!-- FX Switch + Slider -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center font-label-md">
+<span class="material-symbols-outlined text-[18px]">celebration</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Efectos de sonido lúdicos</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sonidos festivos al acertar picas y fijas</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-primary p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-6 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</span>
+</button>
+</div>
+<!-- Volume Slider -->
+<div class="flex items-center gap-3 pl-10 pr-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">volume_down</span>
+<input aria-label="Volumen de efectos" class="w-full h-2.5 bg-surface-container-high rounded-full appearance-none cursor-pointer accent-[#7047eb]" max="100" min="0" type="range" value="80"/>
+<span class="material-symbols-outlined text-[16px] text-primary">volume_up</span>
+</div>
+</div>
+<!-- Divider by background tone -->
+<div class="h-0.5 bg-surface-container-high rounded-full w-full"></div>
+<!-- Music Switch + Slider -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-secondary flex items-center justify-center font-label-md">
+<span class="material-symbols-outlined text-[18px]">music_note</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Música alegre de fondo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Melodía suave estilo fiesta casual</span>
+</div>
+</div>
+<button aria-checked="false" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-surface-container-highest p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-0 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-[14px] font-bold">close</span>
+</span>
+</button>
+</div>
+<!-- Volume Slider (Muted state) -->
+<div class="flex items-center gap-3 pl-10 pr-1 opacity-50">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">music_off</span>
+<input aria-label="Volumen de música" class="w-full h-2.5 bg-surface-container-high rounded-full appearance-none cursor-pointer accent-[#7047eb]" max="100" min="0" type="range" value="40"/>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">volume_up</span>
+</div>
+</div>
+<!-- Divider by background tone -->
+<div class="h-0.5 bg-surface-container-high rounded-full w-full"></div>
+<!-- Vibration Switch -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-label-md">
+<span class="material-symbols-outlined text-[18px]">vibration</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Vibración táctil</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Respuesta suave al pulsar números</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-primary p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-6 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 4. Sección: Preferencias de Partida -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center gap-1.5 px-1">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Preferencias de Partida</h3>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-md flex flex-col gap-4">
+<!-- Confirm on Exit -->
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-secondary-container/20 text-secondary-container flex items-center justify-center font-label-md">
+<span class="material-symbols-outlined text-[18px]">security</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Confirmar antes de salir</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Evita perder tu deducción en curso</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-primary p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-6 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</span>
+</button>
+</div>
+<div class="h-0.5 bg-surface-container-high rounded-full w-full"></div>
+<!-- Quick Clear Existing -->
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-label-md">
+<span class="material-symbols-outlined text-[18px]">backspace</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Limpiar al tocar número</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Borra la casilla con una sola pulsación</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-pill relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full bg-primary p-1 shadow-sm transition-colors duration-200 ease-in-out focus:outline-none" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="translate-x-6 pointer-events-none inline-block h-6 w-6 transform rounded-full bg-on-primary shadow-md transition duration-200 ease-in-out flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 5. Sección de Datos & Reinicio -->
+<div class="flex flex-col gap-2 pt-1">
+<button class="w-full py-3.5 px-space-md rounded-lg bg-surface-container-high text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform cursor-pointer" onclick="confirmReset(this)" type="button">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+<span>Restablecer preferencias</span>
+</button>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant px-4">
+      Vuelve a los ajustes por defecto sin borrar tus récords ni victorias acumuladas.
+    </p>
+</div>
+</div>
+<script>
+  function toggleSwitch(btn) {
+    const isChecked = btn.getAttribute('aria-checked') === 'true';
+    const newState = !isChecked;
+    btn.setAttribute('aria-checked', newState);
+    
+    const knob = btn.firstElementChild;
+    const icon = knob.firstElementChild;
+    
+    if (newState) {
+      btn.classList.remove('bg-surface-container-highest');
+      btn.classList.add('bg-primary');
+      knob.classList.remove('translate-x-0');
+      knob.classList.add('translate-x-6');
+      knob.classList.remove('text-outline');
+      knob.classList.add('text-primary');
+      icon.textContent = 'check';
+    } else {
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-surface-container-highest');
+      knob.classList.remove('translate-x-6');
+      knob.classList.add('translate-x-0');
+      knob.classList.remove('text-primary');
+      knob.classList.add('text-outline');
+      icon.textContent = 'close';
+    }
+  }
+
+  function selectTheme(card) {
+    const parent = card.parentElement;
+    const cards = parent.querySelectorAll('button');
+    cards.forEach(c => {
+      const check = c.querySelector('.theme-check');
+      if (check) check.classList.add('hidden');
+    });
+    const activeCheck = card.querySelector('.theme-check');
+    if (activeCheck) activeCheck.classList.remove('hidden');
+  }
+
+  function confirmReset(btn) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[20px] animate-spin">refresh</span><span>¡Ajustes restablecidos!</span>';
+    btn.classList.add('bg-primary-fixed', 'text-primary');
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove('bg-primary-fixed', 'text-primary');
+    }, 1800);
+  }
+</script></main>
+<!-- Joyful Bottom Navigation Bar -->
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-white/95 backdrop-blur-md border-t-2 border-grape-light shadow-[0_-4px_20px_rgba(112,71,235,0.08)]">
+<div class="flex justify-around items-center h-16 max-w-[414px] mx-auto px-2">
+<!-- Nav Item 1: Jugar (Active) -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<div class="w-9 h-7 rounded-full bg-grape-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] font-bold">sports_esports</span>
+</div>
+<span class="font-fredoka text-[11px] font-bold text-grape leading-none">Jugar</span>
+</a>
+<!-- Nav Item 2: Reglas -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">lightbulb</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Cómo Jugar</span>
+</a>
+<!-- Nav Item 3: Retos -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">workspace_premium</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Premios</span>
+</a>
+<!-- Nav Item 4: Ajustes -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Ajustes</span>
+</a>
+</div>
+</nav>
+</body></html>
