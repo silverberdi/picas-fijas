@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<title>Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&amp;family=Outfit:wght@500;600;700;800;900&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            grape: {
+              DEFAULT: "#7047EB",
+              dark: "#5726D2",
+              light: "#E9DFFF",
+              surface: "#F4EEFF"
+            },
+            coral: {
+              DEFAULT: "#FF7868",
+              dark: "#E35A4A",
+              light: "#FFEAE6"
+            },
+            sunny: {
+              DEFAULT: "#FFD15C",
+              dark: "#F4B828",
+              light: "#FFF8E0"
+            },
+            mint: {
+              DEFAULT: "#35C994",
+              dark: "#20A876",
+              light: "#E4FAF1"
+            },
+            bubble: "#2A1856"
+          },
+          fontFamily: {
+            fredoka: ["Fredoka", "sans-serif"],
+            outfit: ["Outfit", "sans-serif"],
+            quicksand: ["Quicksand", "sans-serif"]
+          },
+          boxShadow: {
+            'bouncy': '0 6px 0 0 rgba(0,0,0,0.12)',
+            'bouncy-sm': '0 4px 0 0 rgba(0,0,0,0.1)',
+            'grape-3d': '0 6px 0 0 #5726D2',
+            'sunny-3d': '0 6px 0 0 #DDA317',
+            'coral-3d': '0 5px 0 0 #D74A3A',
+            'mint-3d': '0 5px 0 0 #1B9767',
+            'card-soft': '0 8px 20px -4px rgba(112, 71, 235, 0.08), 0 4px 0 0 #DBCFFF'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #FFF6E8;
+        color: #2A1856;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 12px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 8px);
+      }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-cream font-quicksand text-bubble flex flex-col min-h-screen antialiased selection:bg-sunny selection:text-bubble">
+<!-- Floating Friendly Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-[#FFF6E8]/90 backdrop-blur-md border-b-2 border-grape-light/70 pt-safe">
+<div class="h-16 px-4 flex items-center justify-between max-w-[440px] mx-auto">
+<!-- Brand & Party Badge -->
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-grape to-grape-dark flex items-center justify-center shadow-bouncy-sm text-white">
+<span class="font-fredoka text-xl font-bold tracking-tight">🎯</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-fredoka text-xl font-bold tracking-tight text-bubble">Picas &amp; Fijas</span>
+<span class="px-2 py-0.5 rounded-full bg-sunny text-[#654300] font-fredoka text-xs font-bold uppercase tracking-wider shadow-sm">PARTY</span>
+</div>
+<span class="text-[12px] font-fredoka font-semibold text-mint-dark flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-mint animate-pulse inline-block"></span> ¡Adivina el código!
+          </span>
+</div>
+</div>
+<!-- Action Toggles -->
+<div class="flex items-center gap-2">
+<button aria-label="Sonido activo" class="w-10 h-10 rounded-2xl bg-white border-2 border-grape-light flex items-center justify-center text-grape shadow-bouncy-sm active:translate-y-1 active:shadow-none transition-all" type="button">
+<span class="material-symbols-outlined text-[22px]">volume_up</span>
+</button>
+<button aria-label="Perfil Amigo" class="w-10 h-10 rounded-2xl bg-coral flex items-center justify-center text-white shadow-coral-3d active:translate-y-1 active:shadow-none transition-all" type="button">
+<span class="font-fredoka text-base font-bold">🐻</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Container -->
+<main class="flex flex-col relative w-full px-4 pt-20 pb-28 max-w-[414px] mx-auto min-h-screen gap-4"><div class="flex flex-col w-full gap-5 pb-6">
+<!-- Friendly Mascot Illustration & Status Pill -->
+<div class="flex flex-col items-center text-center pt-2">
+<!-- Status Pill -->
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container shadow-sm mb-3">
+<span class="material-symbols-outlined text-[18px]">wifi_off</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Sin Conexión a Internet</span>
+</div>
+<!-- Sleepy Cloud Mascot Card -->
+<div class="relative w-28 h-28 flex items-center justify-center bg-surface-container-high rounded-full shadow-card-soft my-1">
+<div class="absolute -top-1 -right-1 w-9 h-9 rounded-full bg-tertiary-fixed flex items-center justify-center shadow-sm">
+<span class="font-label-md text-label-md text-on-tertiary-fixed">💤</span>
+</div>
+<div class="flex flex-col items-center justify-center select-none">
+<span class="text-5xl drop-shadow-sm">☁️</span>
+<span class="font-headline-sm text-headline-sm text-primary -mt-2">˘͈ᵕ˘͈</span>
+</div>
+<div class="absolute bottom-1 left-2 w-5 h-5 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px]">
+        ✨
+      </div>
+</div>
+<!-- Headline and Comforting Copy -->
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-3 px-2">
+      ¡No te preocupes, la fiesta sigue offline!
+    </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[340px] mt-1.5">
+      Puedes seguir jugando en solitario y retando a nuestros divertidos robots. Tus récords se guardan en el móvil.
+    </p>
+<!-- Quick Retry Check Button -->
+<button class="mt-4 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-lg text-label-lg shadow-sunny-3d active:translate-y-1 active:shadow-none transition-all" id="retry-btn" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform" id="retry-icon">sync</span>
+<span>Comprobar conexión nuevamente</span>
+</button>
+</div>
+<!-- Available Offline Modes -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Modos Disponibles sin Internet</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container">4 Listos</span>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Card 1: Modo Solitario Zen -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container shadow-card-soft">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-13 h-13 min-w-[52px] h-[52px] rounded-2xl bg-surface-container-highest flex items-center justify-center text-2xl shadow-sm">
+            🧘
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Modo Solitario (Zen)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Adivina a tu propio ritmo sin reloj ni límites.</span>
+</div>
+</div>
+<button class="ml-2 shrink-0 px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-grape-3d active:translate-y-1 active:shadow-none transition-all" type="button">
+          ¡Jugar!
+        </button>
+</div>
+<!-- Card 2: Duelo vs Robot Tito -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container shadow-card-soft">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-13 h-13 min-w-[52px] h-[52px] rounded-2xl bg-secondary-fixed flex items-center justify-center text-2xl shadow-sm">
+            🤖
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Duelo vs Robot Amigo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Turno a turno contra Robot Tito.</span>
+</div>
+</div>
+<button class="ml-2 shrink-0 px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-grape-3d active:translate-y-1 active:shadow-none transition-all" type="button">
+          ¡Jugar!
+        </button>
+</div>
+<!-- Card 3: Carrera Relámpago -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container shadow-card-soft">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-13 h-13 min-w-[52px] h-[52px] rounded-2xl bg-tertiary-fixed flex items-center justify-center text-2xl shadow-sm">
+            ⚡
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Carrera Relámpago vs Máquina</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Compite a contrarreloj en solitario.</span>
+</div>
+</div>
+<button class="ml-2 shrink-0 px-4 py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-grape-3d active:translate-y-1 active:shadow-none transition-all" type="button">
+          ¡Jugar!
+        </button>
+</div>
+<!-- Card 4: Tutorial y Reglas -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container shadow-card-soft">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-13 h-13 min-w-[52px] h-[52px] rounded-2xl bg-primary-fixed flex items-center justify-center text-2xl shadow-sm">
+            💡
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Tutorial y Reglas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Repasa la lógica de Fijas y Picas.</span>
+</div>
+</div>
+<button class="ml-2 shrink-0 px-4 py-2 rounded-xl bg-surface-container-highest text-primary font-label-md text-label-md shadow-bouncy-sm active:translate-y-1 active:shadow-none transition-all" type="button">
+          Repasar
+        </button>
+</div>
+</div>
+</div>
+<!-- Paused Online Modes Section -->
+<div class="flex flex-col gap-3 pt-2">
+<div class="flex items-center gap-2 px-1">
+<span class="material-symbols-outlined text-[20px] text-outline">lock</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface-variant">Modos Online Pausados</h2>
+</div>
+<div class="flex flex-col gap-2.5">
+<!-- Paused 1: Duelo Online con Amigos -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-high/60">
+<div class="flex items-center gap-3 min-w-0">
+<div class="min-w-[48px] h-[48px] rounded-2xl bg-surface-dim/70 flex items-center justify-center text-xl grayscale opacity-75">
+            👥
+          </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg text-on-surface-variant truncate">Duelo Online con Amigos</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">wifi</span> Requiere Wi-Fi o datos móviles
+            </span>
+</div>
+</div>
+<div class="p-2 rounded-xl bg-surface-dim/80 text-outline shrink-0 ml-2">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</div>
+</div>
+<!-- Paused 2: Carrera Multijugador Online -->
+<div class="flex items-center justify-between p-3.5 rounded-2xl bg-surface-container-high/60">
+<div class="flex items-center gap-3 min-w-0">
+<div class="min-w-[48px] h-[48px] rounded-2xl bg-surface-dim/70 flex items-center justify-center text-xl grayscale opacity-75">
+            🏁
+          </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg text-on-surface-variant truncate">Carrera Multijugador Online</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span> Requiere Wi-Fi o datos móviles
+            </span>
+</div>
+</div>
+<div class="p-2 rounded-xl bg-surface-dim/80 text-outline shrink-0 ml-2">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const retryBtn = document.getElementById('retry-btn');
+    const retryIcon = document.getElementById('retry-icon');
+    if (!retryBtn || !retryIcon) return;
+
+    retryBtn.addEventListener('click', function() {
+      retryIcon.classList.add('rotate-180');
+      const textSpan = retryBtn.querySelector('span:last-child');
+      if (textSpan) textSpan.textContent = 'Buscando señal...';
+      
+      setTimeout(() => {
+        retryIcon.classList.remove('rotate-180');
+        if (textSpan) textSpan.textContent = 'Comprobar conexión nuevamente';
+      }, 1000);
+    });
+  })();
+</script></main>
+<!-- Joyful Bottom Navigation Bar -->
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-white/95 backdrop-blur-md border-t-2 border-grape-light shadow-[0_-4px_20px_rgba(112,71,235,0.08)]">
+<div class="flex justify-around items-center h-16 max-w-[414px] mx-auto px-2">
+<!-- Nav Item 1: Jugar (Active) -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<div class="w-9 h-7 rounded-full bg-grape-light flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] font-bold">sports_esports</span>
+</div>
+<span class="font-fredoka text-[11px] font-bold text-grape leading-none">Jugar</span>
+</a>
+<!-- Nav Item 2: Reglas -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">lightbulb</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Cómo Jugar</span>
+</a>
+<!-- Nav Item 3: Retos -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">workspace_premium</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Premios</span>
+</a>
+<!-- Nav Item 4: Ajustes -->
+<a class="flex flex-col items-center justify-center gap-1 min-w-[64px] h-12 text-bubble/60 hover:text-grape transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+<span class="font-fredoka text-[11px] font-semibold leading-none">Ajustes</span>
+</a>
+</div>
+</nav>
+</body></html>
