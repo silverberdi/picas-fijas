@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_stack" name="shell-type"/>
+<title>Unirse a Sala - Picas y Fijas Party</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&amp;family=Quicksand:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: "#FFF6E8",
+            lavender: "#E9DFFF",
+            grape: "#7047EB",
+            "grape-dark": "#5726D2",
+            coral: "#FF7868",
+            "coral-dark": "#E05848",
+            sunny: "#FFD15C",
+            "sunny-dark": "#E5B035",
+            mint: "#35C994",
+            "mint-dark": "#23A677",
+            plum: "#30234D",
+            "plum-muted": "#6B5B8E",
+          },
+          fontFamily: {
+            display: ["Outfit", "sans-serif"],
+            body: ["Quicksand", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #FFF6E8;
+        color: #30234D;
+        font-family: "Quicksand", sans-serif;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+        min-height: max(844px, 100dvh);
+      }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-cream text-plum flex flex-col min-h-screen selection:bg-lavender selection:text-grape">
+<!-- Header -->
+<header class="fixed top-0 inset-x-0 z-50 bg-cream/90 backdrop-blur-md pt-safe">
+<div class="max-w-[480px] mx-auto h-16 px-4 flex items-center justify-between">
+<button aria-label="Volver" class="w-11 h-11 rounded-2xl bg-white border-2 border-lavender border-b-4 flex items-center justify-center text-plum hover:text-grape active:translate-y-0.5 active:border-b-2 transition-all shadow-sm" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[24px]">arrow_back_rounded</span>
+</button>
+<h1 class="font-display font-extrabold text-[20px] tracking-tight text-plum">
+        Unirse con Código
+      </h1>
+<div aria-hidden="true" class="w-11 h-11"></div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col justify-center w-full max-w-[480px] mx-auto px-5 pt-20 pb-8 pb-safe">
+<div class="flex flex-col space-y-5">
+<!-- Friendly Welcome Banner -->
+<div class="bg-lavender/70 rounded-3xl p-4 border-2 border-white shadow-sm flex items-center gap-3.5">
+<div class="w-12 h-12 rounded-2xl bg-sunny border-b-4 border-sunny-dark flex items-center justify-center text-plum shrink-0">
+<span class="material-symbols-outlined text-[28px]">celebration</span>
+</div>
+<p class="font-body font-bold text-[14px] leading-snug text-plum">
+          ¡Juega con tus amigos! Elige tu apodo y escribe el código de la sala privada.
+        </p>
+</div>
+<!-- Nickname Card -->
+<section class="bg-white rounded-3xl p-5 border-2 border-lavender border-b-[6px] shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-display font-bold text-[14px] text-plum-muted uppercase tracking-wide flex items-center gap-1.5" for="player-alias">
+<span class="material-symbols-outlined text-[18px] text-grape">face</span>
+            Tu Apodo
+          </label>
+<span class="font-display font-bold text-[12px] text-mint-dark bg-mint/15 px-2.5 py-0.5 rounded-full">
+            Jugador
+          </span>
+</div>
+<div class="flex items-center gap-2.5">
+<div class="relative flex-1">
+<input class="w-full h-14 px-4 bg-cream/70 border-2 border-lavender rounded-2xl font-display font-bold text-[18px] text-plum placeholder:text-plum-muted/50 focus:outline-none focus:border-grape focus:bg-white transition-colors" id="player-alias" maxlength="16" placeholder="Escribe tu apodo..." type="text" value="Adivinador"/>
+</div>
+<button aria-label="Generar apodo aleatorio" class="w-14 h-14 rounded-2xl bg-sunny border-2 border-sunny-dark border-b-4 text-plum flex items-center justify-center hover:brightness-105 active:translate-y-0.5 active:border-b-2 transition-all shrink-0" id="btn-random-nick" title="Apodo aleatorio" type="button">
+<span class="material-symbols-outlined text-[26px] transition-transform duration-300">casino</span>
+</button>
+</div>
+</section>
+<!-- Room Code Card -->
+<section class="bg-white rounded-3xl p-5 border-2 border-lavender border-b-[6px] shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-display font-bold text-[14px] text-plum-muted uppercase tracking-wide flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-coral">vpn_key</span>
+            Código de la Sala
+          </span>
+<span class="font-display font-bold text-[12px] text-grape bg-lavender px-2.5 py-0.5 rounded-full">
+            Ej. PF-8492
+          </span>
+</div>
+<!-- Tactile Code Slots -->
+<div class="flex items-center justify-center gap-1.5 sm:gap-2 py-1">
+<!-- Fixed Prefix PF -->
+<div class="flex items-center gap-1 bg-lavender/60 p-1.5 rounded-2xl border-2 border-lavender">
+<div class="w-9 h-12 rounded-xl bg-white border-b-2 border-lavender flex items-center justify-center font-display font-extrabold text-[24px] text-grape select-none">
+              P
+            </div>
+<div class="w-9 h-12 rounded-xl bg-white border-b-2 border-lavender flex items-center justify-center font-display font-extrabold text-[24px] text-coral select-none">
+              F
+            </div>
+</div>
+<span class="font-display font-extrabold text-[24px] text-plum-muted/50 select-none px-0.5">-</span>
+<!-- 4 Editable Slots -->
+<div class="slot-box w-12 h-14 rounded-2xl bg-cream border-2 border-lavender border-b-4 flex flex-col items-center justify-center font-display font-extrabold text-[26px] text-plum cursor-pointer transition-all" id="slot-0">
+<span class="slot-char">8</span>
+<div class="slot-cursor w-5 h-1 rounded-full bg-grape mt-0.5 hidden animate-pulse"></div>
+</div>
+<div class="slot-box w-12 h-14 rounded-2xl bg-cream border-2 border-lavender border-b-4 flex flex-col items-center justify-center font-display font-extrabold text-[26px] text-plum cursor-pointer transition-all" id="slot-1">
+<span class="slot-char">4</span>
+<div class="slot-cursor w-5 h-1 rounded-full bg-grape mt-0.5 hidden animate-pulse"></div>
+</div>
+<div class="slot-box w-12 h-14 rounded-2xl bg-white border-2 border-grape border-b-4 flex flex-col items-center justify-center font-display font-extrabold text-[26px] text-plum cursor-pointer transition-all" id="slot-2">
+<span class="slot-char"></span>
+<div class="slot-cursor w-5 h-1 rounded-full bg-grape mt-0.5 block animate-pulse"></div>
+</div>
+<div class="slot-box w-12 h-14 rounded-2xl bg-cream border-2 border-lavender border-b-4 flex flex-col items-center justify-center font-display font-extrabold text-[26px] text-plum cursor-pointer transition-all" id="slot-3">
+<span class="slot-char"></span>
+<div class="slot-cursor w-5 h-1 rounded-full bg-grape mt-0.5 hidden animate-pulse"></div>
+</div>
+</div>
+<!-- Hidden Native Input -->
+<input autocapitalize="characters" autocomplete="off" autocorrect="off" class="opacity-0 absolute pointer-events-none -z-10" id="code-hidden-input" inputmode="text" maxlength="4" type="text" value="84"/>
+<!-- Paste Button -->
+<button class="w-full h-12 rounded-2xl bg-lavender/70 hover:bg-lavender border-2 border-lavender border-b-4 text-grape font-display font-bold text-[15px] flex items-center justify-center gap-2 active:translate-y-0.5 active:border-b-2 transition-all" id="btn-paste-code" type="button">
+<span class="material-symbols-outlined text-[20px]">content_paste</span>
+<span>Pegar código o enlace</span>
+</button>
+</section>
+<!-- Primary CTA Button -->
+<button class="w-full h-16 rounded-3xl bg-grape hover:brightness-105 border-2 border-grape-dark border-b-[6px] text-white font-display font-extrabold text-[20px] flex items-center justify-center gap-2.5 shadow-lg shadow-grape/20 active:translate-y-1 active:border-b-2 transition-all select-none" id="btn-connect" type="button">
+<span class="material-symbols-outlined text-[26px]">sports_esports</span>
+<span>¡Entrar a la Sala!</span>
+</button>
+</div>
+</main>
+<script>
+    (function initPartyJoin() {
+      const input = document.getElementById("code-hidden-input");
+      const slotBoxes = [
+        document.getElementById("slot-0"),
+        document.getElementById("slot-1"),
+        document.getElementById("slot-2"),
+        document.getElementById("slot-3"),
+      ];
+      const aliasInput = document.getElementById("player-alias");
+      const randomNickBtn = document.getElementById("btn-random-nick");
+      const pasteBtn = document.getElementById("btn-paste-code");
+      const connectBtn = document.getElementById("btn-connect");
+
+      const aliases = [
+        "Adivinador",
+        "MenteBrillante",
+        "PicaVeloz",
+        "FijaMaestra",
+        "RayoLógico",
+        "GenioParty",
+        "EstrellaPF",
+        "SúperJugador",
+        "Chispa99",
+        "Cerebrito",
+      ];
+
+      function renderSlots(val) {
+        const sanitized = val.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+        input.value = sanitized;
+
+        slotBoxes.forEach((box, i) => {
+          const charSpan = box.querySelector(".slot-char");
+          const cursor = box.querySelector(".slot-cursor");
+          const char = sanitized[i] || "";
+
+          charSpan.textContent = char;
+
+          if (i === sanitized.length) {
+            box.classList.remove("bg-cream", "border-lavender");
+            box.classList.add("bg-white", "border-grape");
+            cursor.classList.remove("hidden");
+            cursor.classList.add("block");
+          } else {
+            box.classList.remove("bg-white", "border-grape");
+            box.classList.add("bg-cream", "border-lavender");
+            cursor.classList.add("hidden");
+            cursor.classList.remove("block");
+          }
+        });
+      }
+
+      slotBoxes.forEach((box) => {
+        box.addEventListener("click", () => {
+          input.focus();
+        });
+      });
+
+      input.addEventListener("input", (e) => {
+        renderSlots(e.target.value);
+      });
+
+      randomNickBtn.addEventListener("click", () => {
+        const icon = randomNickBtn.querySelector(".material-symbols-outlined");
+        icon.classList.add("rotate-180");
+        setTimeout(() => icon.classList.remove("rotate-180"), 300);
+        const chosen = aliases[Math.floor(Math.random() * aliases.length)];
+        aliasInput.value = chosen;
+      });
+
+      pasteBtn.addEventListener("click", async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText();
+            let cleaned = text.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+            if (cleaned.includes("PF")) {
+              cleaned = cleaned.split("PF").pop();
+            }
+            renderSlots(cleaned);
+          } else {
+            renderSlots("8492");
+          }
+        } catch (err) {
+          renderSlots("8492");
+        }
+      });
+
+      connectBtn.addEventListener("click", () => {
+        const code = input.value;
+        if (code.length < 4) {
+          slotBoxes.forEach((b) => {
+            b.classList.add("translate-x-1");
+            setTimeout(() => b.classList.remove("translate-x-1"), 150);
+          });
+          input.focus();
+          return;
+        }
+        connectBtn.innerHTML =
+          '<span class="material-symbols-outlined text-[26px] animate-spin">progress_activity</span><span>Entrando...</span>';
+        setTimeout(() => {
+          connectBtn.innerHTML =
+            '<span class="material-symbols-outlined text-[26px]">check_circle</span><span>¡Listo!</span>';
+          connectBtn.classList.remove("bg-grape", "border-grape-dark");
+          connectBtn.classList.add("bg-mint", "border-mint-dark");
+        }, 800);
+      });
+
+      renderSlots(input.value);
+    })();
+  </script>
+</body></html>
