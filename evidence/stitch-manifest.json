@@ -69,10 +69,20 @@
       { "id": "72765bd741154a1c8fbf4728f8a655dd", "request": "projects/7461201299918295899/screens/72765bd741154a1c8fbf4728f8a655dd", "response": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.", "snapshot": { "status": "not_available", "reason": "Stitch query unauthorized; local fallback used" }, "fallback": "assets/references/results.html", "fallbackSha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad" }
     ],
     "evidence": [
-      { "state": "reconnect", "viewport": "360x640", "theme": "light", "path": "evidence/visual/pf05/pf05-reconnect-360x640-light.png", "sha256": "a3ade938535218d9e6bfcc04dad77160192ee9aaefd8d9798bb43de56f48cbf9" },
-      { "state": "reconnect", "viewport": "390x844", "theme": "dark", "path": "evidence/visual/pf05/pf05-reconnect-390x844-dark.png", "sha256": "6eda28ed0df4d69ec23a22141e5036b9b4a2e47b7f2ab3470415c55060c6fcdd" },
+      { "state": "reconnect", "viewport": "360x640", "theme": "light", "path": "evidence/visual/pf05/pf05-reconnect-360x640-light.png", "sha256": "dcb412fde5f7dc4346ba386db82a6814a2cca2abc95ce279c35a5d66f78baa23" },
+      { "state": "reconnect", "viewport": "390x844", "theme": "dark", "path": "evidence/visual/pf05/pf05-reconnect-390x844-dark.png", "sha256": "65b99922a63c648e4acfb2ec2189a14aa25ed78ae71b0cafed3e5314c0fb97e4" },
       { "state": "results", "viewport": "1280x720", "theme": "light", "path": "evidence/visual/pf05/pf05-results-1280x720-light.png", "sha256": "7bc824b54ee0a7b24da140c3ced989b3733822854c2e0dcce9b1fd66667289af" }
-    ]
+    ],
+    "browserEvidence": {
+      "runner": "e2e/pf06-visual.spec.ts",
+      "transitionScenario": "e2e/pf06-visual.spec.ts#recorre abandono, interrupción y revancha con dos navegadores reales",
+      "annotation": "state-viewport-theme en el nombre de cada captura",
+      "pathTemplate": "evidence/visual/pf06/pf06-{state}-{width}x{height}-{theme}.png",
+      "states": ["reconnection", "abandonment", "interruption", "rematch", "results"],
+      "viewports": [{ "width": 360, "height": 640 }, { "width": 390, "height": 844 }, { "width": 1280, "height": 720 }],
+      "themes": ["light", "dark"],
+      "count": 30
+    }
   },
   "screens": [
     {

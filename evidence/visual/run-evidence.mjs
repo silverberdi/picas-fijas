@@ -38,5 +38,17 @@ for (const evidence of manifest.pf06.evidence ?? []) {
   if (digest !== evidence.sha256) process.exit(1);
 }
 if ((manifest.pf06.evidence ?? []).length !== 3) process.exit(1);
+const browserEvidence = manifest.pf06.browserEvidence;
+if (browserEvidence?.runner !== 'e2e/pf06-visual.spec.ts' || browserEvidence.count !== 30) process.exit(1);
+const expectedStates = ['reconnection', 'abandonment', 'interruption', 'rematch', 'results'];
+const expectedViewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
+const expectedThemes = ['light', 'dark'];
+if (JSON.stringify(browserEvidence.states) !== JSON.stringify(expectedStates) || JSON.stringify(browserEvidence.viewports) !== JSON.stringify(expectedViewports) || JSON.stringify(browserEvidence.themes) !== JSON.stringify(expectedThemes)) process.exit(1);
+for (const state of expectedStates) for (const viewport of expectedViewports) for (const theme of expectedThemes) {
+  const evidencePath = path.resolve(`evidence/visual/pf06/pf06-${state}-${viewport.width}x${viewport.height}-${theme}.png`);
+  if (!fs.existsSync(evidencePath)) process.exit(1);
+  const png = fs.readFileSync(evidencePath);
+  if (png.subarray(0, 8).toString('hex') !== '89504e470d0a1a0a' || png.readUInt32BE(16) !== viewport.width || png.readUInt32BE(20) !== viewport.height) process.exit(1);
+}
 if (JSON.stringify(manifest).match(/stitch|cdn/i) && !JSON.stringify(manifest).includes('fallback_applied')) process.exit(1);
 console.log('Visual evidence manifest is deterministic; PF-04 and PF-06 coverage is complete.');
