@@ -1,0 +1,16 @@
+{
+  "change": "req-7-pf-07-salas-publicas-y-busqueda-humana-e",
+  "status": "fallback_applied",
+  "blocking": false,
+  "project": "projects/7461201299918295899",
+  "source": "assets/references/ local HTML fallback; Stitch unavailable in this execution",
+  "screens": [
+    {"file": "home-mobile.html", "stitchId": "1b0e461f4c614b87bb38919c75f0fa64"},
+    {"file": "home-desktop.html", "stitchId": "fb108f500648468392d871cac3c1b714"},
+    {"file": "create-room.html", "stitchId": "ca0a63e2b932407a942bfd26815ebd4c"},
+    {"file": "waiting.html", "stitchId": "57272380a6a24ee8a1799a300728aa4e"},
+    {"file": "duel-bot-mobile.html", "stitchId": "8fdefea15f054e4fab10978d9e263d5f"},
+    {"file": "race-bot-mobile.html", "stitchId": "578efe96cf894d879cfb976c3c868417"}
+  ],
+  "derivation": "Listado, cola y oferta extienden los patrones Party aprobados; Stitch no es runtime."
+}

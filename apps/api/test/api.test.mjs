@@ -8,9 +8,45 @@ import http from 'node:http';
 import net from 'node:net';
 import crypto from 'node:crypto';
 import { attachWebSocket } from '../dist/online/websocket.js';
+import { PublicMatchRegistry, publicRulesKey, validatePublicReservation } from '../dist/online/public-matching.js';
+
+test('PF-07 contrato público exige reglas estrictas y clave canónica', () => {
+  const rules = { length: 4, repeats: false, maxAttempts: 20, timeSeconds: 60 };
+  assert.equal(validatePublicReservation({ mode: 'duel', rules }), true);
+  assert.equal(validatePublicReservation({ mode: 'duel', rules: { ...rules, length: 7 } }), false);
+  assert.equal(publicRulesKey('duel', rules), 'duel|4:0:20:60');
+  assert.equal(validatePublicReservation({ mode: 'duel', rules, personalData: 'no' }), false);
+});
+
+test('PF-07 cola es FIFO, idempotente, privada y compatible exactamente', () => {
+  let now = 1000; const queue = new PublicMatchRegistry(20_000, () => now);
+  const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: null };
+  const first = queue.reserve('connection-a', 'duel', rules, 'same');
+  assert.equal(queue.reserve('connection-a', 'duel', rules, 'same').id, first.id);
+  const second = queue.reserve('connection-b', 'duel', rules, 'b'); queue.reserve('connection-c', 'race', rules, 'c');
+  const offer = queue.match(); assert.ok(offer); assert.deepEqual(offer.reservationIds, [first.id, second.id]);
+  assert.doesNotMatch(JSON.stringify(queue.list()), /connection-a|secret|credential|ip/i);
+  assert.equal(queue.metrics().activeOffers, 1);
+});
+
+test('PF-07 cancelación, expiración y transición humana son idempotentes y neutrales', () => {
+  let now = 0; const queue = new PublicMatchRegistry(20_000, () => now); const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: null };
+  const a = queue.reserve('a', 'race', rules, 'a'); const b = queue.reserve('b', 'race', rules, 'b'); const offer = queue.match(); assert.ok(offer);
+  const accepted = queue.accept(offer.id, 'a', 'accept-a'); assert.equal(accepted.offer.state, 'accepted_by_one');
+  now = 20_000; queue.expire(); assert.equal(queue.getOffer(offer.id).state, 'expired'); assert.equal(queue.accept(offer.id, 'b', 'late'), undefined);
+  const fresh = new PublicMatchRegistry(20_000, () => now); const c = fresh.reserve('c', 'race', rules, 'c'); fresh.reserve('d', 'race', rules, 'd'); const secondOffer = fresh.match(); assert.ok(secondOffer);
+  fresh.accept(secondOffer.id, 'c', 'c'); fresh.accept(secondOffer.id, 'd', 'd'); const entered = fresh.enterHuman(secondOffer.id, 'c', 'enter'); const retry = fresh.enterHuman(secondOffer.id, 'c', 'enter'); assert.equal(entered.humanRoomId, retry.humanRoomId); assert.equal(fresh.enterHuman(secondOffer.id, 'd', 'enter-d').humanRoomId, entered.humanRoomId); assert.equal(fresh.metrics().activeOffers, 0);
+  assert.equal(fresh.cancel(c.id, 'c', 'cancel-after'), c);
+});
+test('PF-07 cancelar una oferta invalida al rival y no deja aceptación fantasma', () => {
+  const queue = new PublicMatchRegistry(); const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: null };
+  const first = queue.reserve('first', 'duel', rules, 'first'); queue.reserve('second', 'duel', rules, 'second'); const offer = queue.match(); assert.ok(offer);
+  assert.equal(queue.cancel(first.id, 'first', 'cancel'), first);
+  assert.equal(queue.getOffer(offer.id).state, 'cancelled'); assert.equal(queue.accept(offer.id, 'second', 'late'), undefined); assert.equal(queue.metrics().activeOffers, 0);
+});
 test('health endpoint is in-memory and public', async () => { const app = createServer(); const response = await app.inject({ method: 'GET', url: '/health' }); assert.equal(response.statusCode, 200); assert.deepEqual(response.json(), { ok: true, service: 'picas-fijas-api' }); await app.close(); });
 test('la configuración online es inyectable y conserva límites seguros', () => { const config = readOnlineConfig({ PORT: '0', ROOM_TTL_MS: '1200', MAX_MESSAGE_BYTES: '2048', ALLOWED_ORIGINS: 'http://test.local' }); assert.equal(config.port, 0); assert.equal(config.roomTtlMs, 1200); assert.equal(config.maxMessageBytes, 2048); assert.deepEqual(config.allowedOrigins, ['http://test.local']); assert.equal(config.maxParticipants, 2); assert.equal(DEFAULT_ONLINE_CONFIG.roomTtlMs > 0, true); });
-test('el protocolo rechaza campos desconocidos sin mutar nada', () => { const invalid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {}, extra: true }); assert.equal(invalid.code, 'INVALID_MESSAGE'); const valid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {} }); assert.equal(valid.type, 'ready'); });
+test('el protocolo rechaza campos desconocidos sin mutar nada', () => { const invalid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {}, extra: true }); assert.equal(invalid.code, 'INVALID_MESSAGE'); const invalidRules = parseCommand({ protocolVersion: 'v1', commandId: 'rules', type: 'reserve', payload: { mode: 'duel', rules: { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60, secret: 'no' } } }); assert.equal(invalidRules.code, 'INVALID_MESSAGE'); const valid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {} }); assert.equal(valid.type, 'ready'); });
 test('el actor crea una sala privada, exige credencial y filtra la carrera', () => { const actor = new RoomActor('race', { ...DEFAULT_ONLINE_CONFIG, roomTtlMs: 10_000 }, 1000, 'AB234'); const create = actor.handle({ protocolVersion: 'v1', commandId: 'create', type: 'join', payload: { roomCode: 'AB234' } }, undefined, 1001); assert.equal(create.accepted, true); assert.ok(create.credential); const join = actor.handle({ protocolVersion: 'v1', commandId: 'join', type: 'join', payload: { roomCode: 'AB234' } }, undefined, 1002); assert.equal(join.accepted, true); assert.notEqual(join.snapshot.participant.nickname, create.snapshot.participant.nickname); const denied = actor.handle({ protocolVersion: 'v1', commandId: 'bad', type: 'ready', payload: {} }, 'not-a-credential', 1003); assert.equal(denied.error.code, 'CREDENTIAL_DENIED'); const ready1 = actor.handle({ protocolVersion: 'v1', commandId: 'r1', type: 'ready', payload: {} }, create.credential, 1004); const ready2 = actor.handle({ protocolVersion: 'v1', commandId: 'r2', type: 'ready', payload: {} }, join.credential, 1005); assert.equal(ready2.snapshot.cycle.phase, 'playing'); assert.equal(ready1.accepted, true); const attempt = actor.handle({ protocolVersion: 'v1', commandId: 'g1', type: 'submitGuess', payload: { guess: '012' } }, create.credential, 1006); assert.equal(attempt.accepted, true); assert.equal(JSON.stringify(attempt.snapshot), JSON.stringify(attempt.snapshot).replace(/secret/gi, 'secret')); });
 test('el duelo usa el secreto manual del create/join y rechaza un secreto inválido sin mutar', () => {
   const actor = new RoomActor('duel', { ...DEFAULT_ONLINE_CONFIG }, 1000, 'LM345');
@@ -72,6 +108,53 @@ test('cada revancha genera secretos nuevos cuando usa generación autoritativa',
   assert.notEqual(actor.cycle.secret, firstSecret);
 });
 test('el framing nativo acepta handshake y máscara contra un servidor Node real', async () => { const server = http.createServer(); attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG); await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve)); const address = server.address(); const port = address.port; const key = crypto.randomBytes(16).toString('base64'); const text = JSON.stringify({ protocolVersion: 'v1', commandId: 'wire', type: 'create', payload: { mode: 'race' } }); const raw = Buffer.from(text); const mask = Buffer.from([5, 6, 7, 8]); const encoded = Buffer.from(raw.map((value, index) => value ^ mask[index % 4])); const frame = Buffer.concat([Buffer.from([0x81, 0x80 | raw.length]), mask, encoded]); const response = await new Promise((resolve, reject) => { const socket = net.connect(port, '127.0.0.1'); let data = Buffer.alloc(0); const timer = setTimeout(() => reject(new Error('timeout')), 2000); socket.on('connect', () => { socket.write(`GET / HTTP/1.1\r\nHost: localhost\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: ${key}\r\nSec-WebSocket-Version: 13\r\n\r\n`); setTimeout(() => socket.write(frame), 10); }); socket.on('data', (chunk) => { data = Buffer.concat([data, chunk]); if (data.includes(Buffer.from('101 Switching Protocols')) && data.length > data.indexOf(Buffer.from('\r\n\r\n')) + 6) { clearTimeout(timer); resolve(data); socket.destroy(); } }); socket.on('error', reject); }); assert.match(response.toString(), /101 Switching Protocols/); server.close(); });
+
+test('PF-07 cerrar el WebSocket retira la reserva pública sin dejar cola fantasma', async () => {
+  const server = http.createServer(); const publicMatches = new PublicMatchRegistry();
+  attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const socket = new WebSocket(`ws://127.0.0.1:${server.address().port}`);
+  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  const response = new Promise((resolve) => socket.addEventListener('message', (event) => resolve(JSON.parse(event.data)), { once: true }));
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'reserve', idempotencyKey: 'reserve', type: 'reserve', payload: { mode: 'duel', rules: { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60 } } }));
+  const reserved = await response; assert.equal(reserved.accepted, true); assert.equal(publicMatches.metrics().queued, 1);
+  const closed = new Promise((resolve) => socket.addEventListener('close', resolve, { once: true })); socket.close(); await closed;
+  for (let attempt = 0; attempt < 20 && publicMatches.metrics().queued !== 0; attempt += 1) await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(publicMatches.metrics().queued, 0); await new Promise((resolve) => server.close(resolve));
+});
+
+test('PF-07 cancelar por API no expone identidad ni metadatos internos de la reserva', async () => {
+  const server = http.createServer(); const publicMatches = new PublicMatchRegistry();
+  attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const socket = new WebSocket(`ws://127.0.0.1:${server.address().port}`);
+  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  const next = () => new Promise((resolve) => socket.addEventListener('message', (event) => resolve(JSON.parse(event.data)), { once: true }));
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'reserve-private', idempotencyKey: 'reserve-private', type: 'reserve', payload: { mode: 'duel', rules: { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60 } } }));
+  const reserved = await next(); const reservation = reserved.transition.reservation;
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'cancel-private', idempotencyKey: 'cancel-private', type: 'cancel', payload: { reservationId: reservation.id } }));
+  const cancelled = await next(); const payload = cancelled.transition.reservation;
+  assert.equal(cancelled.accepted, true); assert.deepEqual(Object.keys(payload).sort(), ['id', 'mode', 'rules', 'state']);
+  assert.doesNotMatch(JSON.stringify(cancelled), /participant|key|createdAt|credential|secret/);
+  socket.close(); await new Promise((resolve) => server.close(resolve));
+});
+
+test('PF-07 E2E real entrega oferta bilateral y entra a una única sala humana', async () => {
+  const server = http.createServer(); const publicMatches = new PublicMatchRegistry(); attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const first = new WebSocket(`ws://127.0.0.1:${server.address().port}`); const second = new WebSocket(`ws://127.0.0.1:${server.address().port}`);
+  const open = (socket) => new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  const next = (socket, predicate = () => true) => new Promise((resolve, reject) => { const timer = setTimeout(() => reject(new Error('public matching message timeout')), 2000); const handler = (event) => { const message = JSON.parse(event.data); if (!predicate(message)) return; clearTimeout(timer); socket.removeEventListener('message', handler); resolve(message); }; socket.addEventListener('message', handler); });
+  const send = (socket, type, payload, id) => socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: id, idempotencyKey: id, type, payload }));
+  await Promise.all([open(first), open(second)]); const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60 };
+  const firstReserve = next(first, (message) => message.commandId === 'reserve-first'); send(first, 'reserve', { mode: 'duel', rules }, 'reserve-first'); const firstReserved = await firstReserve;
+  const secondReserve = next(second, (message) => message.commandId === 'reserve-second'); const firstOffer = next(first, (message) => message.transition?.offer?.id); send(second, 'reserve', { mode: 'duel', rules }, 'reserve-second'); const secondReserved = await secondReserve; const offerId = secondReserved.transition.offer.id;
+  assert.equal((await firstOffer).transition.offer.id, offerId); assert.equal(firstReserved.transition.reservation.participant, undefined);
+  const firstAccepted = next(first, (message) => message.commandId === 'accept-first' || message.transition?.humanRoomId); send(first, 'accept', { offerId }, 'accept-first'); await firstAccepted;
+  const humanOnePromise = next(first, (message) => message.transition?.humanRoomId); const humanTwoPromise = next(second, (message) => message.transition?.humanRoomId); send(second, 'accept', { offerId }, 'accept-second'); const [humanOne, humanTwo] = await Promise.all([humanOnePromise, humanTwoPromise]);
+  assert.equal(humanOne.transition.humanRoomId, humanTwo.transition.humanRoomId); assert.ok(humanOne.roomCode); assert.ok(humanOne.credential); assert.ok(humanTwo.credential); assert.notEqual(humanOne.credential, humanTwo.credential);
+  first.close(); second.close(); await new Promise((resolve) => server.close(resolve));
+});
 
 test('proceso API real coordina dos WebSockets, privacidad, duplicados, reconexión y revancha', async () => {
   const { spawn } = await import('node:child_process');
