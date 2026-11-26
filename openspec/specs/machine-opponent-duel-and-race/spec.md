@@ -64,3 +64,15 @@ Las partidas contra la máquina SHALL usar los resultados competitivos aprobados
 #### Scenario: Métricas de simulación sin secreto
 - **WHEN** se guarda evidencia de una simulación reproducible
 - **THEN** contiene semilla, dificultad, configuración, latencia y resolución, pero no contiene el secreto ni información privada del rival
+
+### Requirement: Búsqueda humana en segundo plano
+
+La aplicación SHALL permitir solicitar sala pública, partida rápida o búsqueda exacta mientras se juega contra «La máquina», sin pausar ni modificar el estado de la partida hasta que exista confirmación bilateral y entrada efectiva en una partida humana.
+
+#### Scenario: Buscar sin interrumpir al bot
+- **WHEN** el jugador inicia una búsqueda durante duelo o carrera contra «La máquina»
+- **THEN** la partida continúa, el avance se conserva y la búsqueda queda observable y cancelable
+
+#### Scenario: Oferta fallida conserva el bot
+- **WHEN** la oferta expira o sólo un jugador acepta
+- **THEN** la partida contra «La máquina» continúa sin interrupción ni derrota
