@@ -65,6 +65,7 @@ export interface IndividualState {
     config: GameConfig;
     secret: Secret;
     startedAt: number;
+    lastTimestamp: number;
     deadline: number | null;
     attemptsUsed: number;
     history: Attempt[];
@@ -104,6 +105,7 @@ export interface DuelState {
     config: GameConfig;
     secrets: Record<string, Secret>;
     startedAt: number;
+    lastTimestamp: number;
     round: number;
     currentPlayer: string;
     attempts: Record<string, number>;
@@ -113,6 +115,7 @@ export interface DuelState {
         outcome: 'win' | 'draw';
         reason: FinalReason;
         winner?: string;
+        at?: number;
         players: PlayerResult[];
     };
 }
@@ -123,6 +126,7 @@ export interface RaceState {
     config: GameConfig;
     secret: Secret;
     startedAt: number;
+    lastTimestamp: number;
     deadline: number;
     attempts: Record<string, number>;
     history: Array<Attempt & {
@@ -133,6 +137,7 @@ export interface RaceState {
         outcome: 'win' | 'draw';
         reason: FinalReason;
         winner?: string;
+        at?: number;
     };
 }
 export declare function createRaceState(config: GameConfig | CustomLevel, secret: Secret, startedAt?: number): RaceState;
