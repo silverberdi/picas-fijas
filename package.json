@@ -1,0 +1,7 @@
+{
+  "name": "picas-fijas",
+  "private": true,
+  "workspaces": ["apps/web", "apps/api", "packages/game-core"],
+  "scripts": {"build": "npm run build -ws --if-present", "test": "npm run test -ws --if-present", "lint": "npm run lint -ws --if-present", "e2e": "playwright test", "check": "npm run lint && npm run test && npm run build && npm run e2e"},
+  "devDependencies": {"@playwright/test": "^1.52.0", "http-server": "^14.1.1", "typescript": "~5.8.2"}
+}

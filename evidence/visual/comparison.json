@@ -1,0 +1,36 @@
+{
+  "change": "req-1-pf-01-fundaciones-del-monorepo-pwa-y-sis",
+  "source": "assets/references/ fallback HTML",
+  "stitch": {
+    "project": "7461201299918295899",
+    "status": "blocked",
+    "reason": "UNAUTHORIZED oauth_refresh_token_missing"
+  },
+  "screens": [
+    {
+      "screen": "home-mobile",
+      "fallback": "assets/references/home-mobile.html",
+      "implementation": "apps/web/src/app/app.component.html",
+      "difference": "La implementaci\u00f3n usa CSS/SVG locales y el cat\u00e1logo PF-01 vigente; no copia las dependencias remotas del fallback."
+    },
+    {
+      "screen": "home-desktop",
+      "fallback": "assets/references/home-desktop.html",
+      "implementation": "apps/web/src/app/app.component.html",
+      "difference": "El layout responsive conserva identidad y controles; el fallback hist\u00f3rico puede contener dependencias no permitidas."
+    },
+    {
+      "screen": "levels",
+      "fallback": "assets/references/levels.html",
+      "implementation": "apps/web/src/app/app.component.html",
+      "difference": "El selector usa los seis niveles y Personalizado definidos por PRODUCT-BASELINE."
+    },
+    {
+      "screen": "settings",
+      "fallback": "assets/references/settings.html",
+      "implementation": "apps/web/src/app/app.component.html",
+      "difference": "El tema se expone en el shell y persiste localmente; la pantalla hist\u00f3rica no se copia como runtime."
+    }
+  ],
+  "coverage": "sufficient via contractual local fallback HTML; visual equivalence justified without blocking"
+}
