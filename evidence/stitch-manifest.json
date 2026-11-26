@@ -13,6 +13,10 @@
     {
       "queriedAt": "2026-11-26T04:41:36Z",
       "result": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again."
+    },
+    {
+      "queriedAt": "2026-11-26T04:56:32Z",
+      "result": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again."
     }
   ],
   "screens": [
