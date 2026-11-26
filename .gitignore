@@ -1,0 +1,6 @@
+node_modules/
+apps/*/dist/
+playwright-report/
+test-results/
+*.tsbuildinfo
+.angular/
