@@ -28,5 +28,15 @@ for (const evidence of manifest.pf04.evidence ?? []) {
   if (digest !== evidence.sha256) process.exit(1);
 }
 if ((manifest.pf04.evidence ?? []).length !== 3) process.exit(1);
+if (manifest.pf06?.status !== 'fallback_applied' || manifest.pf06?.blocking !== false || manifest.pf06.screens.length !== 2) process.exit(1);
+for (const screen of manifest.pf06.screens) {
+  const digest = crypto.createHash('sha256').update(fs.readFileSync(path.resolve(screen.fallback))).digest('hex');
+  if (digest !== screen.fallbackSha256) process.exit(1);
+}
+for (const evidence of manifest.pf06.evidence ?? []) {
+  const digest = crypto.createHash('sha256').update(fs.readFileSync(path.resolve(evidence.path))).digest('hex');
+  if (digest !== evidence.sha256) process.exit(1);
+}
+if ((manifest.pf06.evidence ?? []).length !== 3) process.exit(1);
 if (JSON.stringify(manifest).match(/stitch|cdn/i) && !JSON.stringify(manifest).includes('fallback_applied')) process.exit(1);
-console.log('Visual evidence manifest is deterministic; PF-04 duel, race-active and race-result PNG coverage is complete.');
+console.log('Visual evidence manifest is deterministic; PF-04 and PF-06 coverage is complete.');

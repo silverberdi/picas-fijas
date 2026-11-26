@@ -2,14 +2,14 @@ import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 
 const evidenceRoot = path.resolve('evidence/visual/pf05');
-const screens = ['create-room.html', 'join-room.html', 'waiting.html', 'duel-online-mobile.html', 'race-online-mobile.html', 'duel-desktop.html', 'race-desktop.html', 'results.html'];
+const screens = ['create-room.html', 'join-room.html', 'waiting.html', 'duel-online-mobile.html', 'race-online-mobile.html', 'duel-desktop.html', 'race-desktop.html', 'reconnect.html', 'results.html'];
 const viewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
 
 async function enterOnline(page: Page) {
   await page.goto('/');
   await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
   await page.getByRole('button', { name: 'Comenzar partida' }).click();
-  await expect(page.locator('[data-screen-catalog] button')).toHaveCount(8);
+    await expect(page.locator('[data-screen-catalog] button')).toHaveCount(9);
 }
 
 test('genera matriz visual PF-05 por pantalla, estado, tema y viewport', async ({ page }) => {

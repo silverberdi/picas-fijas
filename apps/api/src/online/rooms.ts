@@ -4,7 +4,7 @@ import type { OnlineConfig } from './config.js';
 import { errorResponse, PROTOCOL_VERSION, type AttemptView, type OnlineCommand, type OnlineError, type OnlineResponse, type OnlineMode, type Participant, type ParticipantSnapshot, type RoomSummary } from './protocol.js';
 
 type Cycle = DuelState | RaceState;
-interface Member { id: string; nickname: string; credentialHash: string; connected: boolean; ready: boolean; secret?: string; }
+interface Member { id: string; nickname: string; credentialHash: string; connected: boolean; ready: boolean; secret?: string; disconnectedAt?: number; }
 const NICKNAMES = ['Luna', 'Rayo'];
 const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const code = () => Array.from(randomBytes(5), (byte) => alphabet[byte % alphabet.length]).join('');
@@ -23,6 +23,9 @@ export class RoomActor {
   private gameConfig: GameConfig;
   private manualRaceSecret: string | undefined;
   private phase: RoomSummary['phase'] = 'waiting';
+  private graceExpiresAt: number | undefined;
+  private graceTimer: ReturnType<typeof setTimeout> | undefined;
+  private readonly rotatedCredentials = new Map<string, string>();
   private readonly results = new Map<string, OnlineResponse>();
   constructor(mode: OnlineMode, private readonly config: OnlineConfig, now = Date.now(), roomCode = code(), gameConfig?: GameConfig) { this.mode = mode; this.createdAt = now; this.code = roomCode; this.gameConfig = gameConfig ?? this.defaultGameConfig(); }
   get stateVersion() { return this.version; }
@@ -30,31 +33,35 @@ export class RoomActor {
   expired(now = Date.now()) { return now >= this.expiresAt; }
   private fail(command: OnlineCommand, error: OnlineError): OnlineResponse { return errorResponse(command.commandId, this.version, error); }
   private find(credentialValue?: string) { return this.members.find((member) => credentialValue && member.credentialHash === hash(credentialValue)); }
-  private summary(): RoomSummary { return { code: this.code, mode: this.mode, phase: this.phase, participants: this.members.map(({ id, nickname, connected, ready }) => ({ id, nickname, connected, ready })), stateVersion: this.version, expiresAt: this.expiresAt }; }
+  private summary(): RoomSummary { return { code: this.code, mode: this.mode, phase: this.phase, participants: this.members.map(({ id, nickname, connected, ready }) => ({ id, nickname, connected, ready })), stateVersion: this.version, expiresAt: this.expiresAt, grace: { paused: Boolean(this.graceExpiresAt), expiresAt: this.graceExpiresAt, remainingMs: this.graceExpiresAt === undefined ? undefined : Math.max(0, this.graceExpiresAt - Date.now()) } }; }
   snapshot(member: Member): ParticipantSnapshot { 
     const ownAttempts: AttemptView[] = this.cycle?.kind === 'duel' ? this.cycle.histories[member.id].map((a) => ({ guess: a.guess, at: a.at, score: a.score })) : this.cycle?.kind === 'race' ? this.cycle.history.filter((a) => a.player === member.id).map((a) => ({ guess: a.guess, at: a.at, score: a.score })) : [];
     const result = this.cycle?.result;
     const players = result && 'players' in result ? (result as { players?: PlayerResult[] }).players : undefined;
-    return { room: this.summary(), participant: { id: member.id, nickname: member.nickname, connected: member.connected, ready: member.ready }, cycle: this.cycle ? { kind: this.mode, stateVersion: this.version, phase: this.phase, currentPlayer: this.cycle.kind === 'duel' ? this.cycle.currentPlayer : undefined, deadline: this.cycle.kind === 'race' ? this.cycle.deadline : undefined, ownAttempts, result: result ? { outcome: result.outcome, reason: result.reason, winner: result.winner, players } : undefined } : undefined };
+    return { room: this.summary(), participant: { id: member.id, nickname: member.nickname, connected: member.connected, ready: member.ready }, cycle: this.cycle ? { kind: this.mode, stateVersion: this.version, phase: this.phase, currentPlayer: this.cycle.kind === 'duel' ? this.cycle.currentPlayer : undefined, deadline: this.cycle.kind === 'race' ? this.cycle.deadline : undefined, ownAttempts, result: result ? { outcome: result.outcome, reason: result.reason, winner: result.winner, players, label: (result as { label?: string }).label } : undefined } : undefined };
   }
   private success(command: OnlineCommand, member: Member): OnlineResponse { return { protocolVersion: PROTOCOL_VERSION, commandId: command.commandId, accepted: true, stateVersion: this.version, snapshot: this.snapshot(member) }; }
-  private finish(reason: 'abandoned' | 'technical-interruption' | 'expired', now: number, winner?: string) {
+  private finish(reason: 'abandoned' | 'grace-expired' | 'technical-interruption' | 'expired', now: number, winner?: string) {
     if (!this.cycle || this.cycle.finished) return;
     if (this.cycle.kind === 'race') {
-      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now } };
+      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now, label: winner ? 'victoria' : reason === 'technical-interruption' ? 'interrupción' : 'empate' } as never };
     } else {
       const players: PlayerResult[] = Object.keys(this.cycle.secrets).map((player) => ({ player, outcome: winner ? (player === winner ? 'win' : 'loss') : 'draw', reason, attempts: this.cycle!.attempts[player] ?? 0 }));
-      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now, players } };
+      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now, players, label: winner ? 'victoria' : reason === 'technical-interruption' ? 'interrupción' : 'empate' } as never };
     }
     this.phase = 'finished';
+    this.graceExpiresAt = undefined;
+    if (this.graceTimer) clearTimeout(this.graceTimer);
     this.version += 1;
   }
   disconnect(credentialValue: string | undefined, now = Date.now()) {
     const member = this.find(credentialValue);
     if (!member) return false;
+    if (this.cycle?.finished) return false;
     member.connected = false;
-    if (this.cycle && !this.cycle.finished && this.members.every((entry) => !entry.connected)) this.finish('technical-interruption', now);
-    else this.version += 1;
+    member.disconnectedAt = now;
+    if (this.cycle) { this.graceExpiresAt = now + this.config.disconnectGraceMs; this.phase = 'reconnecting'; this.graceTimer = setTimeout(() => this.expireGrace(Date.now()), this.config.disconnectGraceMs); this.graceTimer.unref?.(); }
+    this.version += 1;
     return true;
   }
   hasCredential(credentialValue: string | undefined) { return Boolean(this.find(credentialValue)); }
@@ -65,6 +72,7 @@ export class RoomActor {
   interrupt(now = Date.now()) { this.finish('technical-interruption', now); }
   handle(command: OnlineCommand, credentialValue?: string, now = Date.now(), connectionId = 'direct'): OnlineResponse {
     if (this.expired(now)) return this.fail(command, { code: 'EXPIRED', message: 'La sala expiró.', recoverable: false });
+    this.expireGrace(now);
     const key = `${this.find(credentialValue)?.id ?? connectionId}:${command.idempotencyKey ?? command.commandId}`;
     const previous = this.results.get(key); if (previous) return previous;
     let member = this.find(credentialValue);
@@ -83,8 +91,16 @@ export class RoomActor {
       const response = this.success(command, member); response.credential = secret; this.results.set(key, response); return response;
     }
     if (!member) return this.fail(command, { code: 'CREDENTIAL_DENIED', message: 'Credencial no autorizada.', recoverable: true });
+    if (command.type === 'reconnect') {
+      if (member.connected) { const response = this.success(command, member); this.results.set(key, response); return response; }
+      if (member.disconnectedAt === undefined || now - member.disconnectedAt >= this.config.disconnectGraceMs) return this.fail(command, { code: 'GRACE_EXPIRED', message: 'La gracia de reconexión expiró.', recoverable: false });
+      member.connected = true; member.disconnectedAt = undefined;
+      if (this.members.every((entry) => entry.connected)) { this.graceExpiresAt = undefined; this.phase = this.cycle?.finished ? 'finished' : 'playing'; }
+      this.version += 1; const response = this.success(command, member); this.results.set(key, response); return response;
+    }
+    if (!member.connected && command.type !== 'resign' && command.type !== 'leave' && command.type !== 'restart') return this.fail(command, { code: 'NOT_READY', message: 'La partida está pausada; reconecta antes de continuar.', recoverable: true });
     member.connected = true;
-    if (command.type === 'reconnect') { const response = this.success(command, member); this.results.set(key, response); return response; }
+    if (this.graceExpiresAt !== undefined && now < this.graceExpiresAt && command.type === 'submitGuess') return this.fail(command, { code: 'NOT_READY', message: 'La competición está pausada durante la reconexión.', recoverable: true });
     if (command.type === 'ready') { member.ready = true; if (this.members.length === 2 && this.members.every((entry) => entry.ready)) { this.startCycle(now); this.phase = 'playing'; } this.version += 1; }
     else if (command.type === 'submitGuess') {
       if (typeof command.payload.guess !== 'string') return this.fail(command, { code: 'INVALID_GUESS', message: 'Tentativa inválida.', recoverable: true });
@@ -92,22 +108,33 @@ export class RoomActor {
       const transition = this.cycle.kind === 'duel' ? submitDuelAttempt(this.cycle, member.id, command.payload.guess, now) : submitRaceAttempt(this.cycle, member.id, command.payload.guess, now);
       if (transition.error) return this.fail(command, { code: transition.error.code === 'NOT_YOUR_TURN' ? 'OUT_OF_TURN' : 'INVALID_GUESS', message: transition.error.message, recoverable: true });
       this.cycle = transition.state; this.version += 1; if (this.cycle.finished) this.phase = 'finished';
-    } else if (command.type === 'leave') {
-      member.connected = false; member.ready = false;
+    } else if (command.type === 'disconnect') {
+      member.connected = false; member.disconnectedAt = now; this.graceExpiresAt = now + this.config.disconnectGraceMs; this.phase = this.cycle ? 'reconnecting' : 'waiting'; this.graceTimer = setTimeout(() => this.expireGrace(Date.now()), this.config.disconnectGraceMs); this.graceTimer.unref?.(); this.version += 1;
+    } else if (command.type === 'resign' || command.type === 'leave') {
+      member.connected = false; member.ready = false; member.disconnectedAt = now;
       if (this.cycle && !this.cycle.finished) this.finish('abandoned', now, this.members.find((entry) => entry.id !== member!.id && entry.connected)?.id);
       else { this.version += 1; if (this.members.every((entry) => !entry.connected)) this.phase = 'waiting'; }
+    } else if (command.type === 'restart') {
+      if (this.cycle && !this.cycle.finished) this.finish('technical-interruption', now);
+      else return this.fail(command, { code: 'NOT_READY', message: 'No hay una partida activa que interrumpir.', recoverable: true });
     } else if (command.type === 'rematch') {
       if (!this.cycle?.finished) return this.fail(command, { code: 'NOT_READY', message: 'La revancha sólo está disponible al finalizar.', recoverable: true });
       member.ready = true;
-      if (this.members.length === 2 && this.members.every((entry) => entry.ready && entry.connected)) { this.startCycle(now); this.phase = 'playing'; this.version += 1; }
+      if (this.members.length === 2 && this.members.every((entry) => entry.ready && entry.connected)) { this.startCycle(now, true); this.phase = 'playing'; this.version += 1; }
     }
-    const response = this.success(command, member); this.results.set(key, response); return response;
+    const response = this.success(command, member); const rotated = this.rotatedCredentials.get(member.id); if (rotated) { response.credential = rotated; this.rotatedCredentials.delete(member.id); } this.results.set(key, response); return response;
   }
-  private startCycle(now: number) {
+  private expireGrace(now: number) {
+    if (!this.graceExpiresAt || now < this.graceExpiresAt || !this.cycle || this.cycle.finished) return;
+    const present = this.members.find((entry) => entry.connected);
+    this.finish(present ? 'grace-expired' : 'technical-interruption', now, present?.id);
+  }
+  private startCycle(now: number, rotateCredentials = false) {
     const config = this.gameConfig; this.cycleNumber += 1; const seed = (this.createdAt ^ now ^ Math.imul(this.cycleNumber, 0x9e3779b9)) >>> 0;
-    if (this.mode === 'duel') { const secrets = Object.fromEntries(this.members.map((member, index) => [member.id, member.secret ?? generateSecret(config, seededIndexSource(seed + index + 1))])); this.cycle = createDuelState(config, secrets, now); }
+    if (rotateCredentials) this.members.forEach((member) => { const next = credential(); member.credentialHash = hash(next); member.connected = true; member.disconnectedAt = undefined; this.rotatedCredentials.set(member.id, next); });
+    if (this.mode === 'duel') { const secrets = Object.fromEntries(this.members.map((member, index) => [member.id, !rotateCredentials && member.secret ? member.secret : generateSecret(config, seededIndexSource(seed + index + 1))])); this.cycle = createDuelState(config, secrets, now); }
     else this.cycle = createRaceState(config, this.manualRaceSecret ?? generateSecret(config, seededIndexSource(seed + 9)), now);
-    this.members.forEach((member) => { member.ready = false; });
+    this.members.forEach((member) => { member.ready = false; }); this.graceExpiresAt = undefined; if (this.graceTimer) clearTimeout(this.graceTimer);
   }
   private defaultGameConfig(): GameConfig { return { length: 3, repeats: false, maxAttempts: null, raceDurationSeconds: this.config.raceDurationSeconds, turnDurationSeconds: 60 }; }
 }

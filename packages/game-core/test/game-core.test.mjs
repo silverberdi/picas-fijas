@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MODES, LEVELS, isValidCustomLevel, createConfig, generateSecret, seededIndexSource, validateSecret, scoreGuess, createIndividualState, submitIndividualAttempt, abandonIndividual, interruptIndividual, createDuelState, submitDuelAttempt, createRaceState, submitRaceAttempt, expireRace, serialize, deserialize, createMonotonicClock, getIndividualGuidance, createMachineConfig, chooseMachineGuess, createParticipantSnapshot, serializeParticipantSnapshot, calculateMachineGuess, simulateMachine } from '../dist/index.js';
+import { MODES, LEVELS, isValidCustomLevel, createConfig, generateSecret, seededIndexSource, validateSecret, scoreGuess, createIndividualState, submitIndividualAttempt, abandonIndividual, interruptIndividual, createDuelState, submitDuelAttempt, createRaceState, submitRaceAttempt, expireRace, serialize, deserialize, createMonotonicClock, getIndividualGuidance, createMachineConfig, chooseMachineGuess, createParticipantSnapshot, serializeParticipantSnapshot, calculateMachineGuess, simulateMachine, unifiedResult, createReconnectionState, disconnectParticipant, reconnectParticipant, expireReconnectionGrace, restartReconnection } from '../dist/index.js';
 test('expone exactamente cinco modalidades', () => assert.deepEqual(MODES.map((m) => m.id), ['classic','bot-duel','bot-race','human-duel','human-race']));
 test('niveles de línea base tienen reglas exactas', () => { assert.equal(LEVELS.length, 6); assert.deepEqual(LEVELS.map(({length,repeats,maxAttempts}) => ({length,repeats,maxAttempts})), [{length:3,repeats:false,maxAttempts:null},{length:4,repeats:false,maxAttempts:null},{length:4,repeats:true,maxAttempts:null},{length:5,repeats:false,maxAttempts:20},{length:5,repeats:true,maxAttempts:15},{length:6,repeats:true,maxAttempts:12}]); });
 test('valida configuración personalizada', () => { assert.equal(isValidCustomLevel({length:3,repeats:false,maxAttempts:null}), true); assert.equal(isValidCustomLevel({length:6,repeats:true,maxAttempts:12}), true); assert.equal(isValidCustomLevel({length:2,repeats:false,maxAttempts:null}), false); assert.equal(isValidCustomLevel({length:4,repeats:true,maxAttempts:0}), false); });
@@ -54,4 +54,23 @@ test('cálculo asíncrono informa progreso, respeta cancelación y simulación n
   const metrics = simulateMachine(config, 'hard', 3, '012345');
   assert.equal(metrics.seed, 3); assert.ok(metrics.latencyMs > 0); assert.equal(Object.hasOwn(metrics, 'secret'), false);
   const controller = new AbortController(); const cancelled = calculateMachineGuess({ config, history: [], seed: 4, difficulty: 'hard' }, { signal: controller.signal, delayMs: 30 }); controller.abort(); await assert.rejects(cancelled, /cancelado|AbortError/);
+});
+test('PF-06 serializa resultados unificados y aplica la gracia exacta de 60 segundos', () => {
+  assert.deepEqual(unifiedResult('victoria', 'resignation', 12, { winner: 'b' }), { outcome: 'victoria', reason: 'resignation', at: 12, winner: 'b' });
+  let state = createReconnectionState(['a', 'b'], 100);
+  state = disconnectParticipant(state, 'a', 200).state;
+  assert.equal(state.paused, true); assert.equal(state.finished, false); assert.equal(state.expiresAt, 60_200);
+  assert.equal(reconnectParticipant(state, 'a', 60_199).state.finished, false);
+  state = disconnectParticipant(state, 'a', 200).state;
+  const expired = expireReconnectionGrace(state, 60_200);
+  assert.equal(expired.result.outcome, 'abandono'); assert.equal(expired.result.winner, 'b'); assert.equal(expired.result.reason, 'grace-expired');
+});
+test('PF-06 doble desconexión y reinicio son interrupciones neutrales', () => {
+  let state = createReconnectionState(['a', 'b'], 0);
+  state = disconnectParticipant(state, 'a', 10).state;
+  state = disconnectParticipant(state, 'b', 20).state;
+  const neutral = expireReconnectionGrace(state, 60_020);
+  assert.deepEqual(neutral.result?.outcome, 'interrupción'); assert.equal(neutral.result?.winner, undefined);
+  const restarted = restartReconnection(createReconnectionState(['a', 'b']), 8);
+  assert.deepEqual(restarted.result, { outcome: 'interrupción', reason: 'restart', at: 8, affected: [] });
 });
