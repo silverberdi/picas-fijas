@@ -10,7 +10,7 @@
 
 ## Checks
 
-`npm run check` → exit code 0, incluyendo lint, unit/integration, build y 25 E2E Playwright.
+`npm run check` → exit code 0, incluyendo lint, unit/integration (8 web + 21 API + 23 game-core), build y 26 E2E Playwright.
 
 `npx playwright test e2e/pf07-visual-evidence.spec.ts` → exit code 0; `node evidence/visual/run-pf07-evidence.mjs` → exit code 0. Los PNG y reportes se versionan en Git/PR; `test-results/` y `playwright-report/` se retienen como artefactos CI por 14 días.
 
