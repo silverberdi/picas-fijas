@@ -40,7 +40,7 @@ export type Secret = string;
 export type Guess = string;
 export interface Score { fixed: number; picas: number; guess: string; exact: boolean; }
 export interface Attempt { guess: string; at: number; score: Score; }
-export type FinalReason = 'correct' | 'exhausted' | 'expired' | 'abandoned' | 'technical-interruption' | 'draw';
+export type FinalReason = 'correct' | 'exhausted' | 'expired' | 'abandoned' | 'technical-interruption' | 'draw' | 'resignation' | 'grace-expired' | 'restart';
 export type IndividualOutcome = 'win' | 'loss' | 'draw' | 'abandoned' | 'technical-interruption';
 export interface IndividualResult { outcome: IndividualOutcome; reason: FinalReason; attempts: number; at: number; }
 export interface IndividualState { kind: 'individual'; config: GameConfig; secret: Secret; startedAt: number; lastTimestamp: number; deadline: number | null; attemptsUsed: number; history: Attempt[]; finished: boolean; result?: IndividualResult; }
@@ -208,6 +208,59 @@ export function simulateMachine(config: GameConfig, difficulty: MachineDifficult
 }
 export interface MonotonicClock { now(): number; }
 export function createMonotonicClock(read: () => number): MonotonicClock { let last = -Infinity; return { now: () => { const value = read(); if (value < last) throw new Error('CLOCK_REWIND'); last = value; return value; } }; }
+
+/** PF-06's public vocabulary. Legacy `win/loss/draw` fields remain supported
+ * for PF-05 clients; this projection is the stable Spanish result contract. */
+export type CompetitiveOutcome = 'victoria' | 'derrota' | 'empate' | 'abandono' | 'interrupción';
+export interface UnifiedResult { outcome: CompetitiveOutcome; reason: FinalReason; winner?: string; affected?: readonly string[]; at: number; }
+export function unifiedResult(outcome: CompetitiveOutcome, reason: FinalReason, at: number, options: Omit<UnifiedResult, 'outcome' | 'reason' | 'at'> = {}): UnifiedResult { return { outcome, reason, at, ...options }; }
+
+export const DEFAULT_RECONNECTION_GRACE_MS = 60_000;
+export interface ReconnectionParticipant { id: string; connected: boolean; disconnectedAt?: number; }
+export interface ReconnectionState {
+  participants: Record<string, ReconnectionParticipant>;
+  graceMs: number;
+  paused: boolean;
+  startedAt?: number;
+  expiresAt?: number;
+  finished: boolean;
+  result?: UnifiedResult;
+  lastTimestamp: number;
+}
+export interface ReconnectionTransition { state: ReconnectionState; error?: SerializableError; }
+
+export function createReconnectionState(ids: readonly string[], now = 0, graceMs = DEFAULT_RECONNECTION_GRACE_MS): ReconnectionState {
+  if (!ids.length || new Set(ids).size !== ids.length || graceMs < 0) throw new Error('Participantes o gracia inválidos');
+  return { participants: Object.fromEntries(ids.map((id) => [id, { id, connected: true }])), graceMs, paused: false, startedAt: now, finished: false, lastTimestamp: now };
+}
+function finishReconnection(state: ReconnectionState, outcome: CompetitiveOutcome, reason: FinalReason, at: number, winner?: string): ReconnectionState {
+  const affected = Object.keys(state.participants).filter((id) => !state.participants[id].connected);
+  return { ...state, paused: false, finished: true, lastTimestamp: at, result: winner === undefined ? unifiedResult(outcome, reason, at, { affected }) : unifiedResult(outcome, reason, at, { winner, affected }) };
+}
+export function disconnectParticipant(state: ReconnectionState, id: string, now: number): ReconnectionTransition {
+  const participant = state.participants[id];
+  if (!participant) return { state, error: makeError('UNKNOWN_PARTICIPANT', 'Participante desconocido.') };
+  if (state.finished || !participant.connected) return { state };
+  const participants = { ...state.participants, [id]: { ...participant, connected: false, disconnectedAt: now } };
+  return { state: { ...state, participants, paused: true, lastTimestamp: Math.max(state.lastTimestamp, now), expiresAt: now + state.graceMs } };
+}
+export function reconnectParticipant(state: ReconnectionState, id: string, now: number): ReconnectionTransition {
+  const participant = state.participants[id];
+  if (!participant) return { state, error: makeError('UNKNOWN_PARTICIPANT', 'Participante desconocido.') };
+  if (state.finished) return { state, error: makeError('GAME_FINISHED', 'La partida ya terminó.') };
+  if (participant.connected) return { state };
+  if (participant.disconnectedAt === undefined || now - participant.disconnectedAt >= state.graceMs) return { state: expireReconnectionGrace(state, now), error: makeError('GRACE_EXPIRED', 'La gracia de reconexión expiró.') };
+  const participants = { ...state.participants, [id]: { id, connected: true } };
+  return { state: { ...state, participants, paused: Object.values(participants).some((entry) => !entry.connected), expiresAt: undefined, lastTimestamp: Math.max(state.lastTimestamp, now) } };
+}
+export function expireReconnectionGrace(state: ReconnectionState, now: number): ReconnectionState {
+  if (state.finished || !state.paused || !Object.values(state.participants).some((entry) => !entry.connected)) return state;
+  const expired = Object.values(state.participants).some((entry) => entry.disconnectedAt !== undefined && now - entry.disconnectedAt >= state.graceMs);
+  if (!expired) return state;
+  const connected = Object.values(state.participants).filter((entry) => entry.connected);
+  return connected.length === 1 ? finishReconnection(state, 'abandono', 'grace-expired', now, connected[0].id) : finishReconnection(state, 'interrupción', 'technical-interruption', now);
+}
+export function restartReconnection(state: ReconnectionState, now: number): ReconnectionState { return state.finished ? state : finishReconnection(state, 'interrupción', 'restart', now); }
 export function serialize<T>(value: T): string { return JSON.stringify(value); }
 export function deserialize<T>(value: string): T { return JSON.parse(value) as T; }
 

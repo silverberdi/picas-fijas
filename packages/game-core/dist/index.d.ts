@@ -52,7 +52,7 @@ export interface Attempt {
     at: number;
     score: Score;
 }
-export type FinalReason = 'correct' | 'exhausted' | 'expired' | 'abandoned' | 'technical-interruption' | 'draw';
+export type FinalReason = 'correct' | 'exhausted' | 'expired' | 'abandoned' | 'technical-interruption' | 'draw' | 'resignation' | 'grace-expired' | 'restart';
 export type IndividualOutcome = 'win' | 'loss' | 'draw' | 'abandoned' | 'technical-interruption';
 export interface IndividualResult {
     outcome: IndividualOutcome;
@@ -214,6 +214,42 @@ export interface MonotonicClock {
     now(): number;
 }
 export declare function createMonotonicClock(read: () => number): MonotonicClock;
+/** PF-06's public vocabulary. Legacy `win/loss/draw` fields remain supported
+ * for PF-05 clients; this projection is the stable Spanish result contract. */
+export type CompetitiveOutcome = 'victoria' | 'derrota' | 'empate' | 'abandono' | 'interrupción';
+export interface UnifiedResult {
+    outcome: CompetitiveOutcome;
+    reason: FinalReason;
+    winner?: string;
+    affected?: readonly string[];
+    at: number;
+}
+export declare function unifiedResult(outcome: CompetitiveOutcome, reason: FinalReason, at: number, options?: Omit<UnifiedResult, 'outcome' | 'reason' | 'at'>): UnifiedResult;
+export declare const DEFAULT_RECONNECTION_GRACE_MS = 60000;
+export interface ReconnectionParticipant {
+    id: string;
+    connected: boolean;
+    disconnectedAt?: number;
+}
+export interface ReconnectionState {
+    participants: Record<string, ReconnectionParticipant>;
+    graceMs: number;
+    paused: boolean;
+    startedAt?: number;
+    expiresAt?: number;
+    finished: boolean;
+    result?: UnifiedResult;
+    lastTimestamp: number;
+}
+export interface ReconnectionTransition {
+    state: ReconnectionState;
+    error?: SerializableError;
+}
+export declare function createReconnectionState(ids: readonly string[], now?: number, graceMs?: number): ReconnectionState;
+export declare function disconnectParticipant(state: ReconnectionState, id: string, now: number): ReconnectionTransition;
+export declare function reconnectParticipant(state: ReconnectionState, id: string, now: number): ReconnectionTransition;
+export declare function expireReconnectionGrace(state: ReconnectionState, now: number): ReconnectionState;
+export declare function restartReconnection(state: ReconnectionState, now: number): ReconnectionState;
 export declare function serialize<T>(value: T): string;
 export declare function deserialize<T>(value: string): T;
 /** Public, serializable state used by the individual-game presentation layer. */

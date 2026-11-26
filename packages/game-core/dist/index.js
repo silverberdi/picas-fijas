@@ -202,6 +202,49 @@ export function simulateMachine(config, difficulty, seed, secret) {
 }
 export function createMonotonicClock(read) { let last = -Infinity; return { now: () => { const value = read(); if (value < last)
         throw new Error('CLOCK_REWIND'); last = value; return value; } }; }
+export function unifiedResult(outcome, reason, at, options = {}) { return { outcome, reason, at, ...options }; }
+export const DEFAULT_RECONNECTION_GRACE_MS = 60_000;
+export function createReconnectionState(ids, now = 0, graceMs = DEFAULT_RECONNECTION_GRACE_MS) {
+    if (!ids.length || new Set(ids).size !== ids.length || graceMs < 0)
+        throw new Error('Participantes o gracia inválidos');
+    return { participants: Object.fromEntries(ids.map((id) => [id, { id, connected: true }])), graceMs, paused: false, startedAt: now, finished: false, lastTimestamp: now };
+}
+function finishReconnection(state, outcome, reason, at, winner) {
+    const affected = Object.keys(state.participants).filter((id) => !state.participants[id].connected);
+    return { ...state, paused: false, finished: true, lastTimestamp: at, result: winner === undefined ? unifiedResult(outcome, reason, at, { affected }) : unifiedResult(outcome, reason, at, { winner, affected }) };
+}
+export function disconnectParticipant(state, id, now) {
+    const participant = state.participants[id];
+    if (!participant)
+        return { state, error: makeError('UNKNOWN_PARTICIPANT', 'Participante desconocido.') };
+    if (state.finished || !participant.connected)
+        return { state };
+    const participants = { ...state.participants, [id]: { ...participant, connected: false, disconnectedAt: now } };
+    return { state: { ...state, participants, paused: true, lastTimestamp: Math.max(state.lastTimestamp, now), expiresAt: now + state.graceMs } };
+}
+export function reconnectParticipant(state, id, now) {
+    const participant = state.participants[id];
+    if (!participant)
+        return { state, error: makeError('UNKNOWN_PARTICIPANT', 'Participante desconocido.') };
+    if (state.finished)
+        return { state, error: makeError('GAME_FINISHED', 'La partida ya terminó.') };
+    if (participant.connected)
+        return { state };
+    if (participant.disconnectedAt === undefined || now - participant.disconnectedAt >= state.graceMs)
+        return { state: expireReconnectionGrace(state, now), error: makeError('GRACE_EXPIRED', 'La gracia de reconexión expiró.') };
+    const participants = { ...state.participants, [id]: { id, connected: true } };
+    return { state: { ...state, participants, paused: Object.values(participants).some((entry) => !entry.connected), expiresAt: undefined, lastTimestamp: Math.max(state.lastTimestamp, now) } };
+}
+export function expireReconnectionGrace(state, now) {
+    if (state.finished || !state.paused || !Object.values(state.participants).some((entry) => !entry.connected))
+        return state;
+    const expired = Object.values(state.participants).some((entry) => entry.disconnectedAt !== undefined && now - entry.disconnectedAt >= state.graceMs);
+    if (!expired)
+        return state;
+    const connected = Object.values(state.participants).filter((entry) => entry.connected);
+    return connected.length === 1 ? finishReconnection(state, 'abandono', 'grace-expired', now, connected[0].id) : finishReconnection(state, 'interrupción', 'technical-interruption', now);
+}
+export function restartReconnection(state, now) { return state.finished ? state : finishReconnection(state, 'interrupción', 'restart', now); }
 export function serialize(value) { return JSON.stringify(value); }
 export function deserialize(value) { return JSON.parse(value); }
 /**

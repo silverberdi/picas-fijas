@@ -20,7 +20,20 @@ test('carrera humana conserva el estado de sala y el tema oscuro', async ({ page
   await expect(page.locator('.app-shell')).toHaveClass(/dark-theme/);
 });
 
-test('catálogo online navega las ocho pantallas y conserva estados accesibles en dos contextos', async ({ browser }) => {
+test('PF-06 muestra la gracia pausada y el resultado neutral accesibles', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
+  await page.getByRole('button', { name: 'Comenzar partida' }).click();
+  await page.locator('[data-screen="reconnect.html"]').click();
+  await expect(page.getByRole('heading', { name: 'Conexión pausada' })).toBeVisible();
+  await expect(page.getByText(/Cuenta atrás/)).toBeVisible();
+  await page.locator('[data-screen="results.html"]').click();
+  await expect(page.getByRole('heading', { name: 'Resultado online' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Solicitar revancha' })).toBeVisible();
+});
+
+test('catálogo online navega las nueve pantallas y conserva estados accesibles en dos contextos', async ({ browser }) => {
   const first = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const second = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const firstPage = await first.newPage(); const secondPage = await second.newPage();
@@ -28,7 +41,7 @@ test('catálogo online navega las ocho pantallas y conserva estados accesibles e
     await page.goto('/');
     await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
     await page.getByRole('button', { name: 'Comenzar partida' }).click();
-    await expect(page.locator('[data-screen-catalog] button')).toHaveCount(8);
+    await expect(page.locator('[data-screen-catalog] button')).toHaveCount(9);
     await page.locator('[data-screen="join-room.html"]').click();
     await expect(page.getByText(/CATÁLOGO ONLINE · join-room.html/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Activar tema oscuro' })).toBeVisible();

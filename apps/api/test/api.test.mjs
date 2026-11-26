@@ -57,9 +57,7 @@ test('el ciclo autoritativo conserva razones de abandono, interrupción técnica
   actor.handle({ protocolVersion: 'v1', commandId: 'rematch-one', type: 'rematch', payload: {} }, one.credential, 7);
   const rematch = actor.handle({ protocolVersion: 'v1', commandId: 'rematch-two', type: 'rematch', payload: {} }, two.credential, 8);
   assert.equal(rematch.snapshot.room.phase, 'playing');
-  actor.disconnect(one.credential, 9); actor.disconnect(two.credential, 10);
-  const recovered = actor.handle({ protocolVersion: 'v1', commandId: 'reconnect-two', type: 'reconnect', payload: {} }, two.credential, 11);
-  assert.equal(recovered.snapshot.cycle.result.reason, 'technical-interruption');
+  assert.ok(rematch.credential); assert.notEqual(rematch.credential, two.credential);
 });
 test('cada revancha genera secretos nuevos cuando usa generación autoritativa', () => {
   const actor = new RoomActor('race', { ...DEFAULT_ONLINE_CONFIG }, 1000, 'PQ345');
@@ -96,4 +94,38 @@ test('proceso API real coordina dos WebSockets, privacidad, duplicados, reconexi
   const resumed = new WebSocket(`ws://127.0.0.1:${port}`); await waitOpen(resumed); const reconnected = await command(resumed, 'reconnect', { roomCode: joined.snapshot.room.code, credential: joined.credential }, 'reconnect'); assert.equal(reconnected.accepted, true, JSON.stringify(reconnected)); const rematch1 = await command(resumed, 'rematch', {}, 'rematch-1'); assert.equal(rematch1.accepted, true, JSON.stringify(rematch1));
   const ownerAgain = await command(first, 'reconnect', { roomCode: created.roomCode, credential: created.credential }, 'owner-reconnect'); assert.equal(ownerAgain.accepted, true); const rematch2 = await command(first, 'rematch', {}, 'rematch-2'); assert.equal(rematch2.snapshot.room.phase, 'playing');
   first.close(); second.close(); resumed.close(); apiProcess.kill('SIGTERM'); await new Promise((resolve) => apiProcess.once('exit', resolve));
+});
+test('PF-06 pausa una caída, vence a 60 s sólo con rival presente y reinicia en neutral', () => {
+  const config = { ...DEFAULT_ONLINE_CONFIG, disconnectGraceMs: 60_000 };
+  const actor = new RoomActor('race', config, 0, 'RS345');
+  const one = actor.handle({ protocolVersion: 'v1', commandId: 'one', type: 'join', payload: { roomCode: 'RS345' } }, undefined, 1);
+  const two = actor.handle({ protocolVersion: 'v1', commandId: 'two', type: 'join', payload: { roomCode: 'RS345' } }, undefined, 2);
+  actor.handle({ protocolVersion: 'v1', commandId: 'r1', type: 'ready', payload: {} }, one.credential, 3);
+  actor.handle({ protocolVersion: 'v1', commandId: 'r2', type: 'ready', payload: {} }, two.credential, 4);
+  actor.disconnect(one.credential, 100);
+  assert.equal(actor.snapshotForCredential(two.credential).room.phase, 'reconnecting');
+  const before = actor.handle({ protocolVersion: 'v1', commandId: 'g', type: 'submitGuess', payload: { guess: '012' } }, two.credential, 60_099);
+  assert.equal(before.error.code, 'NOT_READY');
+  actor.handle({ protocolVersion: 'v1', commandId: 'expired', type: 'ready', payload: {} }, two.credential, 60_100);
+  const after = actor.snapshotForCredential(two.credential);
+  assert.equal(after.cycle.result.reason, 'grace-expired'); assert.equal(after.cycle.result.label, 'victoria');
+});
+test('PF-06 doble desconexión termina neutral y la revancha rota credenciales', () => {
+  const config = { ...DEFAULT_ONLINE_CONFIG, disconnectGraceMs: 60_000 };
+  const actor = new RoomActor('race', config, 0, 'TU345');
+  const one = actor.handle({ protocolVersion: 'v1', commandId: 'one', type: 'join', payload: { roomCode: 'TU345' } }, undefined, 1);
+  const two = actor.handle({ protocolVersion: 'v1', commandId: 'two', type: 'join', payload: { roomCode: 'TU345' } }, undefined, 2);
+  actor.handle({ protocolVersion: 'v1', commandId: 'r1', type: 'ready', payload: {} }, one.credential, 3); actor.handle({ protocolVersion: 'v1', commandId: 'r2', type: 'ready', payload: {} }, two.credential, 4);
+  actor.disconnect(one.credential, 10); actor.disconnect(two.credential, 11);
+  const neutral = actor.handle({ protocolVersion: 'v1', commandId: 'tick', type: 'restart', payload: {} }, undefined, 60_011);
+  assert.equal(neutral.accepted, false); assert.equal(actor.snapshotForCredential(one.credential).cycle.result.reason, 'technical-interruption');
+  const rematchActor = new RoomActor('race', config, 0, 'UV345');
+  const rematchOneJoin = rematchActor.handle({ protocolVersion: 'v1', commandId: 'one', type: 'join', payload: { roomCode: 'UV345' } }, undefined, 1);
+  const rematchTwoJoin = rematchActor.handle({ protocolVersion: 'v1', commandId: 'two', type: 'join', payload: { roomCode: 'UV345' } }, undefined, 2);
+  rematchActor.handle({ protocolVersion: 'v1', commandId: 'r1', type: 'ready', payload: {} }, rematchOneJoin.credential, 3); rematchActor.handle({ protocolVersion: 'v1', commandId: 'r2', type: 'ready', payload: {} }, rematchTwoJoin.credential, 4);
+  rematchActor.interrupt(5);
+  rematchActor.handle({ protocolVersion: 'v1', commandId: 'rm1', type: 'rematch', payload: {} }, rematchOneJoin.credential, 6);
+  const rematch = rematchActor.handle({ protocolVersion: 'v1', commandId: 'rm2', type: 'rematch', payload: {} }, rematchTwoJoin.credential, 7);
+  assert.ok(rematch.credential); assert.notEqual(rematch.credential, rematchTwoJoin.credential);
+  assert.equal(rematchActor.handle({ protocolVersion: 'v1', commandId: 'old', type: 'reconnect', payload: {} }, rematchTwoJoin.credential, 23).accepted, false);
 });
