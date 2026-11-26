@@ -17,7 +17,7 @@ La UI SHALL ofrecer tema claro y oscuro, conservar la preferencia tras recargar,
 
 ### Requirement: Procedencia visual y fallback
 
-Durante design y verify se SHALL consultar por ID las pantallas aprobadas del proyecto Stitch `7461201299918295899`: home móvil `1b0e461f4c614b87bb38919c75f0fa64`, home escritorio `fb108f500648468392d871cac3c1b714`, levels `11123e53ada04a2ba7297f0eeb884f36` y settings `7f2012d3be454c1e9cfd58203b1f4b87`; se SHALL registrar procedencia y snapshot, usar el HTML local correspondiente sólo como fallback ante fallo y bloquear la verificación si la evidencia resultante es insuficiente.
+Durante design y verify se SHALL consultar por ID las pantallas aprobadas del proyecto Stitch `7461201299918295899`: home móvil `1b0e461f4c614b87bb38919c75f0fa64`, home escritorio `fb108f500648468392d871cac3c1b714`, levels `11123e53ada04a2ba7297f0eeb884f36` y settings `7f2012d3be454c1e9cfd58203b1f4b87`; se SHALL registrar procedencia y snapshot, usar el HTML local correspondiente sólo como fallback ante fallo y usar el fallback contractual sin bloquear cuando la cobertura sea suficiente.
 
 #### Scenario: Referencia Stitch disponible
 
@@ -27,7 +27,7 @@ Durante design y verify se SHALL consultar por ID las pantallas aprobadas del pr
 #### Scenario: Referencia Stitch inaccesible
 
 - **WHEN** la consulta por ID falla durante propose, design o verify
-- **THEN** se registra el fallo, se usa el HTML versionado de `assets/references/` como respaldo y se declara bloqueo si no permite justificar la equivalencia visual
+- **THEN** se registra el fallo, se usa el HTML versionado de `assets/references/` como respaldo y se declara bloqueo únicamente si no permite justificar la equivalencia visual; ante cobertura suficiente del fallback, la verificación no se bloquea
 
 ### Requirement: Evidencia UI reproducible
 

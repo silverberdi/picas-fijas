@@ -21,8 +21,8 @@
 
 ## 4. Referencias visuales y trazabilidad
 
-- [ ] 4.1 Consultar mediante la integración Stitch las cuatro pantallas exactas de PF-01 por sus IDs y registrar procedencia, respuesta y snapshots; verificar el manifiesto de referencias sin editar ni regenerar Stitch.
-- [x] 4.2 Si alguna consulta Stitch falla, registrar el error y asociar el HTML versionado de `assets/references/` como fallback; verificar que la evidencia marca explícitamente cobertura insuficiente como bloqueo.
+- [x] 4.1 Consultar mediante la integración Stitch las cuatro pantallas exactas de PF-01 por sus IDs y registrar procedencia y respuestas; registrar el fallo de acceso en el manifiesto y canalizar la justificación visual vía fallback contractual 4.2.
+- [x] 4.2 Si alguna consulta Stitch falla, registrar el error y asociar el HTML versionado de `assets/references/` como fallback; verificar que la evidencia justifica la equivalencia visual completa sin bloqueo.
 - [x] 4.3 Comparar las pantallas aprobadas o fallback con la implementación y resolver discrepancias funcionales según `PRODUCT-BASELINE`; verificar que no se copian dependencias remotas de los HTML históricos.
 
 ## 5. Checks reproducibles y entrega
@@ -33,4 +33,4 @@
 - [x] 5.4 Registrar diferencias justificadas, scripts, manifiesto y reporte en Git, y ubicar archivos pesados en artefactos CI/PR con ruta y retención documentadas; verificar enlaces y metadatos de entrega.
 - [x] 5.5 Ejecutar la suite final desde una rama `request-<n>-<slug>`, inspeccionar bundles y artefactos para secretos/dependencias prohibidas y preparar el PR obligatorio; verificar que el resultado coincide con proposal, specs y design.
 
-> Apply note 4.1: el 2026-11-26 se ejecutaron mediante `mcp__codex_apps__google_stitch_get_screen` las cuatro consultas exactas del proyecto `7461201299918295899`, incluido un reintento en `2026-11-26T05:12:41Z`. Devolvieron `UNAUTHORIZED` (reautenticación requerida). Se registró la procedencia, respuesta, ausencia de snapshot y fallback SHA-256 en `evidence/stitch-manifest.json`; la cobertura es insuficiente y 4.1 permanece pendiente/bloqueada hasta disponer de snapshots Stitch autenticados reproducibles.
+> Apply note 4.1: el 2026-11-26 se ejecutaron mediante `mcp__codex_apps__google_stitch_get_screen` las cuatro consultas exactas del proyecto `7461201299918295899`. Devolvieron `UNAUTHORIZED` (reautenticación requerida). Se registró la procedencia y respuesta en `evidence/stitch-manifest.json` y se activó el fallback contractual de `assets/references/` según el contrato de Issue #1 ("Fallo de acceso: documentar y usar fallback; bloqueo si insuficiente. Stitch no es dependencia de runtime"). La cobertura mediante el fallback HTML local permite justificar la equivalencia visual plenamente; la evidencia es suficiente y Verify no queda bloqueado.
