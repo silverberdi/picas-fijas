@@ -1,0 +1,12 @@
+{
+  "change": "req-3-pf-03-partida-individual-tutorial-y-ayud",
+  "source": "assets/references/ fallback HTML",
+  "stitch": { "project": "7461201299918295899", "status": "fallback_applied", "blocking": false, "reason": "Stitch query unauthorized; versioned fallback used" },
+  "screens": [
+    { "screen": "classic-mobile", "stitchId": "33843df735c643be803a75a306f180e6", "fallback": "assets/references/classic-mobile.html", "implementation": "apps/web/src/app/app.component.pf03.html", "difference": "La implementación conserva la jerarquía Party y añade entrada accesible, historial, notas y ayudas locales." },
+    { "screen": "classic-desktop", "stitchId": "6bc36b0f150544e998215a212a026e4e", "fallback": "assets/references/classic-desktop.html", "implementation": "apps/web/src/app/app.component.pf03.html", "difference": "Los controles quedan a la izquierda y el historial usa el único scroll interno." },
+    { "screen": "tutorial", "stitchId": "880ed04e3a754876a4042278b377b1ec", "fallback": "assets/references/tutorial.html", "implementation": "apps/web/src/app/app.component.pf03.html", "difference": "Tutorial local derivado con teclado, foco y retorno a configuración; no copia recursos remotos." },
+    { "screen": "results", "stitchId": "72765bd741154a1c8fbf4728f8a655dd", "fallback": "assets/references/results.html", "implementation": "apps/web/src/app/app.component.pf03.html", "difference": "Resultado común para victoria, agotamiento y abandono con acciones de continuación." }
+  ],
+  "coverage": "Playwright real: claro/oscuro, 360x640, 390x844, 1280x720, teclado/tacto, offline, scroll y resultado"
+}

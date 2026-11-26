@@ -113,3 +113,22 @@ export function createMonotonicClock(read) { let last = -Infinity; return { now:
         throw new Error('CLOCK_REWIND'); last = value; return value; } }; }
 export function serialize(value) { return JSON.stringify(value); }
 export function deserialize(value) { return JSON.parse(value); }
+/**
+ * Deliberately accepts only visible configuration and scored history. A secret
+ * cannot be passed to this policy accidentally because it is not part of the
+ * request type or implementation.
+ */
+export function getIndividualGuidance(request) {
+    if (request.helpsUsed >= 3)
+        return { available: false, message: 'Has usado las 3 ayudas disponibles en esta partida.' };
+    if (request.history.length === 0)
+        return { available: true, message: 'Prueba una combinación válida y usa sus fijas y picas para acotar tus opciones.' };
+    const last = request.history[request.history.length - 1];
+    if (last.fixed === request.config.length)
+        return { available: true, message: 'Tu última tentativa coincide por completo. Confírmala para terminar.' };
+    if (last.fixed > 0)
+        return { available: true, message: `Conserva las ${last.fixed} posiciones fijas y cambia las demás con calma.` };
+    if (last.picas > 0)
+        return { available: true, message: `Tienes ${last.picas} picas: esos dígitos están, pero necesitan otra posición.` };
+    return { available: true, message: 'Ningún dígito de la última tentativa coincidió; prueba con dígitos nuevos.' };
+}

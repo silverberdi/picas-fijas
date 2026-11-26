@@ -4,6 +4,17 @@
   "integration": "mcp__codex_apps__google_stitch_get_screen",
   "status": "fallback_applied",
   "blocking": false,
+  "pf03": {
+    "change": "req-3-pf-03-partida-individual-tutorial-y-ayud",
+    "status": "fallback_applied",
+    "blocking": false,
+    "screens": [
+      { "id": "33843df735c643be803a75a306f180e6", "fallback": "assets/references/classic-mobile.html", "fallbackSha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d" },
+      { "id": "6bc36b0f150544e998215a212a026e4e", "fallback": "assets/references/classic-desktop.html", "fallbackSha256": "e912b18b7a745d9ce5ef18255619f86f4529889d851408af1e351261ed8d25db" },
+      { "id": "880ed04e3a754876a4042278b377b1ec", "fallback": "assets/references/tutorial.html", "fallbackSha256": "6ddddf10cc7630c88f884b56b6863539375111a34aa8f0abedd63cd5802ae0c4" },
+      { "id": "72765bd741154a1c8fbf4728f8a655dd", "fallback": "assets/references/results.html", "fallbackSha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad" }
+    ]
+  },
   "error": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.",
   "attempts": [
     {

@@ -150,3 +150,41 @@ export interface MonotonicClock {
 export declare function createMonotonicClock(read: () => number): MonotonicClock;
 export declare function serialize<T>(value: T): string;
 export declare function deserialize<T>(value: string): T;
+/** Public, serializable state used by the individual-game presentation layer. */
+export interface IndividualPublicAttempt {
+    guess: string;
+    at: number;
+    fixed: number;
+    picas: number;
+}
+export interface IndividualNotes {
+    digits: string;
+    positions: string;
+}
+export interface IndividualSessionState {
+    screen: 'configuration' | 'tutorial' | 'game' | 'result';
+    config: GameConfig;
+    input: string;
+    notes: IndividualNotes;
+    helpsUsed: number;
+    history: IndividualPublicAttempt[];
+    result?: IndividualResult & {
+        code: string;
+        duration: number;
+    };
+}
+export interface HelpRequest {
+    config: Pick<GameConfig, 'length' | 'repeats' | 'maxAttempts'>;
+    history: readonly Pick<IndividualPublicAttempt, 'guess' | 'fixed' | 'picas'>[];
+    helpsUsed: number;
+}
+export interface HelpResponse {
+    available: boolean;
+    message: string;
+}
+/**
+ * Deliberately accepts only visible configuration and scored history. A secret
+ * cannot be passed to this policy accidentally because it is not part of the
+ * request type or implementation.
+ */
+export declare function getIndividualGuidance(request: HelpRequest): HelpResponse;
