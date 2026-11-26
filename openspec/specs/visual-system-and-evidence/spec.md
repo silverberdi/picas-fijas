@@ -20,7 +20,7 @@ La UI SHALL ofrecer tema claro y oscuro, conservar la preferencia tras recargar,
 
 ### Requirement: Procedencia visual y fallback
 
-Durante design y verify se SHALL consultar por ID las pantallas aprobadas del proyecto Stitch `7461201299918295899`: `duel-bot-mobile.html` (`8fdefea15f054e4fab10978d9e263d5f`), `race-bot-mobile.html` (`578efe96cf894d879cfb976c3c868417`), `duel-desktop.html` (`3838177211b144d3b6840ebf9cf7bfa7`), `race-desktop.html` (`464d2bb886424af0b419ce58290f3106`) y `results.html` (`72765bd741154a1c8fbf4728f8a655dd`); se SHALL registrar procedencia, estado de consulta y snapshot reproducible. Si Stitch no está disponible, se SHALL registrar `status: fallback_applied` y `blocking: false`, usar los HTML locales versionados como contingencia completa y no introducir Stitch como dependencia de runtime. PRODUCT-BASELINE SHALL prevalecer; los estados sin referencia explícita SHALL derivarse sin cambiar la identidad.
+Durante design y verify se SHALL consultar por ID las pantallas aprobadas del proyecto Stitch `7461201299918295899`: `duel-online-mobile.html` (`68e473f7f73e4f86adca782b86da0cba`), `race-online-mobile.html` (`9416634b2446455dbec79b148f434d39`), `duel-desktop.html` (`3838177211b144d3b6840ebf9cf7bfa7`), `race-desktop.html` (`464d2bb886424af0b419ce58290f3106`), `create-room.html` (`ca0a63e2b932407a942bfd26815ebd4c`), `join-room.html` (`2fb9e0158b5b4f3a842714601a3ba377`), `waiting.html` (`57272380a6a24ee8a1799a300728aa4e`) y `results.html` (`72765bd741154a1c8fbf4728f8a655dd`); se SHALL registrar procedencia, estado de consulta y snapshot reproducible. Si Stitch no está disponible, se SHALL registrar `status: fallback_applied` y `blocking: false`, usar los HTML locales versionados como contingencia completa y no introducir Stitch como dependencia de runtime. PRODUCT-BASELINE SHALL prevalecer; los estados sin referencia explícita SHALL derivarse sin cambiar la identidad.
 
 #### Scenario: Referencia Stitch disponible
 
@@ -36,6 +36,10 @@ Durante design y verify se SHALL consultar por ID las pantallas aprobadas del pr
 - **WHEN** se consultan las pantallas aprobadas de duelo y carrera contra la máquina
 - **THEN** se registran sus IDs, procedencia y snapshots reproducibles para comparar la implementación sin editar ni regenerar las referencias
 
+#### Scenario: Referencias online registradas
+- **WHEN** se diseña o verifica una pantalla de sala privada online
+- **THEN** se registra el ID exacto correspondiente, su snapshot y su estado de procedencia, o el fallback local con `blocking: false`
+
 ### Requirement: Evidencia UI reproducible
 
 Verify SHALL ejecutar checks reales de navegador con el executor configurado, comparando referencia e implementación en estados, tema y viewport aplicables; SHALL conservar capturas, videos sólo cuando sean reproducibles, diferencias justificadas, reporte, scripts y manifiesto, con artefactos pesados ubicados y retenidos en CI/PR.
@@ -48,3 +52,7 @@ Verify SHALL ejecutar checks reales de navegador con el executor configurado, co
 #### Scenario: Evidencia de estados contra máquina
 - **WHEN** se verifica el duelo, la carrera activa y el resultado final contra la máquina
 - **THEN** cada estado tiene captura comparativa anotada, manifiesto, reporte y diferencias justificadas trazables en Git y en el PR
+
+#### Scenario: Evidencia de estados online
+- **WHEN** se verifica creación, unión, espera, duelo, carrera y resultado online en un navegador real
+- **THEN** cada pantalla aplicable tiene captura comparativa PNG anotada, estado, tema, viewport, script, manifiesto y resultado trazable en Git y PR
