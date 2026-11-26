@@ -1,0 +1,16 @@
+{
+  "project": "7461201299918295899",
+  "status": "fallback_applied",
+  "blocking": false,
+  "source": "Stitch integration unavailable in Apply; local versioned references used",
+  "screens": [
+    {"name":"create-room.html","stitchId":"ca0a63e2b932407a942bfd26815ebd4c","fallback":"assets/references/create-room.html"},
+    {"name":"join-room.html","stitchId":"2fb9e0158b5b4f3a842714601a3ba377","fallback":"assets/references/join-room.html"},
+    {"name":"waiting.html","stitchId":"57272380a6a24ee8a1799a300728aa4e","fallback":"assets/references/waiting.html"},
+    {"name":"duel-online-mobile.html","stitchId":"68e473f7f73e4f86adca782b86da0cba","fallback":"assets/references/duel-online-mobile.html"},
+    {"name":"race-online-mobile.html","stitchId":"9416634b2446455dbec79b148f434d39","fallback":"assets/references/race-online-mobile.html"},
+    {"name":"duel-desktop.html","stitchId":"3838177211b144d3b6840ebf9cf7bfa7","fallback":"assets/references/duel-desktop.html"},
+    {"name":"race-desktop.html","stitchId":"464d2bb886424af0b419ce58290f3106","fallback":"assets/references/race-desktop.html"},
+    {"name":"results.html","stitchId":"72765bd741154a1c8fbf4728f8a655dd","fallback":"assets/references/results.html"}
+  ]
+}
