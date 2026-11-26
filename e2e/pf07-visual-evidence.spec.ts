@@ -4,7 +4,25 @@ import path from 'node:path';
 const evidenceRoot = path.resolve('evidence/visual/pf07');
 const viewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
 
+async function freezeOnlineConnection(page: Page) {
+  await page.addInitScript(() => {
+    class EvidenceWebSocket {
+      static readonly OPEN = 1;
+      readonly readyState = 0;
+      onclose: ((event: Event) => void) | null = null;
+      onerror: ((event: Event) => void) | null = null;
+      onmessage: ((event: MessageEvent) => void) | null = null;
+      onopen: (() => void) | null = null;
+      constructor() {}
+      close() {}
+      send() {}
+    }
+    Object.defineProperty(window, 'WebSocket', { configurable: true, value: EvidenceWebSocket });
+  });
+}
+
 async function enterPublicCatalog(page: Page) {
+  await freezeOnlineConnection(page);
   await page.goto('/');
   await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
   await page.getByRole('button', { name: 'Comenzar partida' }).click();
