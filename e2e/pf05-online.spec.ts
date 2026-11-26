@@ -19,3 +19,19 @@ test('carrera humana conserva el estado de sala y el tema oscuro', async ({ page
   await expect(page.getByText(/SALA PRIVADA · CARRERA/)).toBeVisible();
   await expect(page.locator('.app-shell')).toHaveClass(/dark-theme/);
 });
+
+test('catálogo online navega las ocho pantallas y conserva estados accesibles en dos contextos', async ({ browser }) => {
+  const first = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const second = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const firstPage = await first.newPage(); const secondPage = await second.newPage();
+  for (const page of [firstPage, secondPage]) {
+    await page.goto('/');
+    await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
+    await page.getByRole('button', { name: 'Comenzar partida' }).click();
+    await expect(page.locator('[data-screen-catalog] button')).toHaveCount(8);
+    await page.locator('[data-screen="join-room.html"]').click();
+    await expect(page.getByText(/CATÁLOGO ONLINE · join-room.html/)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Activar tema oscuro' })).toBeVisible();
+  }
+  await first.close(); await second.close();
+});

@@ -35,6 +35,27 @@ export class RoomActor {
     return { room: this.summary(), participant: { id: member.id, nickname: member.nickname, connected: member.connected, ready: member.ready }, cycle: this.cycle ? { kind: this.mode, stateVersion: this.version, phase: this.phase, currentPlayer: this.cycle.kind === 'duel' ? this.cycle.currentPlayer : undefined, deadline: this.cycle.kind === 'race' ? this.cycle.deadline : undefined, ownAttempts, result: result ? { outcome: result.outcome, reason: result.reason, winner: result.winner, players } : undefined } : undefined };
   }
   private success(command: OnlineCommand, member: Member): OnlineResponse { return { protocolVersion: PROTOCOL_VERSION, commandId: command.commandId, accepted: true, stateVersion: this.version, snapshot: this.snapshot(member) }; }
+  private finish(reason: 'abandoned' | 'technical-interruption' | 'expired', now: number, winner?: string) {
+    if (!this.cycle || this.cycle.finished) return;
+    if (this.cycle.kind === 'race') {
+      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now } };
+    } else {
+      const players: PlayerResult[] = Object.keys(this.cycle.secrets).map((player) => ({ player, outcome: winner ? (player === winner ? 'win' : 'loss') : 'draw', reason, attempts: this.cycle!.attempts[player] ?? 0 }));
+      this.cycle = { ...this.cycle, finished: true, lastTimestamp: Math.max(this.cycle.lastTimestamp, now), result: { outcome: winner ? 'win' : 'draw', reason, winner, at: now, players } };
+    }
+    this.phase = 'finished';
+    this.version += 1;
+  }
+  disconnect(credentialValue: string | undefined, now = Date.now()) {
+    const member = this.find(credentialValue);
+    if (!member) return false;
+    member.connected = false;
+    if (this.cycle && !this.cycle.finished && this.members.every((entry) => !entry.connected)) this.finish('technical-interruption', now);
+    else this.version += 1;
+    return true;
+  }
+  hasCredential(credentialValue: string | undefined) { return Boolean(this.find(credentialValue)); }
+  interrupt(now = Date.now()) { this.finish('technical-interruption', now); }
   handle(command: OnlineCommand, credentialValue?: string, now = Date.now()): OnlineResponse {
     if (this.expired(now)) return this.fail(command, { code: 'EXPIRED', message: 'La sala expiró.', recoverable: false });
     const key = `${this.find(credentialValue)?.id ?? 'new'}:${command.idempotencyKey ?? command.commandId}`;
@@ -57,8 +78,15 @@ export class RoomActor {
       const transition = this.cycle.kind === 'duel' ? submitDuelAttempt(this.cycle, member.id, command.payload.guess, now) : submitRaceAttempt(this.cycle, member.id, command.payload.guess, now);
       if (transition.error) return this.fail(command, { code: transition.error.code === 'NOT_YOUR_TURN' ? 'OUT_OF_TURN' : 'INVALID_GUESS', message: transition.error.message, recoverable: true });
       this.cycle = transition.state; this.version += 1; if (this.cycle.finished) this.phase = 'finished';
-    } else if (command.type === 'leave') { member.connected = false; member.ready = false; this.version += 1; if (this.members.every((entry) => !entry.connected)) this.phase = 'waiting'; }
-    else if (command.type === 'rematch') { member.ready = true; if (this.members.every((entry) => entry.ready)) { this.startCycle(now); this.phase = 'playing'; this.version += 1; } }
+    } else if (command.type === 'leave') {
+      member.connected = false; member.ready = false;
+      if (this.cycle && !this.cycle.finished) this.finish('abandoned', now, this.members.find((entry) => entry.id !== member!.id && entry.connected)?.id);
+      else { this.version += 1; if (this.members.every((entry) => !entry.connected)) this.phase = 'waiting'; }
+    } else if (command.type === 'rematch') {
+      if (!this.cycle?.finished) return this.fail(command, { code: 'NOT_READY', message: 'La revancha sólo está disponible al finalizar.', recoverable: true });
+      member.ready = true;
+      if (this.members.length === 2 && this.members.every((entry) => entry.ready && entry.connected)) { this.startCycle(now); this.phase = 'playing'; this.version += 1; }
+    }
     const response = this.success(command, member); this.results.set(key, response); return response;
   }
   private startCycle(now: number) {
@@ -75,6 +103,8 @@ export class RoomRegistry {
   constructor(private readonly config: OnlineConfig) {}
   create(mode: OnlineMode, now = Date.now()) { const room = new RoomActor(mode, this.config, now); this.rooms.set(room.code, room); return room; }
   get(roomCode: string, now = Date.now()) { const room = this.rooms.get(roomCode); if (!room || room.expired(now)) { if (room) this.rooms.delete(roomCode); return undefined; } return room; }
+  findByCredential(credentialValue: string | undefined, now = Date.now()) { for (const room of this.rooms.values()) if (!room.expired(now) && room.hasCredential(credentialValue)) return room; return undefined; }
   deleteExpired(now = Date.now()) { for (const [roomCode, room] of this.rooms) if (room.expired(now)) this.rooms.delete(roomCode); }
+  interrupt(now = Date.now()) { for (const room of this.rooms.values()) room.interrupt(now); }
   size() { return this.rooms.size; }
 }

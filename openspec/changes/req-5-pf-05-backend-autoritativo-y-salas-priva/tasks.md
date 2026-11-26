@@ -17,22 +17,22 @@
 
 - [x] 3.1 Integrar el motor de `packages/game-core` para duelo humano con secreto manual/aleatorio, turnos, tiempo, intentos y oportunidad equivalente; verificar resultados y no mutación ante intento inválido o fuera de turno.
 - [x] 3.2 Integrar carrera humana con secreto común, primer acierto válido por reloj autoritativo y filtrado activo; verificar que cada cliente sólo recibe su intento/feedback y que el resumen rival aparece al finalizar.
-- [ ] 3.3 Implementar `ready`, abandono, interrupción técnica, doble desconexión y revancha en la misma sala; fijar valores delegados de duración/política dentro de la línea base y verificar cada razón final.
+- [x] 3.3 Implementar `ready`, abandono, interrupción técnica, doble desconexión y revancha en la misma sala; fijar valores delegados de duración/política dentro de la línea base y verificar cada razón final.
 - [x] 3.4 Implementar reconexión por credencial opaca dentro del TTL sin duplicar cupo ni penalizar; verificar recuperación de versión, rechazo de credencial vencida y limpieza al expirar.
 
 ## 4. Integración web y pantallas online
 
-- [ ] 4.1 Integrar cliente WebSocket versionado en el shell Angular con estados de conexión, carga, rechazo, reconexión y finalización; verificar navegación por teclado, etiquetas accesibles y temas claro/oscuro.
-- [ ] 4.2 Implementar `create-room.html`, `join-room.html` y `waiting.html` con código/enlace, credencial privada, apodo, cupo y recuperación de errores; verificar flujo de dos navegadores y no exposición de la identidad ajena.
-- [ ] 4.3 Implementar `duel-online-mobile.html`, `race-online-mobile.html`, `duel-desktop.html`, `race-desktop.html` y `results.html`; verificar controles/reloj visibles, historial interno y ausencia de scroll general en los viewports aplicables.
+- [x] 4.1 Integrar cliente WebSocket versionado en el shell Angular con estados de conexión, carga, rechazo, reconexión y finalización; verificar navegación por teclado, etiquetas accesibles y temas claro/oscuro.
+- [x] 4.2 Implementar `create-room.html`, `join-room.html` y `waiting.html` con código/enlace, credencial privada, apodo, cupo y recuperación de errores; verificar flujo de dos navegadores y no exposición de la identidad ajena.
+- [x] 4.3 Implementar `duel-online-mobile.html`, `race-online-mobile.html`, `duel-desktop.html`, `race-desktop.html` y `results.html`; verificar controles/reloj visibles, historial interno y ausencia de scroll general en los viewports aplicables.
 - [x] 4.4 Registrar manifiesto y snapshots de las ocho referencias Stitch por ID exacto; si la integración sigue unavailable, registrar el fallo y `status: fallback_applied`, `blocking: false`, usando los HTML locales sin copiarlos como runtime.
 
 ## 5. Pruebas automatizadas y evidencia
 
 - [x] 5.1 Añadir pruebas unitarias del registro, actor, credenciales, esquemas, errores, idempotencia, reloj y proyecciones; verificar con `npm run test --workspace=@picas-fijas/api` y los tests del motor compartido.
-- [ ] 5.2 Añadir integración real con proceso Node local en puerto efímero y dos conexiones WebSocket; verificar creación/unión, sala llena/inválida, concurrencia, duplicados, suplantación, reconexión, carrera y revancha.
-- [ ] 5.3 Configurar fixtures Playwright que arranquen y apaguen el proceso Node, abran dos contextos y ejecuten los escenarios Gherkin de UI; verificar con `npm run e2e` sin Docker ni demonio externo.
-- [ ] 5.4 Generar capturas PNG comparativas anotadas para cada pantalla, estado, tema y viewport (360×640, 390×844, 1280×720), más manifiesto, scripts, reporte y diferencias justificadas; verificar que la evidencia queda trazable en Git/PR y que no se declara video inexistente.
+- [x] 5.2 Añadir integración real con proceso Node local en puerto efímero y dos conexiones WebSocket; verificar creación/unión, sala llena/inválida, concurrencia, duplicados, suplantación, reconexión, carrera y revancha.
+- [x] 5.3 Configurar fixtures Playwright que arranquen y apaguen el proceso Node, abran dos contextos y ejecuten los escenarios Gherkin de UI; verificar con `npm run e2e` sin Docker ni demonio externo.
+- [x] 5.4 Generar capturas PNG comparativas anotadas para cada pantalla, estado, tema y viewport (360×640, 390×844, 1280×720), más manifiesto, scripts, reporte y diferencias justificadas; verificar que la evidencia queda trazable en Git/PR y que no se declara video inexistente.
 - [x] 5.5 Ejecutar la comprobación declarada completa (`npm run check`) y revisar que no queden secretos, dependencias de runtime no aprobadas, scroll general en partidas ni rutas online duplicadas; conservar resultados y artefactos para Verify.
 
 ## 6. Entrega OpenSpec
