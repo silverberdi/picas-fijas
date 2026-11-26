@@ -36,6 +36,13 @@ test('el duelo usa el secreto manual del create/join y rechaza un secreto invál
   assert.equal(started.snapshot.cycle.currentPlayer, create.snapshot.participant.id);
 });
 test('el registro expira y deduplica comando por idempotencyKey', () => { const registry = new RoomRegistry({ ...DEFAULT_ONLINE_CONFIG, roomTtlMs: 10 }); const room = registry.create('duel', 0); assert.equal(registry.get(room.code, 5), room); assert.equal(registry.get(room.code, 11), undefined); const actor = new RoomActor('duel', { ...DEFAULT_ONLINE_CONFIG }, 0, 'CD345'); const first = actor.handle({ protocolVersion: 'v1', commandId: 'a', idempotencyKey: 'same', type: 'join', payload: { roomCode: 'CD345' } }, undefined, 1); const duplicate = actor.handle({ protocolVersion: 'v1', commandId: 'b', idempotencyKey: 'same', type: 'join', payload: { roomCode: 'CD345' } }, undefined, 2); assert.equal(duplicate.stateVersion, first.stateVersion); assert.equal(actor.stateVersion, 1); });
+test('uniones no autenticadas con la misma idempotencyKey conservan participantes por conexión', () => {
+  const actor = new RoomActor('race', { ...DEFAULT_ONLINE_CONFIG }, 0, 'NP345');
+  const first = actor.handle({ protocolVersion: 'v1', commandId: 'join-1', idempotencyKey: 'same', type: 'join', payload: { roomCode: 'NP345' } }, undefined, 1, 'connection-one');
+  const second = actor.handle({ protocolVersion: 'v1', commandId: 'join-2', idempotencyKey: 'same', type: 'join', payload: { roomCode: 'NP345' } }, undefined, 2, 'connection-two');
+  assert.notEqual(first.credential, second.credential);
+  assert.equal(second.snapshot.room.participants.length, 2);
+});
 test('dos comandos concurrentes del mismo participante convergen por idempotencia', () => { const actor = new RoomActor('duel', { ...DEFAULT_ONLINE_CONFIG }, 0, 'EF345'); const created = actor.handle({ protocolVersion: 'v1', commandId: 'a', type: 'join', payload: { roomCode: 'EF345' } }, undefined, 1); const command = { protocolVersion: 'v1', commandId: 'ready', idempotencyKey: 'ready-once', type: 'ready', payload: {} }; const first = actor.handle(command, created.credential, 2); const second = actor.handle({ ...command, commandId: 'ready-retry' }, created.credential, 3); assert.equal(first.stateVersion, second.stateVersion); assert.equal(actor.stateVersion, 2); });
 test('reconexión legítima conserva identidad y versión sin duplicar cupo', () => { const actor = new RoomActor('race', { ...DEFAULT_ONLINE_CONFIG }, 0, 'GH345'); const created = actor.handle({ protocolVersion: 'v1', commandId: 'a', type: 'join', payload: { roomCode: 'GH345' } }, undefined, 1); actor.handle({ protocolVersion: 'v1', commandId: 'leave', type: 'leave', payload: {} }, created.credential, 2); const reconnected = actor.handle({ protocolVersion: 'v1', commandId: 'reconnect', type: 'reconnect', payload: {} }, created.credential, 3); assert.equal(reconnected.accepted, true); assert.equal(reconnected.snapshot.participant.id, created.snapshot.participant.id); assert.equal(reconnected.snapshot.room.participants.length, 1); const denied = actor.handle({ protocolVersion: 'v1', commandId: 'bad-reconnect', type: 'reconnect', payload: {} }, 'expired', 4); assert.equal(denied.error.code, 'CREDENTIAL_DENIED'); });
 test('el ciclo autoritativo conserva razones de abandono, interrupción técnica y revancha', () => {
@@ -53,6 +60,18 @@ test('el ciclo autoritativo conserva razones de abandono, interrupción técnica
   actor.disconnect(one.credential, 9); actor.disconnect(two.credential, 10);
   const recovered = actor.handle({ protocolVersion: 'v1', commandId: 'reconnect-two', type: 'reconnect', payload: {} }, two.credential, 11);
   assert.equal(recovered.snapshot.cycle.result.reason, 'technical-interruption');
+});
+test('cada revancha genera secretos nuevos cuando usa generación autoritativa', () => {
+  const actor = new RoomActor('race', { ...DEFAULT_ONLINE_CONFIG }, 1000, 'PQ345');
+  const one = actor.handle({ protocolVersion: 'v1', commandId: 'one', type: 'join', payload: { roomCode: 'PQ345' } }, undefined, 1001);
+  const two = actor.handle({ protocolVersion: 'v1', commandId: 'two', type: 'join', payload: { roomCode: 'PQ345' } }, undefined, 1002);
+  actor.handle({ protocolVersion: 'v1', commandId: 'ready-one', type: 'ready', payload: {} }, one.credential, 1003);
+  actor.handle({ protocolVersion: 'v1', commandId: 'ready-two', type: 'ready', payload: {} }, two.credential, 1004);
+  const firstSecret = actor.cycle.secret;
+  actor.interrupt(1005);
+  actor.handle({ protocolVersion: 'v1', commandId: 'rematch-one', type: 'rematch', payload: {} }, one.credential, 1006);
+  actor.handle({ protocolVersion: 'v1', commandId: 'rematch-two', type: 'rematch', payload: {} }, two.credential, 1007);
+  assert.notEqual(actor.cycle.secret, firstSecret);
 });
 test('el framing nativo acepta handshake y máscara contra un servidor Node real', async () => { const server = http.createServer(); attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG); await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve)); const address = server.address(); const port = address.port; const key = crypto.randomBytes(16).toString('base64'); const text = JSON.stringify({ protocolVersion: 'v1', commandId: 'wire', type: 'create', payload: { mode: 'race' } }); const raw = Buffer.from(text); const mask = Buffer.from([5, 6, 7, 8]); const encoded = Buffer.from(raw.map((value, index) => value ^ mask[index % 4])); const frame = Buffer.concat([Buffer.from([0x81, 0x80 | raw.length]), mask, encoded]); const response = await new Promise((resolve, reject) => { const socket = net.connect(port, '127.0.0.1'); let data = Buffer.alloc(0); const timer = setTimeout(() => reject(new Error('timeout')), 2000); socket.on('connect', () => { socket.write(`GET / HTTP/1.1\r\nHost: localhost\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: ${key}\r\nSec-WebSocket-Version: 13\r\n\r\n`); setTimeout(() => socket.write(frame), 10); }); socket.on('data', (chunk) => { data = Buffer.concat([data, chunk]); if (data.includes(Buffer.from('101 Switching Protocols')) && data.length > data.indexOf(Buffer.from('\r\n\r\n')) + 6) { clearTimeout(timer); resolve(data); socket.destroy(); } }); socket.on('error', reject); }); assert.match(response.toString(), /101 Switching Protocols/); server.close(); });
 

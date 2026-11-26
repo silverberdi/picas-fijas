@@ -19,6 +19,7 @@ export class RoomActor {
   private version = 0;
   private members: Member[] = [];
   private cycle: Cycle | undefined;
+  private cycleNumber = 0;
   private gameConfig: GameConfig;
   private manualRaceSecret: string | undefined;
   private phase: RoomSummary['phase'] = 'waiting';
@@ -62,9 +63,9 @@ export class RoomActor {
     return member ? this.snapshot(member) : undefined;
   }
   interrupt(now = Date.now()) { this.finish('technical-interruption', now); }
-  handle(command: OnlineCommand, credentialValue?: string, now = Date.now()): OnlineResponse {
+  handle(command: OnlineCommand, credentialValue?: string, now = Date.now(), connectionId = 'direct'): OnlineResponse {
     if (this.expired(now)) return this.fail(command, { code: 'EXPIRED', message: 'La sala expiró.', recoverable: false });
-    const key = `${this.find(credentialValue)?.id ?? 'new'}:${command.idempotencyKey ?? command.commandId}`;
+    const key = `${this.find(credentialValue)?.id ?? connectionId}:${command.idempotencyKey ?? command.commandId}`;
     const previous = this.results.get(key); if (previous) return previous;
     let member = this.find(credentialValue);
     if (command.type === 'join') {
@@ -103,7 +104,7 @@ export class RoomActor {
     const response = this.success(command, member); this.results.set(key, response); return response;
   }
   private startCycle(now: number) {
-    const config = this.gameConfig; const seed = this.createdAt >>> 0;
+    const config = this.gameConfig; this.cycleNumber += 1; const seed = (this.createdAt ^ now ^ Math.imul(this.cycleNumber, 0x9e3779b9)) >>> 0;
     if (this.mode === 'duel') { const secrets = Object.fromEntries(this.members.map((member, index) => [member.id, member.secret ?? generateSecret(config, seededIndexSource(seed + index + 1))])); this.cycle = createDuelState(config, secrets, now); }
     else this.cycle = createRaceState(config, this.manualRaceSecret ?? generateSecret(config, seededIndexSource(seed + 9)), now);
     this.members.forEach((member) => { member.ready = false; });
