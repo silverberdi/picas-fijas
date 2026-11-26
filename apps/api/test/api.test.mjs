@@ -103,6 +103,20 @@ test('cada revancha genera secretos nuevos cuando usa generación autoritativa',
 });
 test('el framing nativo acepta handshake y máscara contra un servidor Node real', async () => { const server = http.createServer(); attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG); await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve)); const address = server.address(); const port = address.port; const key = crypto.randomBytes(16).toString('base64'); const text = JSON.stringify({ protocolVersion: 'v1', commandId: 'wire', type: 'create', payload: { mode: 'race' } }); const raw = Buffer.from(text); const mask = Buffer.from([5, 6, 7, 8]); const encoded = Buffer.from(raw.map((value, index) => value ^ mask[index % 4])); const frame = Buffer.concat([Buffer.from([0x81, 0x80 | raw.length]), mask, encoded]); const response = await new Promise((resolve, reject) => { const socket = net.connect(port, '127.0.0.1'); let data = Buffer.alloc(0); const timer = setTimeout(() => reject(new Error('timeout')), 2000); socket.on('connect', () => { socket.write(`GET / HTTP/1.1\r\nHost: localhost\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: ${key}\r\nSec-WebSocket-Version: 13\r\n\r\n`); setTimeout(() => socket.write(frame), 10); }); socket.on('data', (chunk) => { data = Buffer.concat([data, chunk]); if (data.includes(Buffer.from('101 Switching Protocols')) && data.length > data.indexOf(Buffer.from('\r\n\r\n')) + 6) { clearTimeout(timer); resolve(data); socket.destroy(); } }); socket.on('error', reject); }); assert.match(response.toString(), /101 Switching Protocols/); server.close(); });
 
+test('PF-07 cerrar el WebSocket retira la reserva pública sin dejar cola fantasma', async () => {
+  const server = http.createServer(); const publicMatches = new PublicMatchRegistry();
+  attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const socket = new WebSocket(`ws://127.0.0.1:${server.address().port}`);
+  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  const response = new Promise((resolve) => socket.addEventListener('message', (event) => resolve(JSON.parse(event.data)), { once: true }));
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'reserve', idempotencyKey: 'reserve', type: 'reserve', payload: { mode: 'duel', rules: { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60 } } }));
+  const reserved = await response; assert.equal(reserved.accepted, true); assert.equal(publicMatches.metrics().queued, 1);
+  const closed = new Promise((resolve) => socket.addEventListener('close', resolve, { once: true })); socket.close(); await closed;
+  for (let attempt = 0; attempt < 20 && publicMatches.metrics().queued !== 0; attempt += 1) await new Promise((resolve) => setTimeout(resolve, 10));
+  assert.equal(publicMatches.metrics().queued, 0); await new Promise((resolve) => server.close(resolve));
+});
+
 test('proceso API real coordina dos WebSockets, privacidad, duplicados, reconexión y revancha', async () => {
   const { spawn } = await import('node:child_process');
   const probe = net.createServer(); await new Promise((resolve) => probe.listen(0, '127.0.0.1', resolve));
