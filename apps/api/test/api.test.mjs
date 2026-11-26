@@ -123,6 +123,22 @@ test('PF-07 cerrar el WebSocket retira la reserva pública sin dejar cola fantas
   assert.equal(publicMatches.metrics().queued, 0); await new Promise((resolve) => server.close(resolve));
 });
 
+test('PF-07 cancelar por API no expone identidad ni metadatos internos de la reserva', async () => {
+  const server = http.createServer(); const publicMatches = new PublicMatchRegistry();
+  attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const socket = new WebSocket(`ws://127.0.0.1:${server.address().port}`);
+  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
+  const next = () => new Promise((resolve) => socket.addEventListener('message', (event) => resolve(JSON.parse(event.data)), { once: true }));
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'reserve-private', idempotencyKey: 'reserve-private', type: 'reserve', payload: { mode: 'duel', rules: { length: 3, repeats: false, maxAttempts: null, timeSeconds: 60 } } }));
+  const reserved = await next(); const reservation = reserved.transition.reservation;
+  socket.send(JSON.stringify({ protocolVersion: 'v1', commandId: 'cancel-private', idempotencyKey: 'cancel-private', type: 'cancel', payload: { reservationId: reservation.id } }));
+  const cancelled = await next(); const payload = cancelled.transition.reservation;
+  assert.equal(cancelled.accepted, true); assert.deepEqual(Object.keys(payload).sort(), ['id', 'mode', 'rules', 'state']);
+  assert.doesNotMatch(JSON.stringify(cancelled), /participant|key|createdAt|credential|secret/);
+  socket.close(); await new Promise((resolve) => server.close(resolve));
+});
+
 test('PF-07 E2E real entrega oferta bilateral y entra a una única sala humana', async () => {
   const server = http.createServer(); const publicMatches = new PublicMatchRegistry(); attachWebSocket(server, new RoomRegistry(DEFAULT_ONLINE_CONFIG), DEFAULT_ONLINE_CONFIG, publicMatches);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
