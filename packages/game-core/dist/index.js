@@ -63,7 +63,7 @@ export function chooseIntermediateGuess(input) {
 /** Hard policy samples a bounded candidate set and chooses the most informative probe. */
 export function chooseHardGuess(input) {
     const source = seededIndexSource(input.seed ^ 0x85ebca6b);
-    const guesses = candidateValues(input.config, input.config.length === 6 ? 320 : 220, source);
+    const guesses = candidateValues(input.config, input.config.length === 6 ? 128 : 160, source);
     const candidates = guesses.filter((value) => compatible(value, input.history, input.config));
     const pool = candidates.length ? candidates : guesses;
     const buckets = (guess) => new Set(input.history.map((entry) => scoreGuess(guess, entry.guess).fixed + ':' + scoreGuess(guess, entry.guess).picas)).size;
