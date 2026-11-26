@@ -26,6 +26,11 @@ export function parseCommand(input: unknown): OnlineCommand | OnlineError {
   if (value.protocolVersion !== PROTOCOL_VERSION || typeof value.commandId !== 'string' || !commandTypes.has(value.type as CommandType) || !value.payload || typeof value.payload !== 'object') return { code: 'INVALID_MESSAGE', message: 'El comando no cumple el protocolo v1.', recoverable: true };
   const payload = value.payload as Record<string, unknown>;
   if (Object.keys(payload).some((key) => !['mode', 'config', 'secret', 'roomCode', 'credential', 'guess', 'rules', 'reservationId', 'offerId'].includes(key))) return { code: 'INVALID_MESSAGE', message: 'El payload contiene campos desconocidos.', recoverable: true };
+  if (payload.rules !== undefined) {
+    if (!payload.rules || typeof payload.rules !== 'object') return { code: 'INVALID_MESSAGE', message: 'Las reglas públicas no cumplen el esquema.', recoverable: true };
+    const rules = payload.rules as Record<string, unknown>;
+    if (Object.keys(rules).some((key) => !['length', 'repeats', 'maxAttempts', 'timeSeconds'].includes(key)) || Object.keys(rules).length !== 4) return { code: 'INVALID_MESSAGE', message: 'Las reglas públicas contienen campos desconocidos.', recoverable: true };
+  }
   return { protocolVersion: PROTOCOL_VERSION, commandId: value.commandId, idempotencyKey: typeof value.idempotencyKey === 'string' ? value.idempotencyKey : undefined, type: value.type as CommandType, payload: payload as CommandPayload };
 }
 
