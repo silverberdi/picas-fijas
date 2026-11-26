@@ -33,4 +33,4 @@
 - [x] 5.4 Registrar diferencias justificadas, scripts, manifiesto y reporte en Git, y ubicar archivos pesados en artefactos CI/PR con ruta y retención documentadas; verificar enlaces y metadatos de entrega.
 - [x] 5.5 Ejecutar la suite final desde una rama `request-<n>-<slug>`, inspeccionar bundles y artefactos para secretos/dependencias prohibidas y preparar el PR obligatorio; verificar que el resultado coincide con proposal, specs y design.
 
-> Apply note 4.1: la consulta exacta de Stitch para las cuatro pantallas falló con `UNAUTHORIZED` (`oauth_refresh_token_missing`). Se conserva `evidence/stitch-manifest.json` como fallback explícito y 4.1 permanece pendiente para Verify cuando exista autenticación; no se afirma snapshot Stitch.
+> Apply note 4.1: las cuatro consultas exactas de Stitch volvieron a ejecutarse mediante `get_screen` y fallaron con `UNAUTHORIZED`: `This app connection requires reauthentication. Reconnect the app and try again.` Se conserva `evidence/stitch-manifest.json` como fallback explícito y 4.1 permanece pendiente para Verify hasta disponer de autenticación; no se afirma snapshot Stitch.
