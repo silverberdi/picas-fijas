@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MODES, LEVELS, isValidCustomLevel, createConfig, generateSecret, seededIndexSource, validateSecret, scoreGuess, createIndividualState, submitIndividualAttempt, abandonIndividual, interruptIndividual, createDuelState, submitDuelAttempt, createRaceState, submitRaceAttempt, expireRace, serialize, deserialize, createMonotonicClock, getIndividualGuidance } from '../dist/index.js';
+import { MODES, LEVELS, isValidCustomLevel, createConfig, generateSecret, seededIndexSource, validateSecret, scoreGuess, createIndividualState, submitIndividualAttempt, abandonIndividual, interruptIndividual, createDuelState, submitDuelAttempt, createRaceState, submitRaceAttempt, expireRace, serialize, deserialize, createMonotonicClock, getIndividualGuidance, createMachineConfig, chooseMachineGuess, createParticipantSnapshot, serializeParticipantSnapshot, calculateMachineGuess, simulateMachine } from '../dist/index.js';
 test('expone exactamente cinco modalidades', () => assert.deepEqual(MODES.map((m) => m.id), ['classic','bot-duel','bot-race','human-duel','human-race']));
 test('niveles de línea base tienen reglas exactas', () => { assert.equal(LEVELS.length, 6); assert.deepEqual(LEVELS.map(({length,repeats,maxAttempts}) => ({length,repeats,maxAttempts})), [{length:3,repeats:false,maxAttempts:null},{length:4,repeats:false,maxAttempts:null},{length:4,repeats:true,maxAttempts:null},{length:5,repeats:false,maxAttempts:20},{length:5,repeats:true,maxAttempts:15},{length:6,repeats:true,maxAttempts:12}]); });
 test('valida configuración personalizada', () => { assert.equal(isValidCustomLevel({length:3,repeats:false,maxAttempts:null}), true); assert.equal(isValidCustomLevel({length:6,repeats:true,maxAttempts:12}), true); assert.equal(isValidCustomLevel({length:2,repeats:false,maxAttempts:null}), false); assert.equal(isValidCustomLevel({length:4,repeats:true,maxAttempts:0}), false); });
@@ -22,3 +22,36 @@ test('un timestamp retrocedido y un turno inválido también conservan el estado
 test('deadlines 0/60/180, expiración y razones manuales son deterministas', () => { const zero = createConfig({ length: 3, repeats: false, maxAttempts: null, raceDurationSeconds: 0, turnDurationSeconds: 0 }); const race = createRaceState(zero, '012'); assert.equal(expireRace(race, 0).finished, true); const duel = createDuelState({ ...zero, turnDurationSeconds: 60, raceDurationSeconds: 180 }, { a: '012', b: '345' }); assert.equal(submitDuelAttempt(duel, 'a', '013', 61).state.result.reason, 'expired'); const state = createIndividualState(zero, '012'); assert.equal(abandonIndividual(state, 5).state.result.reason, 'abandoned'); assert.equal(interruptIndividual(state, 5).state.result.reason, 'technical-interruption'); });
 test('round-trip JSON y reloj monotónico son deterministas', () => { const clockValues = [10, 10, 9]; const clock = createMonotonicClock(() => clockValues.shift()); assert.equal(clock.now(), 10); assert.equal(clock.now(), 10); assert.throws(() => clock.now(), /CLOCK_REWIND/); const state = createIndividualState({ length: 3, repeats: false, maxAttempts: null }, '012'); assert.deepEqual(deserialize(serialize(state)), state); });
 test('ayuda individual sólo usa estado público y bloquea el cuarto uso', () => { const config = createConfig({ length: 4, repeats: false, maxAttempts: null }); const first = getIndividualGuidance({ config, history: [], helpsUsed: 0 }); assert.equal(first.available, true); assert.doesNotMatch(first.message, /0123|secreto|código exacto/i); const withHistory = getIndividualGuidance({ config, history: [{ guess: '1234', fixed: 1, picas: 2 }], helpsUsed: 2 }); assert.equal(withHistory.available, true); const exhausted = getIndividualGuidance({ config, history: [{ guess: '1234', fixed: 1, picas: 2 }], helpsUsed: 3 }); assert.equal(exhausted.available, false); assert.match(exhausted.message, /3 ayudas/); });
+test('snapshots de duelo y carrera no serializan secretos ni datos rivales activos', () => {
+  const config = createConfig({ length: 3, repeats: false, maxAttempts: null });
+  const duel = createDuelState(config, { human: '012', machine: '345' }, 0, createMachineConfig('duel', 'easy', 7));
+  const duelJson = serializeParticipantSnapshot(duel, 'human');
+  assert.doesNotMatch(duelJson, /012|345|secrets/);
+  assert.deepEqual(createParticipantSnapshot(duel, 'human').history, []);
+  const race = createRaceState(config, '012', 0, createMachineConfig('race', 'hard', 9));
+  const raceJson = serializeParticipantSnapshot(race, 'human');
+  assert.doesNotMatch(raceJson, /012/);
+  assert.equal(createParticipantSnapshot(race, 'human').history.length, 0);
+});
+test('estrategias de máquina son reproducibles, distintas y no reciben secreto', () => {
+  const config = createConfig({ length: 4, repeats: false, maxAttempts: null });
+  const input = { config, history: [], seed: 41 };
+  const easy = chooseMachineGuess({ ...input, difficulty: 'easy' });
+  const mid = chooseMachineGuess({ ...input, difficulty: 'intermediate' });
+  const hard = chooseMachineGuess({ ...input, difficulty: 'hard' });
+  assert.deepEqual(easy, chooseMachineGuess({ ...input, difficulty: 'easy' }));
+  assert.deepEqual(mid, chooseMachineGuess({ ...input, difficulty: 'intermediate' }));
+  assert.deepEqual(hard, chooseMachineGuess({ ...input, difficulty: 'hard' }));
+  assert.ok(new Set([easy.guess, mid.guess, hard.guess]).size >= 2);
+  assert.ok(!Object.keys(input).includes('secret'));
+  assert.equal(validateSecret(hard.guess, config).valid, true);
+});
+test('cálculo asíncrono informa progreso, respeta cancelación y simulación no expone secreto', async () => {
+  const config = createConfig({ length: 6, repeats: true, maxAttempts: 12 });
+  const progress = [];
+  const decision = await calculateMachineGuess({ config, history: [], seed: 3, difficulty: 'hard' }, { delayMs: 1, onProgress: (value) => progress.push(value.status) });
+  assert.equal(decision.guess.length, 6); assert.deepEqual(progress, ['calculating', 'complete']);
+  const metrics = simulateMachine(config, 'hard', 3, '012345');
+  assert.equal(metrics.seed, 3); assert.ok(metrics.latencyMs > 0); assert.equal(Object.hasOwn(metrics, 'secret'), false);
+  const controller = new AbortController(); const cancelled = calculateMachineGuess({ config, history: [], seed: 4, difficulty: 'hard' }, { signal: controller.signal, delayMs: 30 }); controller.abort(); await assert.rejects(cancelled, /cancelado|AbortError/);
+});

@@ -1,12 +1,72 @@
 {
-  "change": "req-1-pf-01-fundaciones-del-monorepo-pwa-y-sis",
-  "source": "assets/references/ fallback HTML",
+  "change": "req-4-pf-04-duelo-y-carrera-contra-la-maquina",
+  "source": "assets/references/ fallback HTML + Playwright PNG evidence",
   "stitch": {
     "project": "7461201299918295899",
     "status": "blocked",
     "reason": "UNAUTHORIZED oauth_refresh_token_missing"
   },
   "screens": [
+    {
+      "screen": "duel-bot-mobile",
+      "fallback": "assets/references/duel-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "La vista local conserva la identidad Party, añade estado La máquina y usa el historial interno; Stitch quedó inaccesible y el fallback es la referencia trazable."
+    },
+    {
+      "screen": "race-bot-mobile",
+      "fallback": "assets/references/race-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "La carrera oculta el historial rival durante actividad y publica el resultado sólo al cierre."
+    },
+    {
+      "screen": "duel-desktop",
+      "fallback": "assets/references/duel-desktop.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El layout desktop mantiene controles a la izquierda e historial a la derecha sin dependencia externa."
+    },
+    {
+      "screen": "race-desktop",
+      "fallback": "assets/references/race-desktop.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El reloj y controles permanecen visibles; sólo el historial admite desplazamiento."
+    },
+    {
+      "screen": "results",
+      "fallback": "assets/references/results.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El resultado unificado muestra desenlace contra La máquina y evita exponer datos rivales durante la carrera."
+    },
+    {
+      "screen": "duel-bot-mobile",
+      "state": "duel-active",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/duel-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-duel-active-mobile-light.png",
+      "difference": "Captura real del duelo activo: controles, reloj, identidad La máquina e historial propio visibles; el fallback Stitch inaccesible se conserva como referencia local."
+    },
+    {
+      "screen": "race-bot-mobile",
+      "state": "race-active",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/race-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-race-active-mobile-light.png",
+      "difference": "Captura real de carrera activa: el historial rival permanece oculto y el historial usa desplazamiento interno; el fallback Stitch inaccesible se conserva como referencia local."
+    },
+    {
+      "screen": "results",
+      "state": "race-result",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/results.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-race-result-mobile-light.png",
+      "difference": "Captura real del resultado final de carrera tras cierre explícito: desenlace, oponente y acciones de continuación visibles."
+    },
     {
       "screen": "home-mobile",
       "fallback": "assets/references/home-mobile.html",
