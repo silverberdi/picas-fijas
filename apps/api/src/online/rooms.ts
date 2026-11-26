@@ -1,4 +1,4 @@
-import { createDuelState, createRaceState, generateSecret, seededIndexSource, submitDuelAttempt, submitRaceAttempt, type DuelState, type GameConfig, type RaceState, type PlayerResult } from '@picas-fijas/game-core';
+import { createConfig, createDuelState, createRaceState, generateSecret, seededIndexSource, submitDuelAttempt, submitRaceAttempt, validateSecret, type DuelState, type GameConfig, type RaceState, type PlayerResult } from '@picas-fijas/game-core';
 import { createHash, randomBytes } from 'node:crypto';
 import type { OnlineConfig } from './config.js';
 import { errorResponse, PROTOCOL_VERSION, type AttemptView, type OnlineCommand, type OnlineError, type OnlineResponse, type OnlineMode, type Participant, type ParticipantSnapshot, type RoomSummary } from './protocol.js';
@@ -19,9 +19,11 @@ export class RoomActor {
   private version = 0;
   private members: Member[] = [];
   private cycle: Cycle | undefined;
+  private gameConfig: GameConfig;
+  private manualRaceSecret: string | undefined;
   private phase: RoomSummary['phase'] = 'waiting';
   private readonly results = new Map<string, OnlineResponse>();
-  constructor(mode: OnlineMode, private readonly config: OnlineConfig, now = Date.now(), roomCode = code()) { this.mode = mode; this.createdAt = now; this.code = roomCode; }
+  constructor(mode: OnlineMode, private readonly config: OnlineConfig, now = Date.now(), roomCode = code(), gameConfig?: GameConfig) { this.mode = mode; this.createdAt = now; this.code = roomCode; this.gameConfig = gameConfig ?? this.defaultGameConfig(); }
   get stateVersion() { return this.version; }
   get expiresAt() { return this.createdAt + this.config.roomTtlMs; }
   expired(now = Date.now()) { return now >= this.expiresAt; }
@@ -64,7 +66,14 @@ export class RoomActor {
     if (command.type === 'join') {
       if (this.members.length >= 2) return this.fail(command, { code: 'ROOM_FULL', message: 'La sala ya tiene dos participantes.', recoverable: true });
       if (command.payload.roomCode !== this.code || !safeCode(this.code)) return this.fail(command, { code: 'ROOM_NOT_FOUND', message: 'Sala no disponible.', recoverable: true });
+      if (this.members.length === 0 && command.payload.config) {
+        try { this.gameConfig = createConfig(command.payload.config); } catch { return this.fail(command, { code: 'INVALID_MESSAGE', message: 'La configuración de partida es inválida.', recoverable: true }); }
+      }
+      const requestedSecret = command.payload.secret;
+      if (requestedSecret !== undefined && !validateSecret(requestedSecret, this.gameConfig).valid) return this.fail(command, { code: 'INVALID_SECRET', message: 'El secreto manual no cumple la configuración.', recoverable: true });
       const secret = credential(); member = { id: `p${this.members.length + 1}`, nickname: NICKNAMES[this.members.length], credentialHash: hash(secret), connected: true, ready: false };
+      if (this.mode === 'duel') member.secret = requestedSecret;
+      else if (this.members.length === 0) this.manualRaceSecret = requestedSecret;
       this.members.push(member); if (this.members.length === 2) this.phase = 'ready'; this.version += 1;
       const response = this.success(command, member); response.credential = secret; this.results.set(key, response); return response;
     }
@@ -90,9 +99,9 @@ export class RoomActor {
     const response = this.success(command, member); this.results.set(key, response); return response;
   }
   private startCycle(now: number) {
-    const config = this.defaultGameConfig(); const seed = this.createdAt >>> 0;
+    const config = this.gameConfig; const seed = this.createdAt >>> 0;
     if (this.mode === 'duel') { const secrets = Object.fromEntries(this.members.map((member, index) => [member.id, member.secret ?? generateSecret(config, seededIndexSource(seed + index + 1))])); this.cycle = createDuelState(config, secrets, now); }
-    else this.cycle = createRaceState(config, generateSecret(config, seededIndexSource(seed + 9)), now);
+    else this.cycle = createRaceState(config, this.manualRaceSecret ?? generateSecret(config, seededIndexSource(seed + 9)), now);
     this.members.forEach((member) => { member.ready = false; });
   }
   private defaultGameConfig(): GameConfig { return { length: 3, repeats: false, maxAttempts: null, raceDurationSeconds: this.config.raceDurationSeconds, turnDurationSeconds: 60 }; }
@@ -101,7 +110,7 @@ export class RoomActor {
 export class RoomRegistry {
   private readonly rooms = new Map<string, RoomActor>();
   constructor(private readonly config: OnlineConfig) {}
-  create(mode: OnlineMode, now = Date.now()) { const room = new RoomActor(mode, this.config, now); this.rooms.set(room.code, room); return room; }
+  create(mode: OnlineMode, now = Date.now(), gameConfig?: GameConfig) { const room = new RoomActor(mode, this.config, now, code(), gameConfig); this.rooms.set(room.code, room); return room; }
   get(roomCode: string, now = Date.now()) { const room = this.rooms.get(roomCode); if (!room || room.expired(now)) { if (room) this.rooms.delete(roomCode); return undefined; } return room; }
   findByCredential(credentialValue: string | undefined, now = Date.now()) { for (const room of this.rooms.values()) if (!room.expired(now) && room.hasCredential(credentialValue)) return room; return undefined; }
   deleteExpired(now = Date.now()) { for (const [roomCode, room] of this.rooms) if (room.expired(now)) this.rooms.delete(roomCode); }

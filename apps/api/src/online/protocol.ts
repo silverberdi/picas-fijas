@@ -3,7 +3,7 @@ import type { GameConfig, IndividualOutcome, PlayerResult, Score } from '@picas-
 export const PROTOCOL_VERSION = 'v1' as const;
 export type OnlineMode = 'duel' | 'race';
 export type CommandType = 'create' | 'join' | 'reconnect' | 'ready' | 'submitGuess' | 'leave' | 'rematch';
-export type ErrorCode = 'INVALID_MESSAGE' | 'ORIGIN_DENIED' | 'ROOM_NOT_FOUND' | 'ROOM_FULL' | 'CREDENTIAL_DENIED' | 'EXPIRED' | 'OUT_OF_TURN' | 'RATE_LIMITED' | 'PAYLOAD_TOO_LARGE' | 'NOT_READY' | 'INVALID_GUESS' | 'GAME_FINISHED';
+export type ErrorCode = 'INVALID_MESSAGE' | 'ORIGIN_DENIED' | 'ROOM_NOT_FOUND' | 'ROOM_FULL' | 'CREDENTIAL_DENIED' | 'EXPIRED' | 'OUT_OF_TURN' | 'RATE_LIMITED' | 'PAYLOAD_TOO_LARGE' | 'NOT_READY' | 'INVALID_GUESS' | 'INVALID_SECRET' | 'GAME_FINISHED';
 export interface OnlineError { code: ErrorCode; message: string; recoverable: boolean; }
 export interface Participant { id: string; nickname: string; connected: boolean; ready: boolean; }
 export interface RoomSummary { code: string; mode: OnlineMode; phase: 'waiting' | 'ready' | 'playing' | 'finished'; participants: readonly Participant[]; stateVersion: number; expiresAt: number; }
