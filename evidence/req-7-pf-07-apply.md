@@ -8,4 +8,5 @@
 - Evidencia automatizada: `npm run check` terminó con exit code 0; lint, tests (7 web + 18 API + 23 game-core), build y Playwright (25 passed en 360×640, 390×844 y 1280×720).
 - Stitch: `[PUBLISHED_EVIDENCE source="local assets/references fallback; Stitch unavailable"; sha=unknown]`; manifiesto `evidence/pf07-visual-manifest.json` conserva las seis IDs y `status: fallback_applied`, `blocking: false`.
 - Artefactos Playwright pesados: `test-results/` y `playwright-report/` siguen siendo artefactos de ejecución, no evidencia candidata inmutable; las capturas PNG comparativas anotadas requieren generación/retención del PR.
+- Corrección 5.4: `npx playwright test e2e/pf07-visual-evidence.spec.ts` terminó con exit code 0 y generó 30 PNG anotados en `evidence/visual/pf07/`; `node evidence/visual/run-pf07-evidence.mjs` terminó con exit code 0 y verificó dimensiones, SHA-256 y cinco estados. Digest de matriz: `9c81d9aaf665452bda2bdaac1b8764b2f5685a6c7608151f430047de4bf2bc09`. Retención CI/PR: `test-results/` y `playwright-report/` por 14 días; PNG, manifiesto y reporte quedan trazables en Git/PR.
 - No se hizo merge, push ni se inventó SHA candidato.

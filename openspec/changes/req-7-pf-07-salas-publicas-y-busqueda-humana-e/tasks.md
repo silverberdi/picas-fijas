@@ -31,6 +31,6 @@
 - [x] 5.1 Añadir escenarios Gherkin y pruebas unitarias para PF-06, compatibilidad exacta, FIFO, cancelación, oferta bilateral, sonido opcional y transición neutral; verificar con el comando de test declarado.
 - [x] 5.2 Añadir pruebas de integración para dos clientes, reintentos, concurrencia, expiración de 20 segundos y privacidad de snapshots; verificar con backend efímero y resultados observables.
 - [x] 5.3 Asignar al executor configurado la ejecución de Playwright para listado, cola, oferta aceptada/expirada/cancelada y continuidad contra bot en temas y viewports comparables; verificar que no se delegan navegación o checks de navegador a human_validation.
-- [ ] 5.4 Generar capturas PNG comparativas anotadas por pantalla, estado, tema y viewport, diferencias justificadas, scripts, reporte y manifiesto; verificar rutas en Git y artefactos pesados con ubicación/retención documentadas en el PR.
+- [x] 5.4 Generar capturas PNG comparativas anotadas por pantalla, estado, tema y viewport, diferencias justificadas, scripts, reporte y manifiesto; verificar rutas en Git y artefactos pesados con ubicación/retención documentadas en el PR.
 - [x] 5.5 Ejecutar el check declarado completo (`npm run check`) y corregir regresiones; verificar que incluye lint, test, build y e2e con resultado trazable.
 - [x] 5.6 Preparar el PR obligatorio con escenarios, pruebas, evidencia visual, procedencia/fallback y checklist de Definition of Done; verificar que no contiene dependencias externas de runtime ni cambios de producto fuera del alcance.
