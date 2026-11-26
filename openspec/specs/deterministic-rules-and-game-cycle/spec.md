@@ -40,7 +40,19 @@ El motor SHALL validar longitud, caracteres, repetición y pertenencia a la conf
 
 ### Requirement: Estados, razones finales y reloj inyectable
 
-El contrato SHALL serializar configuración, estado, historial, oportunidades restantes, resultado individual, resultado competitivo y razón final. El reloj SHALL ser inyectable y monotónico para que vencimiento, duración y transiciones se puedan reproducir sin consultar el entorno global. En una partida contra la máquina o en una sala humana online, cada participante SHALL recibir un snapshot que excluya secretos e historial no legítimos y el servidor autoritativo SHALL validar la versión de transición.
+El contrato SHALL serializar configuración, estado, historial, oportunidades restantes, resultado individual, resultado competitivo y razón final. El reloj SHALL ser inyectable y monotónico para que vencimiento, duración, reconexión y transiciones se puedan reproducir sin consultar el entorno global. SHALL distinguir `victoria`, `derrota`, `empate`, `abandono` e `interrupción`; la gracia SHALL pausar el reloj competitivo y el reinicio global SHALL producir interrupción neutral. En una partida contra la máquina o en una sala humana online, cada participante SHALL recibir un snapshot que excluya secretos e historial no legítimos y el servidor autoritativo SHALL validar la versión de transición.
+
+#### Scenario: Vencimiento de reconexión con rival presente
+- **WHEN** el reloj inyectado supera 60 segundos desde la desconexión de un jugador y el rival está presente
+- **THEN** la transición registra abandono, el rival obtiene victoria y no se aceptan jugadas posteriores del desconectado
+
+#### Scenario: Doble desconexión neutral
+- **WHEN** ambos jugadores están desconectados durante toda la gracia
+- **THEN** el resultado competitivo es interrupción neutral, sin victoria ni derrota para ninguno
+
+#### Scenario: Reinicio del servidor
+- **WHEN** el cliente informa que el backend se reinició durante una partida
+- **THEN** el resultado es interrupción y el contrato no registra una derrota
 
 #### Scenario: Agotamiento de intentos
 - **WHEN** ambos jugadores consumen todas sus oportunidades sin acertar
@@ -60,7 +72,15 @@ El contrato SHALL serializar configuración, estado, historial, oportunidades re
 
 ### Requirement: Duelo por rondas equivalentes
 
-El motor SHALL alternar turnos en rondas equivalentes y SHALL conservar la oportunidad del rival en la ronda en que un jugador acierta. Si ambos aciertan en la misma ronda SHALL resolver empate; si sólo uno acierta después de oportunidades equivalentes SHALL ganar ese jugador. El mismo contrato SHALL aplicarse cuando el rival sea «La máquina».
+El motor SHALL alternar turnos en rondas equivalentes y SHALL conservar la oportunidad del rival en la ronda en que un jugador acierta. Si ambos aciertan en la misma ronda SHALL resolver empate; si sólo uno acierta después de oportunidades equivalentes SHALL ganar ese jugador. Durante la gracia de reconexión SHALL pausar la ronda y distinguir una renuncia o abandono vencido de una interrupción neutral. El mismo contrato SHALL aplicarse cuando el rival sea «La máquina».
+
+#### Scenario: Renuncia durante duelo
+- **WHEN** un jugador renuncia y el rival está presente
+- **THEN** el resultado competitivo es victoria del rival y la razón final es abandono
+
+#### Scenario: Gracia pausa la ronda
+- **WHEN** el socket de un jugador cae durante su turno y vuelve antes de 60 segundos
+- **THEN** el motor conserva la ronda, el turno y el reloj restante sin consumir oportunidad
 
 #### Scenario: Ambos resuelven en la misma ronda
 - **WHEN** los dos jugadores aciertan sus secretos durante la misma ronda del duelo
@@ -76,7 +96,15 @@ El motor SHALL alternar turnos en rondas equivalentes y SHALL conservar la oport
 
 ### Requirement: Carrera por primer acierto válido
 
-El motor SHALL evaluar tentativas de carrera contra un secreto común, SHALL ignorar tentativas inválidas sin consumir oportunidad y SHALL declarar ganador al primer acierto válido en el orden temporal del reloj inyectado. Si termina el límite sin acierto SHALL devolver empate competitivo. Los snapshots durante una carrera SHALL ocultar tentativas y feedback del rival hasta el cierre.
+El motor SHALL evaluar tentativas de carrera contra un secreto común, SHALL ignorar tentativas inválidas sin consumir oportunidad y SHALL declarar ganador al primer acierto válido en el orden temporal del reloj inyectado. Si termina el límite sin acierto SHALL devolver empate competitivo. Los snapshots durante una carrera SHALL ocultar tentativas y feedback del rival hasta el cierre y la gracia de reconexión SHALL pausar la competición.
+
+#### Scenario: Acierto tras reconexión
+- **WHEN** un jugador reconecta antes de 60 segundos en una carrera activa
+- **THEN** conserva su identidad y puede continuar desde el estado pausado sin recibir intentos duplicados ni feedback del rival
+
+#### Scenario: Abandono en carrera
+- **WHEN** un jugador renuncia o vence su gracia mientras el rival está presente
+- **THEN** el rival gana por abandono y el secreto común no se revela antes del resultado final
 
 #### Scenario: Primer acierto válido gana la carrera
 - **WHEN** dos tentativas válidas llegan y sólo la primera en el reloj inyectado es exacta
