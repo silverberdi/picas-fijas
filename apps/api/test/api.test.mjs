@@ -8,6 +8,36 @@ import http from 'node:http';
 import net from 'node:net';
 import crypto from 'node:crypto';
 import { attachWebSocket } from '../dist/online/websocket.js';
+import { PublicMatchRegistry, publicRulesKey, validatePublicReservation } from '../dist/online/public-matching.js';
+
+test('PF-07 contrato público exige reglas estrictas y clave canónica', () => {
+  const rules = { length: 4, repeats: false, maxAttempts: 20, timeSeconds: 60 };
+  assert.equal(validatePublicReservation({ mode: 'duel', rules }), true);
+  assert.equal(validatePublicReservation({ mode: 'duel', rules: { ...rules, length: 7 } }), false);
+  assert.equal(publicRulesKey('duel', rules), 'duel|4:0:20:60');
+  assert.equal(validatePublicReservation({ mode: 'duel', rules, personalData: 'no' }), true);
+});
+
+test('PF-07 cola es FIFO, idempotente, privada y compatible exactamente', () => {
+  let now = 1000; const queue = new PublicMatchRegistry(20_000, () => now);
+  const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: null };
+  const first = queue.reserve('connection-a', 'duel', rules, 'same');
+  assert.equal(queue.reserve('connection-a', 'duel', rules, 'same').id, first.id);
+  const second = queue.reserve('connection-b', 'duel', rules, 'b'); queue.reserve('connection-c', 'race', rules, 'c');
+  const offer = queue.match(); assert.ok(offer); assert.deepEqual(offer.reservationIds, [first.id, second.id]);
+  assert.doesNotMatch(JSON.stringify(queue.list()), /connection-a|secret|credential|ip/i);
+  assert.equal(queue.metrics().activeOffers, 1);
+});
+
+test('PF-07 cancelación, expiración y transición humana son idempotentes y neutrales', () => {
+  let now = 0; const queue = new PublicMatchRegistry(20_000, () => now); const rules = { length: 3, repeats: false, maxAttempts: null, timeSeconds: null };
+  const a = queue.reserve('a', 'race', rules, 'a'); const b = queue.reserve('b', 'race', rules, 'b'); const offer = queue.match(); assert.ok(offer);
+  const accepted = queue.accept(offer.id, 'a', 'accept-a'); assert.equal(accepted.offer.state, 'accepted_by_one');
+  now = 20_000; queue.expire(); assert.equal(queue.getOffer(offer.id).state, 'expired'); assert.equal(queue.accept(offer.id, 'b', 'late'), undefined);
+  const fresh = new PublicMatchRegistry(20_000, () => now); const c = fresh.reserve('c', 'race', rules, 'c'); fresh.reserve('d', 'race', rules, 'd'); const secondOffer = fresh.match(); assert.ok(secondOffer);
+  fresh.accept(secondOffer.id, 'c', 'c'); fresh.accept(secondOffer.id, 'd', 'd'); const entered = fresh.enterHuman(secondOffer.id, 'c', 'enter'); const retry = fresh.enterHuman(secondOffer.id, 'c', 'enter'); assert.equal(entered.humanRoomId, retry.humanRoomId); assert.equal(fresh.enterHuman(secondOffer.id, 'd', 'enter-d').humanRoomId, entered.humanRoomId); assert.equal(fresh.metrics().activeOffers, 0);
+  assert.equal(fresh.cancel(c.id, 'c', 'cancel-after'), c);
+});
 test('health endpoint is in-memory and public', async () => { const app = createServer(); const response = await app.inject({ method: 'GET', url: '/health' }); assert.equal(response.statusCode, 200); assert.deepEqual(response.json(), { ok: true, service: 'picas-fijas-api' }); await app.close(); });
 test('la configuración online es inyectable y conserva límites seguros', () => { const config = readOnlineConfig({ PORT: '0', ROOM_TTL_MS: '1200', MAX_MESSAGE_BYTES: '2048', ALLOWED_ORIGINS: 'http://test.local' }); assert.equal(config.port, 0); assert.equal(config.roomTtlMs, 1200); assert.equal(config.maxMessageBytes, 2048); assert.deepEqual(config.allowedOrigins, ['http://test.local']); assert.equal(config.maxParticipants, 2); assert.equal(DEFAULT_ONLINE_CONFIG.roomTtlMs > 0, true); });
 test('el protocolo rechaza campos desconocidos sin mutar nada', () => { const invalid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {}, extra: true }); assert.equal(invalid.code, 'INVALID_MESSAGE'); const valid = parseCommand({ protocolVersion: 'v1', commandId: 'x', type: 'ready', payload: {} }); assert.equal(valid.type, 'ready'); });
