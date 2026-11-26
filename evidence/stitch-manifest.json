@@ -1,6 +1,6 @@
 {
   "project": "7461201299918295899",
-  "queriedAt": "2026-11-26T05:02:13Z",
+  "queriedAt": "2026-11-26T05:07:22Z",
   "integration": "mcp__codex_apps__google_stitch_get_screen",
   "status": "unavailable",
   "blocking": true,
@@ -21,13 +21,17 @@
     {
       "queriedAt": "2026-11-26T05:02:13Z",
       "result": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again."
+    },
+    {
+      "queriedAt": "2026-11-26T05:07:22Z",
+      "result": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again."
     }
   ],
   "screens": [
     {
       "id": "1b0e461f4c614b87bb38919c75f0fa64",
       "request": "projects/7461201299918295899/screens/1b0e461f4c614b87bb38919c75f0fa64",
-      "lastAttemptAt": "2026-11-26T05:02:13Z",
+      "lastAttemptAt": "2026-11-26T05:07:22Z",
       "response": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.",
       "snapshot": {"status": "not_available", "reason": "Stitch query unauthorized; no snapshot captured"},
       "fallback": "assets/references/home-mobile.html",
@@ -36,7 +40,7 @@
     {
       "id": "fb108f500648468392d871cac3c1b714",
       "request": "projects/7461201299918295899/screens/fb108f500648468392d871cac3c1b714",
-      "lastAttemptAt": "2026-11-26T05:02:13Z",
+      "lastAttemptAt": "2026-11-26T05:07:22Z",
       "response": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.",
       "snapshot": {"status": "not_available", "reason": "Stitch query unauthorized; no snapshot captured"},
       "fallback": "assets/references/home-desktop.html",
@@ -45,7 +49,7 @@
     {
       "id": "11123e53ada04a2ba7297f0eeb884f36",
       "request": "projects/7461201299918295899/screens/11123e53ada04a2ba7297f0eeb884f36",
-      "lastAttemptAt": "2026-11-26T05:02:13Z",
+      "lastAttemptAt": "2026-11-26T05:07:22Z",
       "response": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.",
       "snapshot": {"status": "not_available", "reason": "Stitch query unauthorized; no snapshot captured"},
       "fallback": "assets/references/levels.html",
@@ -54,7 +58,7 @@
     {
       "id": "7f2012d3be454c1e9cfd58203b1f4b87",
       "request": "projects/7461201299918295899/screens/7f2012d3be454c1e9cfd58203b1f4b87",
-      "lastAttemptAt": "2026-11-26T05:02:13Z",
+      "lastAttemptAt": "2026-11-26T05:07:22Z",
       "response": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again.",
       "snapshot": {"status": "not_available", "reason": "Stitch query unauthorized; no snapshot captured"},
       "fallback": "assets/references/settings.html",
