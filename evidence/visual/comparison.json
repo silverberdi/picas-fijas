@@ -1,6 +1,6 @@
 {
   "change": "req-4-pf-04-duelo-y-carrera-contra-la-maquina",
-  "source": "assets/references/ fallback HTML",
+  "source": "assets/references/ fallback HTML + Playwright PNG evidence",
   "stitch": {
     "project": "7461201299918295899",
     "status": "blocked",
@@ -36,6 +36,36 @@
       "fallback": "assets/references/results.html",
       "implementation": "apps/web/src/app/app.component.pf03.html",
       "difference": "El resultado unificado muestra desenlace contra La máquina y evita exponer datos rivales durante la carrera."
+    },
+    {
+      "screen": "duel-bot-mobile",
+      "state": "duel-active",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/duel-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-duel-active-mobile-light.png",
+      "difference": "Captura real del duelo activo: controles, reloj, identidad La máquina e historial propio visibles; el fallback Stitch inaccesible se conserva como referencia local."
+    },
+    {
+      "screen": "race-bot-mobile",
+      "state": "race-active",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/race-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-race-active-mobile-light.png",
+      "difference": "Captura real de carrera activa: el historial rival permanece oculto y el historial usa desplazamiento interno; el fallback Stitch inaccesible se conserva como referencia local."
+    },
+    {
+      "screen": "results",
+      "state": "race-result",
+      "viewport": "390x844",
+      "theme": "light",
+      "fallback": "assets/references/results.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "evidence": "evidence/visual/pf04-race-result-mobile-light.png",
+      "difference": "Captura real del resultado final de carrera tras cierre explícito: desenlace, oponente y acciones de continuación visibles."
     },
     {
       "screen": "home-mobile",
