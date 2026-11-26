@@ -27,6 +27,66 @@ export function createConfig(value) {
     return { length: value.length, repeats: value.repeats, maxAttempts: value.maxAttempts, raceDurationSeconds: value.raceDurationSeconds ?? DEFAULT_RACE_DURATION_SECONDS, turnDurationSeconds: value.turnDurationSeconds ?? DEFAULT_TURN_DURATION_SECONDS };
 }
 export function configFromLevel(level) { return createConfig(level); }
+export function createMachineConfig(kind, difficulty, seed) {
+    if (!Number.isInteger(seed))
+        throw new Error('La semilla debe ser entera');
+    return { kind, difficulty, seed: seed >>> 0, calculation: 'idle' };
+}
+function candidateValues(config, limit, source) {
+    const values = [];
+    for (let i = 0; i < limit; i += 1)
+        values.push(generateSecret(config, source));
+    return values;
+}
+function compatible(candidate, history, config) {
+    return history.every((attempt) => {
+        const score = scoreGuess(candidate, attempt.guess);
+        return score.fixed === attempt.score.fixed && score.picas === attempt.score.picas && validateSecret(candidate, config).valid;
+    });
+}
+/** Pure easy policy: a deterministic probe derived only from public history and rules. */
+export function chooseEasyGuess(input) {
+    const source = seededIndexSource(input.seed + input.history.length * 31);
+    const guesses = candidateValues(input.config, 32, source);
+    const guess = guesses.find((value) => !input.history.some((entry) => entry.guess === value)) ?? guesses[0];
+    return { guess, difficulty: 'easy', seed: input.seed >>> 0, work: guesses.length, latencyMs: 18 + (input.seed % 7) };
+}
+/** Intermediate policy filters candidates against the machine's own scored history. */
+export function chooseIntermediateGuess(input) {
+    const source = seededIndexSource(input.seed ^ 0x9e3779b9);
+    const guesses = candidateValues(input.config, 192, source);
+    const compatibleCandidates = guesses.filter((value) => compatible(value, input.history, input.config));
+    const pool = compatibleCandidates.length ? compatibleCandidates : guesses;
+    const guess = pool.find((value) => !input.history.some((entry) => entry.guess === value)) ?? pool[0];
+    return { guess, difficulty: 'intermediate', seed: input.seed >>> 0, work: guesses.length, latencyMs: 36 + (input.seed % 11) };
+}
+/** Hard policy samples a bounded candidate set and chooses the most informative probe. */
+export function chooseHardGuess(input) {
+    const source = seededIndexSource(input.seed ^ 0x85ebca6b);
+    const guesses = candidateValues(input.config, input.config.length === 6 ? 320 : 220, source);
+    const candidates = guesses.filter((value) => compatible(value, input.history, input.config));
+    const pool = candidates.length ? candidates : guesses;
+    const buckets = (guess) => new Set(input.history.map((entry) => scoreGuess(guess, entry.guess).fixed + ':' + scoreGuess(guess, entry.guess).picas)).size;
+    const guess = pool.filter((value) => !input.history.some((entry) => entry.guess === value)).sort((a, b) => buckets(b) - buckets(a) || a.localeCompare(b))[0] ?? pool[0];
+    return { guess, difficulty: 'hard', seed: input.seed >>> 0, work: guesses.length, latencyMs: 52 + (input.seed % 17) };
+}
+export function chooseMachineGuess(input) {
+    if (input.difficulty === 'easy')
+        return chooseEasyGuess(input);
+    if (input.difficulty === 'intermediate')
+        return chooseIntermediateGuess(input);
+    return chooseHardGuess(input);
+}
+export function calculateMachineGuess(input, options = {}) {
+    const decision = chooseMachineGuess(input);
+    const delay = options.delayMs ?? decision.latencyMs;
+    options.onProgress?.({ status: 'calculating', progress: 0 });
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => { if (options.signal?.aborted)
+            return; options.onProgress?.({ status: 'complete', progress: 1, decision }); resolve(decision); }, delay);
+        options.signal?.addEventListener('abort', () => { clearTimeout(timer); options.onProgress?.({ status: 'cancelled', progress: 0 }); reject(new DOMException('Cálculo cancelado', 'AbortError')); }, { once: true });
+    });
+}
 function nextIndex(source, upper) { const value = typeof source === 'function' ? source(upper) : source.nextIndex(upper); if (!Number.isInteger(value) || value < 0 || value >= upper)
     throw new Error('La fuente devolvió un índice fuera de rango'); return value; }
 export function generateSecret(config, source) {
@@ -82,10 +142,10 @@ export function submitIndividualAttempt(state, guess, now) { if (state.finished)
 export const expireIndividual = (state, now) => finishIndividual(state, 'expired', now);
 export const abandonIndividual = (state, now) => finishIndividual(state, 'abandoned', now);
 export const interruptIndividual = (state, now) => finishIndividual(state, 'technical-interruption', now);
-export function createDuelState(config, secrets, startedAt = 0) { const players = Object.keys(secrets); if (players.length !== 2)
+export function createDuelState(config, secrets, startedAt = 0, machine) { const players = Object.keys(secrets); if (players.length !== 2)
     throw new Error('Un duelo requiere dos jugadores'); const full = createConfig(config); for (const player of players)
     if (!validateSecret(secrets[player], full).valid)
-        throw new Error('Secreto inválido'); return { kind: 'duel', config: full, secrets: { ...secrets }, startedAt, lastTimestamp: startedAt, round: 1, currentPlayer: players[0], attempts: Object.fromEntries(players.map(p => [p, 0])), histories: Object.fromEntries(players.map(p => [p, []])), finished: false }; }
+        throw new Error('Secreto inválido'); return { kind: 'duel', config: full, secrets: { ...secrets }, startedAt, lastTimestamp: startedAt, round: 1, currentPlayer: players[0], attempts: Object.fromEntries(players.map(p => [p, 0])), histories: Object.fromEntries(players.map(p => [p, []])), finished: false, ...(machine ? { machine } : {}) }; }
 export function submitDuelAttempt(state, player, guess, now) { if (state.finished)
     return { state, error: makeError('GAME_FINISHED', 'El duelo ya terminó.') }; if (now < state.lastTimestamp)
     return { state, error: makeError('CLOCK_REWIND', 'El reloj monotónico no puede retroceder.') }; if (!(player in state.secrets) || player !== state.currentPlayer)
@@ -99,8 +159,8 @@ export function submitDuelAttempt(state, player, guess, now) { if (state.finishe
     return { state: finishDuelState(current, 'win', 'correct', other, now), attempt }; if (state.config.maxAttempts !== null && attempts[player] >= state.config.maxAttempts && attempts[other] >= state.config.maxAttempts)
     return { state: finishDuelState(current, 'draw', 'exhausted', undefined, now), attempt }; return { state: { ...current, currentPlayer: other, round: player === players[1] ? state.round + 1 : state.round }, attempt }; }
 function finishDuelState(state, outcome, reason, winner, at) { const players = Object.keys(state.secrets).map(player => ({ player, outcome: outcome === 'draw' ? 'draw' : player === winner ? 'win' : 'loss', reason, attempts: state.attempts[player] })); return { ...state, finished: true, result: { outcome, reason, winner, at, players } }; }
-export function createRaceState(config, secret, startedAt = 0) { const full = createConfig(config); if (!validateSecret(secret, full).valid)
-    throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds, attempts: {}, history: [], finished: false }; }
+export function createRaceState(config, secret, startedAt = 0, machine) { const full = createConfig(config); if (!validateSecret(secret, full).valid)
+    throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds, attempts: {}, history: [], finished: false, ...(machine ? { machine } : {}) }; }
 export function expireRace(state, now) { if (state.finished || now < state.lastTimestamp || now < state.deadline)
     return state; return { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } }; }
 export function submitRaceAttempt(state, player, guess, now) { if (state.finished)
@@ -109,6 +169,37 @@ export function submitRaceAttempt(state, player, guess, now) { if (state.finishe
     return { state: { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } } }; const validation = validateSecret(guess, state.config); if (!validation.valid)
     return { state, error: validation.error }; const attempt = { player, guess, at: now, score: scoreGuess(state.secret, guess) }; const next = { ...state, lastTimestamp: now, attempts: { ...state.attempts, [player]: (state.attempts[player] ?? 0) + 1 }, history: [...state.history, attempt] }; return attempt.score.exact ? { state: { ...next, finished: true, result: { outcome: 'win', reason: 'correct', winner: player, at: now } }, attempt } : { state: next, attempt }; }
 export const submitRaceGuess = submitRaceAttempt;
+export function createParticipantSnapshot(state, participant) {
+    if (state.kind === 'duel') {
+        if (!(participant in state.histories))
+            throw new Error('Participante desconocido');
+        return { kind: 'duel', config: state.config, machine: state.machine, history: state.histories[participant].map((attempt) => ({ ...attempt })), attemptsUsed: state.attempts[participant], finished: state.finished, result: state.finished ? state.result : undefined, currentPlayer: state.currentPlayer };
+    }
+    return { kind: 'race', config: state.config, machine: state.machine, history: state.finished ? state.history.map((attempt) => ({ ...attempt })) : [], attemptsUsed: state.attempts[participant] ?? 0, finished: state.finished, result: state.finished ? state.result : undefined, deadline: state.deadline };
+}
+export function serializeParticipantSnapshot(state, participant) {
+    const snapshot = createParticipantSnapshot(state, participant);
+    return serialize(snapshot);
+}
+export function simulateMachine(config, difficulty, seed, secret) {
+    let history = [];
+    let resolved = false;
+    let latencyMs = 0;
+    for (let attempt = 0; attempt < (config.maxAttempts ?? 12); attempt += 1) {
+        const decision = chooseMachineGuess({ config, history, seed: seed + attempt, difficulty });
+        latencyMs += decision.latencyMs;
+        const validation = validateSecret(decision.guess, config);
+        if (!validation.valid)
+            continue;
+        const scored = scoreGuess(secret, decision.guess);
+        history = [...history, { guess: decision.guess, at: attempt, score: scored }];
+        if (scored.exact) {
+            resolved = true;
+            return { seed: seed >>> 0, difficulty, length: config.length, repeats: config.repeats, latencyMs, resolved, attempts: history.length };
+        }
+    }
+    return { seed: seed >>> 0, difficulty, length: config.length, repeats: config.repeats, latencyMs, resolved, attempts: history.length };
+}
 export function createMonotonicClock(read) { let last = -Infinity; return { now: () => { const value = read(); if (value < last)
         throw new Error('CLOCK_REWIND'); last = value; return value; } }; }
 export function serialize(value) { return JSON.stringify(value); }

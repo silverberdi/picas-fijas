@@ -46,6 +46,100 @@ export interface IndividualResult { outcome: IndividualOutcome; reason: FinalRea
 export interface IndividualState { kind: 'individual'; config: GameConfig; secret: Secret; startedAt: number; lastTimestamp: number; deadline: number | null; attemptsUsed: number; history: Attempt[]; finished: boolean; result?: IndividualResult; }
 export interface Transition<T> { state: T; error?: SerializableError; attempt?: Attempt; }
 
+export type MachineDifficulty = 'easy' | 'intermediate' | 'hard';
+export type MachineGameKind = 'duel' | 'race';
+export type CalculationStatus = 'idle' | 'calculating' | 'cancelled' | 'complete';
+export interface MachineConfig {
+  kind: MachineGameKind;
+  difficulty: MachineDifficulty;
+  seed: number;
+  calculation: CalculationStatus;
+}
+export interface MachineDecisionInput {
+  config: GameConfig;
+  history: readonly Attempt[];
+  seed: number;
+  difficulty: MachineDifficulty;
+}
+export interface MachineDecision { guess: Guess; difficulty: MachineDifficulty; seed: number; work: number; latencyMs: number; }
+
+/** A participant snapshot intentionally has no secret or rival-owned data. */
+export interface ParticipantSnapshot {
+  kind: MachineGameKind;
+  config: GameConfig;
+  machine?: MachineConfig;
+  history: readonly Attempt[];
+  attemptsUsed: number;
+  finished: boolean;
+  result?: unknown;
+  currentPlayer?: string;
+  deadline?: number;
+}
+
+export function createMachineConfig(kind: MachineGameKind, difficulty: MachineDifficulty, seed: number): MachineConfig {
+  if (!Number.isInteger(seed)) throw new Error('La semilla debe ser entera');
+  return { kind, difficulty, seed: seed >>> 0, calculation: 'idle' };
+}
+
+function candidateValues(config: GameConfig, limit: number, source: IndexSource): string[] {
+  const values: string[] = [];
+  for (let i = 0; i < limit; i += 1) values.push(generateSecret(config, source));
+  return values;
+}
+
+function compatible(candidate: string, history: readonly Attempt[], config: GameConfig): boolean {
+  return history.every((attempt) => {
+    const score = scoreGuess(candidate, attempt.guess);
+    return score.fixed === attempt.score.fixed && score.picas === attempt.score.picas && validateSecret(candidate, config).valid;
+  });
+}
+
+/** Pure easy policy: a deterministic probe derived only from public history and rules. */
+export function chooseEasyGuess(input: MachineDecisionInput): MachineDecision {
+  const source = seededIndexSource(input.seed + input.history.length * 31);
+  const guesses = candidateValues(input.config, 32, source);
+  const guess = guesses.find((value) => !input.history.some((entry) => entry.guess === value)) ?? guesses[0];
+  return { guess, difficulty: 'easy', seed: input.seed >>> 0, work: guesses.length, latencyMs: 18 + (input.seed % 7) };
+}
+
+/** Intermediate policy filters candidates against the machine's own scored history. */
+export function chooseIntermediateGuess(input: MachineDecisionInput): MachineDecision {
+  const source = seededIndexSource(input.seed ^ 0x9e3779b9);
+  const guesses = candidateValues(input.config, 192, source);
+  const compatibleCandidates = guesses.filter((value) => compatible(value, input.history, input.config));
+  const pool = compatibleCandidates.length ? compatibleCandidates : guesses;
+  const guess = pool.find((value) => !input.history.some((entry) => entry.guess === value)) ?? pool[0];
+  return { guess, difficulty: 'intermediate', seed: input.seed >>> 0, work: guesses.length, latencyMs: 36 + (input.seed % 11) };
+}
+
+/** Hard policy samples a bounded candidate set and chooses the most informative probe. */
+export function chooseHardGuess(input: MachineDecisionInput): MachineDecision {
+  const source = seededIndexSource(input.seed ^ 0x85ebca6b);
+  const guesses = candidateValues(input.config, input.config.length === 6 ? 320 : 220, source);
+  const candidates = guesses.filter((value) => compatible(value, input.history, input.config));
+  const pool = candidates.length ? candidates : guesses;
+  const buckets = (guess: string) => new Set(input.history.map((entry) => scoreGuess(guess, entry.guess).fixed + ':' + scoreGuess(guess, entry.guess).picas)).size;
+  const guess = pool.filter((value) => !input.history.some((entry) => entry.guess === value)).sort((a, b) => buckets(b) - buckets(a) || a.localeCompare(b))[0] ?? pool[0];
+  return { guess, difficulty: 'hard', seed: input.seed >>> 0, work: guesses.length, latencyMs: 52 + (input.seed % 17) };
+}
+
+export function chooseMachineGuess(input: MachineDecisionInput): MachineDecision {
+  if (input.difficulty === 'easy') return chooseEasyGuess(input);
+  if (input.difficulty === 'intermediate') return chooseIntermediateGuess(input);
+  return chooseHardGuess(input);
+}
+
+export interface MachineDecisionProgress { status: CalculationStatus; progress: number; decision?: MachineDecision; }
+export function calculateMachineGuess(input: MachineDecisionInput, options: { signal?: AbortSignal; onProgress?: (progress: MachineDecisionProgress) => void; delayMs?: number } = {}): Promise<MachineDecision> {
+  const decision = chooseMachineGuess(input);
+  const delay = options.delayMs ?? decision.latencyMs;
+  options.onProgress?.({ status: 'calculating', progress: 0 });
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { if (options.signal?.aborted) return; options.onProgress?.({ status: 'complete', progress: 1, decision }); resolve(decision); }, delay);
+    options.signal?.addEventListener('abort', () => { clearTimeout(timer); options.onProgress?.({ status: 'cancelled', progress: 0 }); reject(new DOMException('Cálculo cancelado', 'AbortError')); }, { once: true });
+  });
+}
+
 export type IndexSource = (exclusiveUpperBound: number) => number;
 export interface RandomIndexSource { nextIndex(exclusiveUpperBound: number): number; }
 function nextIndex(source: IndexSource | RandomIndexSource, upper: number): number { const value = typeof source === 'function' ? source(upper) : source.nextIndex(upper); if (!Number.isInteger(value) || value < 0 || value >= upper) throw new Error('La fuente devolvió un índice fuera de rango'); return value; }
@@ -77,16 +171,41 @@ export const abandonIndividual = (state: IndividualState, now: number) => finish
 export const interruptIndividual = (state: IndividualState, now: number) => finishIndividual(state, 'technical-interruption', now);
 
 export interface PlayerResult { player: string; outcome: IndividualOutcome; reason: FinalReason; attempts: number; }
-export interface DuelState { kind: 'duel'; config: GameConfig; secrets: Record<string, Secret>; startedAt: number; lastTimestamp: number; round: number; currentPlayer: string; attempts: Record<string, number>; histories: Record<string, Attempt[]>; finished: boolean; result?: { outcome: 'win' | 'draw'; reason: FinalReason; winner?: string; at?: number; players: PlayerResult[] }; }
-export function createDuelState(config: GameConfig | CustomLevel, secrets: Record<string, Secret>, startedAt = 0): DuelState { const players = Object.keys(secrets); if (players.length !== 2) throw new Error('Un duelo requiere dos jugadores'); const full = createConfig(config); for (const player of players) if (!validateSecret(secrets[player], full).valid) throw new Error('Secreto inválido'); return { kind: 'duel', config: full, secrets: { ...secrets }, startedAt, lastTimestamp: startedAt, round: 1, currentPlayer: players[0], attempts: Object.fromEntries(players.map(p => [p, 0])), histories: Object.fromEntries(players.map(p => [p, []])), finished: false }; }
+export interface DuelState { kind: 'duel'; config: GameConfig; secrets: Record<string, Secret>; startedAt: number; lastTimestamp: number; round: number; currentPlayer: string; attempts: Record<string, number>; histories: Record<string, Attempt[]>; finished: boolean; machine?: MachineConfig; result?: { outcome: 'win' | 'draw'; reason: FinalReason; winner?: string; at?: number; players: PlayerResult[] }; }
+export function createDuelState(config: GameConfig | CustomLevel, secrets: Record<string, Secret>, startedAt = 0, machine?: MachineConfig): DuelState { const players = Object.keys(secrets); if (players.length !== 2) throw new Error('Un duelo requiere dos jugadores'); const full = createConfig(config); for (const player of players) if (!validateSecret(secrets[player], full).valid) throw new Error('Secreto inválido'); return { kind: 'duel', config: full, secrets: { ...secrets }, startedAt, lastTimestamp: startedAt, round: 1, currentPlayer: players[0], attempts: Object.fromEntries(players.map(p => [p, 0])), histories: Object.fromEntries(players.map(p => [p, []])), finished: false, ...(machine ? { machine } : {}) }; }
 export function submitDuelAttempt(state: DuelState, player: string, guess: Guess, now: number): Transition<DuelState> { if (state.finished) return { state, error: makeError('GAME_FINISHED', 'El duelo ya terminó.') }; if (now < state.lastTimestamp) return { state, error: makeError('CLOCK_REWIND', 'El reloj monotónico no puede retroceder.') }; if (!(player in state.secrets) || player !== state.currentPlayer) return { state, error: makeError('NOT_YOUR_TURN', 'No es el turno de ese jugador.') }; const prior = state.histories[player]; const turnStart = prior.length ? prior[prior.length - 1].at : state.startedAt; if (now >= turnStart + state.config.turnDurationSeconds) return { state: { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now, players: Object.keys(state.secrets).map(p => ({ player: p, outcome: 'draw', reason: 'expired', attempts: state.attempts[p] })) } } }; const validation = validateSecret(guess, state.config); if (!validation.valid) return { state, error: validation.error }; const attempt = { guess, at: now, score: scoreGuess(state.secrets[player], guess) }; const histories = { ...state.histories, [player]: [...prior, attempt] }; const attempts = { ...state.attempts, [player]: state.attempts[player] + 1 }; const players = Object.keys(state.secrets); const other = players.find(p => p !== player)!; const current = { ...state, lastTimestamp: now, histories, attempts }; const otherSolved = histories[other].some(a => a.score.exact); if (attempt.score.exact) { if (otherSolved) return { state: finishDuelState(current, 'draw', 'correct', undefined, now), attempt }; return { state: { ...current, currentPlayer: other }, attempt }; } if (otherSolved) return { state: finishDuelState(current, 'win', 'correct', other, now), attempt }; if (state.config.maxAttempts !== null && attempts[player] >= state.config.maxAttempts && attempts[other] >= state.config.maxAttempts) return { state: finishDuelState(current, 'draw', 'exhausted', undefined, now), attempt }; return { state: { ...current, currentPlayer: other, round: player === players[1] ? state.round + 1 : state.round }, attempt }; }
 function finishDuelState(state: DuelState, outcome: 'win' | 'draw', reason: FinalReason, winner?: string, at?: number): DuelState { const players = Object.keys(state.secrets).map(player => ({ player, outcome: outcome === 'draw' ? 'draw' : player === winner ? 'win' : 'loss', reason, attempts: state.attempts[player] } as PlayerResult)); return { ...state, finished: true, result: { outcome, reason, winner, at, players } }; }
 
-export interface RaceState { kind: 'race'; config: GameConfig; secret: Secret; startedAt: number; lastTimestamp: number; deadline: number; attempts: Record<string, number>; history: Array<Attempt & { player: string }>; finished: boolean; result?: { outcome: 'win' | 'draw'; reason: FinalReason; winner?: string; at?: number }; }
-export function createRaceState(config: GameConfig | CustomLevel, secret: Secret, startedAt = 0): RaceState { const full = createConfig(config); if (!validateSecret(secret, full).valid) throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds, attempts: {}, history: [], finished: false }; }
+export interface RaceState { kind: 'race'; config: GameConfig; secret: Secret; startedAt: number; lastTimestamp: number; deadline: number; attempts: Record<string, number>; history: Array<Attempt & { player: string }>; finished: boolean; machine?: MachineConfig; result?: { outcome: 'win' | 'draw'; reason: FinalReason; winner?: string; at?: number }; }
+export function createRaceState(config: GameConfig | CustomLevel, secret: Secret, startedAt = 0, machine?: MachineConfig): RaceState { const full = createConfig(config); if (!validateSecret(secret, full).valid) throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds, attempts: {}, history: [], finished: false, ...(machine ? { machine } : {}) }; }
 export function expireRace(state: RaceState, now: number): RaceState { if (state.finished || now < state.lastTimestamp || now < state.deadline) return state; return { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } }; }
 export function submitRaceAttempt(state: RaceState, player: string, guess: Guess, now: number): Transition<RaceState> { if (state.finished) return { state, error: makeError('GAME_FINISHED', 'La carrera ya terminó.') }; if (now < state.lastTimestamp) return { state, error: makeError('CLOCK_REWIND', 'El reloj monotónico no puede retroceder.') }; if (now >= state.deadline) return { state: { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } } }; const validation = validateSecret(guess, state.config); if (!validation.valid) return { state, error: validation.error }; const attempt = { player, guess, at: now, score: scoreGuess(state.secret, guess) }; const next = { ...state, lastTimestamp: now, attempts: { ...state.attempts, [player]: (state.attempts[player] ?? 0) + 1 }, history: [...state.history, attempt] }; return attempt.score.exact ? { state: { ...next, finished: true, result: { outcome: 'win', reason: 'correct', winner: player, at: now } }, attempt } : { state: next, attempt }; }
 export const submitRaceGuess = submitRaceAttempt;
+
+export function createParticipantSnapshot(state: DuelState | RaceState, participant: string): ParticipantSnapshot {
+  if (state.kind === 'duel') {
+    if (!(participant in state.histories)) throw new Error('Participante desconocido');
+    return { kind: 'duel', config: state.config, machine: state.machine, history: state.histories[participant].map((attempt) => ({ ...attempt })), attemptsUsed: state.attempts[participant], finished: state.finished, result: state.finished ? state.result : undefined, currentPlayer: state.currentPlayer };
+  }
+  return { kind: 'race', config: state.config, machine: state.machine, history: state.finished ? state.history.map((attempt) => ({ ...attempt })) : [], attemptsUsed: state.attempts[participant] ?? 0, finished: state.finished, result: state.finished ? state.result : undefined, deadline: state.deadline };
+}
+
+export function serializeParticipantSnapshot(state: DuelState | RaceState, participant: string): string {
+  const snapshot = createParticipantSnapshot(state, participant);
+  return serialize(snapshot);
+}
+
+export interface SimulationMetrics { seed: number; difficulty: MachineDifficulty; length: number; repeats: boolean; latencyMs: number; resolved: boolean; attempts: number; }
+export function simulateMachine(config: GameConfig, difficulty: MachineDifficulty, seed: number, secret: Secret): SimulationMetrics {
+  let history: Attempt[] = []; let resolved = false; let latencyMs = 0;
+  for (let attempt = 0; attempt < (config.maxAttempts ?? 12); attempt += 1) {
+    const decision = chooseMachineGuess({ config, history, seed: seed + attempt, difficulty }); latencyMs += decision.latencyMs;
+    const validation = validateSecret(decision.guess, config); if (!validation.valid) continue;
+    const scored = scoreGuess(secret, decision.guess); history = [...history, { guess: decision.guess, at: attempt, score: scored }];
+    if (scored.exact) { resolved = true; return { seed: seed >>> 0, difficulty, length: config.length, repeats: config.repeats, latencyMs, resolved, attempts: history.length }; }
+  }
+  return { seed: seed >>> 0, difficulty, length: config.length, repeats: config.repeats, latencyMs, resolved, attempts: history.length };
+}
 export interface MonotonicClock { now(): number; }
 export function createMonotonicClock(read: () => number): MonotonicClock { let last = -Infinity; return { now: () => { const value = read(); if (value < last) throw new Error('CLOCK_REWIND'); last = value; return value; } }; }
 export function serialize<T>(value: T): string { return JSON.stringify(value); }

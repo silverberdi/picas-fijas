@@ -77,6 +77,58 @@ export interface Transition<T> {
     error?: SerializableError;
     attempt?: Attempt;
 }
+export type MachineDifficulty = 'easy' | 'intermediate' | 'hard';
+export type MachineGameKind = 'duel' | 'race';
+export type CalculationStatus = 'idle' | 'calculating' | 'cancelled' | 'complete';
+export interface MachineConfig {
+    kind: MachineGameKind;
+    difficulty: MachineDifficulty;
+    seed: number;
+    calculation: CalculationStatus;
+}
+export interface MachineDecisionInput {
+    config: GameConfig;
+    history: readonly Attempt[];
+    seed: number;
+    difficulty: MachineDifficulty;
+}
+export interface MachineDecision {
+    guess: Guess;
+    difficulty: MachineDifficulty;
+    seed: number;
+    work: number;
+    latencyMs: number;
+}
+/** A participant snapshot intentionally has no secret or rival-owned data. */
+export interface ParticipantSnapshot {
+    kind: MachineGameKind;
+    config: GameConfig;
+    machine?: MachineConfig;
+    history: readonly Attempt[];
+    attemptsUsed: number;
+    finished: boolean;
+    result?: unknown;
+    currentPlayer?: string;
+    deadline?: number;
+}
+export declare function createMachineConfig(kind: MachineGameKind, difficulty: MachineDifficulty, seed: number): MachineConfig;
+/** Pure easy policy: a deterministic probe derived only from public history and rules. */
+export declare function chooseEasyGuess(input: MachineDecisionInput): MachineDecision;
+/** Intermediate policy filters candidates against the machine's own scored history. */
+export declare function chooseIntermediateGuess(input: MachineDecisionInput): MachineDecision;
+/** Hard policy samples a bounded candidate set and chooses the most informative probe. */
+export declare function chooseHardGuess(input: MachineDecisionInput): MachineDecision;
+export declare function chooseMachineGuess(input: MachineDecisionInput): MachineDecision;
+export interface MachineDecisionProgress {
+    status: CalculationStatus;
+    progress: number;
+    decision?: MachineDecision;
+}
+export declare function calculateMachineGuess(input: MachineDecisionInput, options?: {
+    signal?: AbortSignal;
+    onProgress?: (progress: MachineDecisionProgress) => void;
+    delayMs?: number;
+}): Promise<MachineDecision>;
 export type IndexSource = (exclusiveUpperBound: number) => number;
 export interface RandomIndexSource {
     nextIndex(exclusiveUpperBound: number): number;
@@ -111,6 +163,7 @@ export interface DuelState {
     attempts: Record<string, number>;
     histories: Record<string, Attempt[]>;
     finished: boolean;
+    machine?: MachineConfig;
     result?: {
         outcome: 'win' | 'draw';
         reason: FinalReason;
@@ -119,7 +172,7 @@ export interface DuelState {
         players: PlayerResult[];
     };
 }
-export declare function createDuelState(config: GameConfig | CustomLevel, secrets: Record<string, Secret>, startedAt?: number): DuelState;
+export declare function createDuelState(config: GameConfig | CustomLevel, secrets: Record<string, Secret>, startedAt?: number, machine?: MachineConfig): DuelState;
 export declare function submitDuelAttempt(state: DuelState, player: string, guess: Guess, now: number): Transition<DuelState>;
 export interface RaceState {
     kind: 'race';
@@ -133,6 +186,7 @@ export interface RaceState {
         player: string;
     }>;
     finished: boolean;
+    machine?: MachineConfig;
     result?: {
         outcome: 'win' | 'draw';
         reason: FinalReason;
@@ -140,10 +194,22 @@ export interface RaceState {
         at?: number;
     };
 }
-export declare function createRaceState(config: GameConfig | CustomLevel, secret: Secret, startedAt?: number): RaceState;
+export declare function createRaceState(config: GameConfig | CustomLevel, secret: Secret, startedAt?: number, machine?: MachineConfig): RaceState;
 export declare function expireRace(state: RaceState, now: number): RaceState;
 export declare function submitRaceAttempt(state: RaceState, player: string, guess: Guess, now: number): Transition<RaceState>;
 export declare const submitRaceGuess: typeof submitRaceAttempt;
+export declare function createParticipantSnapshot(state: DuelState | RaceState, participant: string): ParticipantSnapshot;
+export declare function serializeParticipantSnapshot(state: DuelState | RaceState, participant: string): string;
+export interface SimulationMetrics {
+    seed: number;
+    difficulty: MachineDifficulty;
+    length: number;
+    repeats: boolean;
+    latencyMs: number;
+    resolved: boolean;
+    attempts: number;
+}
+export declare function simulateMachine(config: GameConfig, difficulty: MachineDifficulty, seed: number, secret: Secret): SimulationMetrics;
 export interface MonotonicClock {
     now(): number;
 }

@@ -42,6 +42,18 @@
       "result": "UNAUTHORIZED: This app connection requires reauthentication. Reconnect the app and try again."
     }
   ],
+  "pf04": {
+    "change": "req-4-pf-04-duelo-y-carrera-contra-la-maquina",
+    "status": "fallback_applied",
+    "blocking": false,
+    "screens": [
+      { "id": "8fdefea15f054e4fab10978d9e263d5f", "fallback": "assets/references/duel-bot-mobile.html", "fallbackSha256": "25e5a710f1f3df53c19f3f4352c273670bc6b2b27fccbd2ea607ce585bf78895" },
+      { "id": "578efe96cf894d879cfb976c3c868417", "fallback": "assets/references/race-bot-mobile.html", "fallbackSha256": "a6c43cb4864f04523b95b1eddff3d472b37f9945a6a8aca9537b11019ab87f34" },
+      { "id": "3838177211b144d3b6840ebf9cf7bfa7", "fallback": "assets/references/duel-desktop.html", "fallbackSha256": "8ae36e9d5a4b54a80cdc54c9f7867f4198eb0f60c1c1532914ac211fd961db8c" },
+      { "id": "464d2bb886424af0b419ce58290f3106", "fallback": "assets/references/race-desktop.html", "fallbackSha256": "bc62513284959c823821ba17d132caa116485e45d3d5a7ea9d413556c774f4c5" },
+      { "id": "72765bd741154a1c8fbf4728f8a655dd", "fallback": "assets/references/results.html", "fallbackSha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad" }
+    ]
+  },
   "screens": [
     {
       "id": "1b0e461f4c614b87bb38919c75f0fa64",

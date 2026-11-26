@@ -40,3 +40,27 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
     await page.screenshot({ path: testInfo.outputPath(`classic-light-${viewport.width}x${viewport.height}.png`), fullPage: false });
   });
 }
+
+test('duelo contra La máquina conserva controles, estado de cálculo y privacidad del rival', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Duelo máquina/ }).click();
+  await page.getByRole('button', { name: 'Comenzar partida' }).click();
+  await expect(page.getByRole('heading', { name: /Duelo contra La máquina/ })).toBeVisible();
+  await expect(page.getByText('La máquina', { exact: true })).toBeVisible();
+  await expect(page.getByText('Intentos rivales ocultos hasta el resultado.')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Abandonar partida' }).click();
+  await expect(page.getByRole('heading', { name: 'Empate' })).toBeVisible();
+});
+
+test('carrera contra La máquina oculta el historial rival y mantiene scroll interno', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: /Carrera máquina/ }).click();
+  await page.getByRole('button', { name: 'Comenzar partida' }).click();
+  await expect(page.getByRole('heading', { name: /Carrera contra La máquina/ })).toBeVisible();
+  await expect(page.getByText('Intentos rivales ocultos hasta el resultado.')).toBeVisible();
+  await expect(page.locator('.history-scroll')).toHaveCSS('overflow-y', 'auto');
+  await expect(page.getByRole('button', { name: 'Confirmar' })).toBeVisible();
+  await page.getByRole('button', { name: 'Abandonar partida' }).click();
+  await expect(page.getByRole('heading', { name: 'Empate' })).toBeVisible();
+});

@@ -1,5 +1,5 @@
 {
-  "change": "req-1-pf-01-fundaciones-del-monorepo-pwa-y-sis",
+  "change": "req-4-pf-04-duelo-y-carrera-contra-la-maquina",
   "source": "assets/references/ fallback HTML",
   "stitch": {
     "project": "7461201299918295899",
@@ -7,6 +7,36 @@
     "reason": "UNAUTHORIZED oauth_refresh_token_missing"
   },
   "screens": [
+    {
+      "screen": "duel-bot-mobile",
+      "fallback": "assets/references/duel-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "La vista local conserva la identidad Party, añade estado La máquina y usa el historial interno; Stitch quedó inaccesible y el fallback es la referencia trazable."
+    },
+    {
+      "screen": "race-bot-mobile",
+      "fallback": "assets/references/race-bot-mobile.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "La carrera oculta el historial rival durante actividad y publica el resultado sólo al cierre."
+    },
+    {
+      "screen": "duel-desktop",
+      "fallback": "assets/references/duel-desktop.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El layout desktop mantiene controles a la izquierda e historial a la derecha sin dependencia externa."
+    },
+    {
+      "screen": "race-desktop",
+      "fallback": "assets/references/race-desktop.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El reloj y controles permanecen visibles; sólo el historial admite desplazamiento."
+    },
+    {
+      "screen": "results",
+      "fallback": "assets/references/results.html",
+      "implementation": "apps/web/src/app/app.component.pf03.html",
+      "difference": "El resultado unificado muestra desenlace contra La máquina y evita exponer datos rivales durante la carrera."
+    },
     {
       "screen": "home-mobile",
       "fallback": "assets/references/home-mobile.html",
