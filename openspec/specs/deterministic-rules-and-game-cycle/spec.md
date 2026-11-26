@@ -40,7 +40,7 @@ El motor SHALL validar longitud, caracteres, repetición y pertenencia a la conf
 
 ### Requirement: Estados, razones finales y reloj inyectable
 
-El contrato SHALL serializar configuración, estado, historial, oportunidades restantes, resultado individual, resultado competitivo y razón final. El reloj SHALL ser inyectable y monotónico para que vencimiento, duración y transiciones se puedan reproducir sin consultar el entorno global. En una partida contra la máquina, cada participante SHALL recibir un snapshot que excluya secretos e historial no legítimos.
+El contrato SHALL serializar configuración, estado, historial, oportunidades restantes, resultado individual, resultado competitivo y razón final. El reloj SHALL ser inyectable y monotónico para que vencimiento, duración y transiciones se puedan reproducir sin consultar el entorno global. En una partida contra la máquina o en una sala humana online, cada participante SHALL recibir un snapshot que excluya secretos e historial no legítimos y el servidor autoritativo SHALL validar la versión de transición.
 
 #### Scenario: Agotamiento de intentos
 - **WHEN** ambos jugadores consumen todas sus oportunidades sin acertar
@@ -53,6 +53,10 @@ El contrato SHALL serializar configuración, estado, historial, oportunidades re
 #### Scenario: Snapshot legítimo para la máquina
 - **WHEN** la máquina solicita el estado de una partida
 - **THEN** recibe su configuración, reglas e historial propio, pero no recibe ningún secreto ni historial del rival
+
+#### Scenario: Snapshot legítimo para sala humana
+- **WHEN** un participante solicita el estado de una sala humana online
+- **THEN** recibe la versión autoritativa, sus datos permitidos y su historial propio, pero no recibe secretos ni historial privado del rival
 
 ### Requirement: Duelo por rondas equivalentes
 
@@ -85,6 +89,10 @@ El motor SHALL evaluar tentativas de carrera contra un secreto común, SHALL ign
 #### Scenario: Carrera contra máquina oculta el rival
 - **WHEN** la máquina realiza una tentativa durante una carrera activa
 - **THEN** el participante no recibe su tentativa ni feedback hasta que el resultado final cierre la carrera
+
+#### Scenario: Carrera humana oculta el rival
+- **WHEN** un participante realiza una tentativa durante una carrera humana activa
+- **THEN** el otro participante no recibe el secreto común, la tentativa ni el feedback hasta que el resultado final cierre la carrera
 
 ### Requirement: Cobertura determinista y basada en propiedades
 
