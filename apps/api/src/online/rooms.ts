@@ -57,6 +57,10 @@ export class RoomActor {
     return true;
   }
   hasCredential(credentialValue: string | undefined) { return Boolean(this.find(credentialValue)); }
+  snapshotForCredential(credentialValue: string | undefined) {
+    const member = this.find(credentialValue);
+    return member ? this.snapshot(member) : undefined;
+  }
   interrupt(now = Date.now()) { this.finish('technical-interruption', now); }
   handle(command: OnlineCommand, credentialValue?: string, now = Date.now()): OnlineResponse {
     if (this.expired(now)) return this.fail(command, { code: 'EXPIRED', message: 'La sala expiró.', recoverable: false });
