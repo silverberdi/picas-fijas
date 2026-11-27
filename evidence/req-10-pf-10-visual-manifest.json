@@ -3,7 +3,7 @@
   "status": "fallback_applied",
   "blocking": false,
   "candidate": {
-    "headShaAtGeneration": "90f4a842abbb2b8aefc6b0617d51e7d41c690400",
+    "headShaAtGeneration": "8c9e883e378ccf7942416df720ef347d0202ef33",
     "worktree": "clean"
   },
   "stitch": {
