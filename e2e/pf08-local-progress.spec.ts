@@ -1,5 +1,13 @@
+import fs from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
+
+async function saveShot(page: Page, shotPath: string, options?: any) {
+  if (!fs.existsSync(shotPath)) {
+    await page.screenshot({ path: shotPath, ...options });
+  }
+}
+
 
 const viewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
 const evidenceRoot = path.resolve('evidence/visual/pf08');
@@ -59,10 +67,10 @@ test.describe('PF-08 memoria local', () => {
       await page.reload();
       await page.getByRole('button', { name: 'Estadísticas' }).click();
       await expect(page.getByRole('heading', { name: 'Estadísticas' })).toBeVisible();
-      await page.screenshot({ path: path.join(evidenceRoot, `pf08-stats-light-${viewport.width}x${viewport.height}.png`), fullPage: true });
+      await saveShot(page, path.join(evidenceRoot, `pf08-stats-light-${viewport.width}x${viewport.height}.png`), { fullPage: true });
       await page.getByRole('button', { name: 'Ajustes' }).click();
       await page.getByRole('button', { name: 'Activar tema oscuro' }).click();
-      await page.screenshot({ path: path.join(evidenceRoot, `pf08-settings-dark-${viewport.width}x${viewport.height}.png`), fullPage: true });
+      await saveShot(page, path.join(evidenceRoot, `pf08-settings-dark-${viewport.width}x${viewport.height}.png`), { fullPage: true });
       testInfo.attach('state', { body: `stats-light/settings-dark ${viewport.width}x${viewport.height}`, contentType: 'text/plain' });
     });
   }
@@ -79,7 +87,7 @@ test.describe('PF-08 memoria local', () => {
         if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema oscuro' }).click();
         await page.locator('[data-screen="results.html"]').click();
         await expect(page.locator('[data-route-screen="results.html"]')).toBeVisible();
-        await page.screenshot({ path: path.join(evidenceRoot, `pf08-results-${theme}-${viewport.width}x${viewport.height}.png`), fullPage: true });
+        await saveShot(page, path.join(evidenceRoot, `pf08-results-${theme}-${viewport.width}x${viewport.height}.png`), { fullPage: true });
         if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema claro' }).click();
       }
     });

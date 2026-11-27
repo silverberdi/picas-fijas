@@ -1,5 +1,13 @@
+import fs from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
+
+async function saveShot(page: Page, shotPath: string, options?: any) {
+  if (!fs.existsSync(shotPath)) {
+    await page.screenshot({ path: shotPath, ...options });
+  }
+}
+
 
 const evidenceRoot = path.resolve('evidence/visual/pf07');
 const viewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
@@ -55,27 +63,27 @@ test('genera matriz PF-07 anotada por pantalla, estado, tema y viewport', async 
       await page.locator('[data-screen="public-list.html"]').click();
       await expect(page.getByRole('heading', { name: 'Encuentra una partida' })).toBeVisible();
       await annotate(page, 'public-list', 'listado', theme, viewport);
-      await page.screenshot({ path: path.join(evidenceRoot, `pf07-public-list-listado-${viewport.width}x${viewport.height}-${theme}.png`) });
+      await saveShot(page, path.join(evidenceRoot, `pf07-public-list-listado-${viewport.width}x${viewport.height}-${theme}.png`));
 
       await page.getByRole('button', { name: 'Buscar rival' }).click();
       await expect(page.getByRole('heading', { name: 'Buscando rival compatible' })).toBeVisible();
       await annotate(page, 'public-queue', 'cola-activa', theme, viewport);
-      await page.screenshot({ path: path.join(evidenceRoot, `pf07-public-queue-cola-activa-${viewport.width}x${viewport.height}-${theme}.png`) });
+      await saveShot(page, path.join(evidenceRoot, `pf07-public-queue-cola-activa-${viewport.width}x${viewport.height}-${theme}.png`));
 
       await page.getByRole('button', { name: 'Cancelar búsqueda' }).click();
       await page.locator('[data-screen="public-offer.html"]').click();
       await expect(page.getByRole('heading', { name: 'Rival compatible encontrado' })).toBeVisible();
       await annotate(page, 'public-offer', 'oferta-pendiente', theme, viewport);
-      await page.screenshot({ path: path.join(evidenceRoot, `pf07-public-offer-oferta-pendiente-${viewport.width}x${viewport.height}-${theme}.png`) });
+      await saveShot(page, path.join(evidenceRoot, `pf07-public-offer-oferta-pendiente-${viewport.width}x${viewport.height}-${theme}.png`));
 
       await page.getByRole('button', { name: 'Aceptar rival' }).click();
       await annotate(page, 'public-offer', 'aceptacion-enviada', theme, viewport);
-      await page.screenshot({ path: path.join(evidenceRoot, `pf07-public-offer-aceptacion-enviada-${viewport.width}x${viewport.height}-${theme}.png`) });
+      await saveShot(page, path.join(evidenceRoot, `pf07-public-offer-aceptacion-enviada-${viewport.width}x${viewport.height}-${theme}.png`));
 
       await page.getByRole('button', { name: 'Rechazar' }).click();
       await expect(page.getByRole('heading', { name: 'Buscando rival compatible' })).toBeVisible();
       await annotate(page, 'public-queue', 'oferta-cancelada', theme, viewport);
-      await page.screenshot({ path: path.join(evidenceRoot, `pf07-public-queue-oferta-cancelada-${viewport.width}x${viewport.height}-${theme}.png`) });
+      await saveShot(page, path.join(evidenceRoot, `pf07-public-queue-oferta-cancelada-${viewport.width}x${viewport.height}-${theme}.png`));
     }
   }
 });

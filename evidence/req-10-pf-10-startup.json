@@ -1,0 +1,34 @@
+{
+  "change": "req-10-pf-10-seguridad-operacional-validacion-i",
+  "candidateSha": "0d8670c7fca80839da90491b98c57c0d65ad51ef",
+  "status": "PASS",
+  "frontend": {
+    "staticBuild": "apps/web/dist/web/browser",
+    "bundleSecrets": false,
+    "staticServer": "PASS",
+    "wssConfigurable": true
+  },
+  "backend": {
+    "transport": "HTTP health + WebSocket-capable server",
+    "health": 200,
+    "config": 200,
+    "wssUrl": "configurable via frontend runtime-config.js",
+    "candidateProcess": "PASS",
+    "docker": "PASS"
+  },
+  "dockerAttempt": {
+    "commands": [
+      "docker info",
+      "docker build",
+      "docker run",
+      "docker port",
+      "GET /health"
+    ],
+    "result": "PASS",
+    "build": "PASS",
+    "container": "PASS",
+    "health": "PASS"
+  },
+  "logs": "sanitized: no payloads, credentials or complete IPs",
+  "task": "3.3 verified"
+}

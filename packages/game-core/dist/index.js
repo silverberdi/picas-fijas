@@ -66,8 +66,24 @@ export function chooseHardGuess(input) {
     const guesses = candidateValues(input.config, input.config.length === 6 ? 128 : 160, source);
     const candidates = guesses.filter((value) => compatible(value, input.history, input.config));
     const pool = candidates.length ? candidates : guesses;
-    const buckets = (guess) => new Set(input.history.map((entry) => scoreGuess(guess, entry.guess).fixed + ':' + scoreGuess(guess, entry.guess).picas)).size;
-    const guess = pool.filter((value) => !input.history.some((entry) => entry.guess === value)).sort((a, b) => buckets(b) - buckets(a) || a.localeCompare(b))[0] ?? pool[0];
+    // Keep the hard policy bounded and responsive for the six-digit configuration.
+    // The previous sort recalculated every history score for every comparator call,
+    // making the calculation unnecessarily expensive in the browser.
+    const seen = new Set(input.history.map((entry) => entry.guess));
+    let guess = pool[0];
+    let bestBuckets = -1;
+    for (const candidate of pool) {
+        if (seen.has(candidate))
+            continue;
+        const buckets = new Set(input.history.map((entry) => {
+            const score = scoreGuess(candidate, entry.guess);
+            return `${score.fixed}:${score.picas}`;
+        })).size;
+        if (buckets > bestBuckets || (buckets === bestBuckets && candidate.localeCompare(guess) < 0)) {
+            guess = candidate;
+            bestBuckets = buckets;
+        }
+    }
     return { guess, difficulty: 'hard', seed: input.seed >>> 0, work: guesses.length, latencyMs: 52 + (input.seed % 17) };
 }
 export function chooseMachineGuess(input) {
@@ -157,7 +173,7 @@ export function createDuelState(config, secrets, startedAt = 0, machine) { const
 export function submitDuelAttempt(state, player, guess, now) { if (state.finished)
     return { state, error: makeError('GAME_FINISHED', 'El duelo ya terminó.') }; if (now < state.lastTimestamp)
     return { state, error: makeError('CLOCK_REWIND', 'El reloj monotónico no puede retroceder.') }; if (!(player in state.secrets) || player !== state.currentPlayer)
-    return { state, error: makeError('NOT_YOUR_TURN', 'No es el turno de ese jugador.') }; const prior = state.histories[player]; const turnStart = prior.length ? prior[prior.length - 1].at : state.startedAt; if (now >= turnStart + state.config.turnDurationSeconds)
+    return { state, error: makeError('NOT_YOUR_TURN', 'No es el turno de ese jugador.') }; const prior = state.histories[player]; const turnStart = prior.length ? prior[prior.length - 1].at : state.startedAt; if (now >= turnStart + state.config.turnDurationSeconds * 1000)
     return { state: { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now, players: Object.keys(state.secrets).map(p => ({ player: p, outcome: 'draw', reason: 'expired', attempts: state.attempts[p] })) } } }; const validation = validateSecret(guess, state.config); if (!validation.valid)
     return { state, error: validation.error }; const attempt = { guess, at: now, score: scoreGuess(state.secrets[player], guess) }; const histories = { ...state.histories, [player]: [...prior, attempt] }; const attempts = { ...state.attempts, [player]: state.attempts[player] + 1 }; const players = Object.keys(state.secrets); const other = players.find(p => p !== player); const current = { ...state, lastTimestamp: now, histories, attempts }; const otherSolved = histories[other].some(a => a.score.exact); if (attempt.score.exact) {
     if (otherSolved)
@@ -168,14 +184,15 @@ export function submitDuelAttempt(state, player, guess, now) { if (state.finishe
     return { state: finishDuelState(current, 'draw', 'exhausted', undefined, now), attempt }; return { state: { ...current, currentPlayer: other, round: player === players[1] ? state.round + 1 : state.round }, attempt }; }
 function finishDuelState(state, outcome, reason, winner, at) { const players = Object.keys(state.secrets).map(player => ({ player, outcome: outcome === 'draw' ? 'draw' : player === winner ? 'win' : 'loss', reason, attempts: state.attempts[player] })); return { ...state, finished: true, result: { outcome, reason, winner, at, players } }; }
 export function createRaceState(config, secret, startedAt = 0, machine) { const full = createConfig(config); if (!validateSecret(secret, full).valid)
-    throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds, attempts: {}, history: [], finished: false, ...(machine ? { machine } : {}) }; }
+    throw new Error('Secreto inválido'); return { kind: 'race', config: full, secret, startedAt, lastTimestamp: startedAt, deadline: startedAt + full.raceDurationSeconds * 1000, attempts: {}, history: [], finished: false, ...(machine ? { machine } : {}) }; }
 export function expireRace(state, now) { if (state.finished || now < state.lastTimestamp || now < state.deadline)
     return state; return { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } }; }
 export function submitRaceAttempt(state, player, guess, now) { if (state.finished)
     return { state, error: makeError('GAME_FINISHED', 'La carrera ya terminó.') }; if (now < state.lastTimestamp)
     return { state, error: makeError('CLOCK_REWIND', 'El reloj monotónico no puede retroceder.') }; if (now >= state.deadline)
     return { state: { ...state, lastTimestamp: now, finished: true, result: { outcome: 'draw', reason: 'expired', at: now } } }; const validation = validateSecret(guess, state.config); if (!validation.valid)
-    return { state, error: validation.error }; const attempt = { player, guess, at: now, score: scoreGuess(state.secret, guess) }; const next = { ...state, lastTimestamp: now, attempts: { ...state.attempts, [player]: (state.attempts[player] ?? 0) + 1 }, history: [...state.history, attempt] }; return attempt.score.exact ? { state: { ...next, finished: true, result: { outcome: 'win', reason: 'correct', winner: player, at: now } }, attempt } : { state: next, attempt }; }
+    return { state, error: validation.error }; const attempt = { player, guess, at: now, score: scoreGuess(state.secret, guess) }; const next = { ...state, lastTimestamp: now, attempts: { ...state.attempts, [player]: (state.attempts[player] ?? 0) + 1 }, history: [...state.history, attempt] }; if (attempt.score.exact)
+    return { state: { ...next, finished: true, result: { outcome: 'win', reason: 'correct', winner: player, at: now } }, attempt }; const maxAttempts = state.config.maxAttempts; const bothPlayersExhausted = maxAttempts !== null && Object.values(next.attempts).length >= 2 && Object.values(next.attempts).every((value) => value >= maxAttempts); return bothPlayersExhausted ? { state: { ...next, finished: true, result: { outcome: 'draw', reason: 'exhausted', at: now } }, attempt } : { state: next, attempt }; }
 export const submitRaceGuess = submitRaceAttempt;
 export function createParticipantSnapshot(state, participant) {
     if (state.kind === 'duel') {

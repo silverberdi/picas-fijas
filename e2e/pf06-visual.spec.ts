@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 
@@ -30,7 +31,13 @@ test('genera evidencia PF-06 por estado, tema y viewport', async ({ page }) => {
       for (const state of states) {
         await page.locator(`[data-screen="${state.screen}"]`).click();
         await expect(page.locator(`[data-route-screen="${state.screen}"]`)).toBeVisible();
-        await page.screenshot({ path: path.join(evidenceRoot, `pf06-${state.id}-${viewport.width}x${viewport.height}-${theme}.png`), fullPage: false });
+        const shotPath = path.join(evidenceRoot, `pf06-${state.id}-${viewport.width}x${viewport.height}-${theme}.png`);
+
+        if (!fs.existsSync(shotPath)) {
+
+          await page.screenshot({ path: shotPath, fullPage: false });
+
+        }
       }
       if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema claro' }).click();
     }
