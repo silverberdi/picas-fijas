@@ -23,11 +23,11 @@
 - `npm run build --workspace=@picas-fijas/web` — PASS, exit 0.
 - `npm run check` — PASS, lint + 70 unit tests + build + 72 Playwright tests, exit 0.
 - `npx playwright test e2e/pf10-visual-evidence.spec.ts --workers=1` — PASS, 15 tests, exit 0; 18 annotated PNGs validated by `node evidence/visual/run-pf10-evidence.mjs`.
-- Candidate SHA: `d8c5b4b7116c8900bd5791211725fc75b9638628`.
+- Candidate SHA: `8faf19fde914901acb3ba61d2b4c341e317b8892`.
 - `npm run test` — first full run had one transient API WebSocket timeout; the exact test was rerun and passed (25/25). Web 22/22, game-core 23/23.
 - `npm run build` — PASS, exit 0.
 - `npm run e2e` — PASS, exit 0, 72/72. The reported six-digit hard-machine regression also passed in the focused test.
-- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; the harness attempts `docker info`, image build, detached container, published port and `/health`, then cleanup when a daemon exists. Docker startup remains NOT_VERIFIED because neither the default daemon socket nor a disposable `/tmp` daemon was available; sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`.
+- `node evidence/req-10-pf-10-startup.mjs` — exit 0 at candidate `8faf19fde914901acb3ba61d2b4c341e317b8892`, static frontend server and configurable backend health/config PASS; the harness attempts `docker info`, image build, detached container, published port and `/health`, then cleanup when a daemon exists. Docker startup remains NOT_VERIFIED because neither the default daemon socket nor a disposable `/tmp` daemon was available; sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`.
 - `docker build --tag picas-fijas-pf10-candidate:local .` — NOT_VERIFIED: daemon ausente (`/var/run/docker.sock`).
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.

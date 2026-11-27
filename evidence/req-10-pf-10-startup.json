@@ -1,6 +1,6 @@
 {
   "change": "req-10-pf-10-seguridad-operacional-validacion-i",
-  "candidateSha": "d8c5b4b7116c8900bd5791211725fc75b9638628",
+  "candidateSha": "8faf19fde914901acb3ba61d2b4c341e317b8892",
   "status": "BLOCKED",
   "frontend": {
     "staticBuild": "apps/web/dist/web/browser",
