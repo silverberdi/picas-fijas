@@ -7,6 +7,12 @@ export interface OnlineConfig {
   port: number;
   raceDurationSeconds: number;
   disconnectGraceMs: number;
+  connectionWindowMs: number;
+  maxConnectionsPerWindow: number;
+  maxReconnectsPerWindow: number;
+  credentialTtlMs: number;
+  reservationTtlMs: number;
+  metricsTtlMs: number;
 }
 
 export const DEFAULT_ONLINE_CONFIG: OnlineConfig = {
@@ -18,6 +24,12 @@ export const DEFAULT_ONLINE_CONFIG: OnlineConfig = {
   port: 0,
   raceDurationSeconds: 180,
   disconnectGraceMs: 60 * 1000,
+  connectionWindowMs: 60 * 1000,
+  maxConnectionsPerWindow: 120,
+  maxReconnectsPerWindow: 20,
+  credentialTtlMs: 15 * 60 * 1000,
+  reservationTtlMs: 20 * 1000,
+  metricsTtlMs: 60 * 60 * 1000,
 };
 
 function positive(value: number, fallback: number): number {
@@ -35,6 +47,12 @@ export function readOnlineConfig(env: NodeJS.ProcessEnv = process.env): OnlineCo
     port: Number.isInteger(Number(env.PORT)) && Number(env.PORT) >= 0 ? Number(env.PORT) : 0,
     raceDurationSeconds: positive(Number(env.RACE_DURATION_SECONDS), DEFAULT_ONLINE_CONFIG.raceDurationSeconds),
     disconnectGraceMs: positive(Number(env.DISCONNECT_GRACE_MS), DEFAULT_ONLINE_CONFIG.disconnectGraceMs),
+    connectionWindowMs: positive(Number(env.CONNECTION_WINDOW_MS), DEFAULT_ONLINE_CONFIG.connectionWindowMs),
+    maxConnectionsPerWindow: positive(Number(env.MAX_CONNECTIONS_PER_WINDOW), DEFAULT_ONLINE_CONFIG.maxConnectionsPerWindow),
+    maxReconnectsPerWindow: positive(Number(env.MAX_RECONNECTS_PER_WINDOW), DEFAULT_ONLINE_CONFIG.maxReconnectsPerWindow),
+    credentialTtlMs: positive(Number(env.CREDENTIAL_TTL_MS), DEFAULT_ONLINE_CONFIG.credentialTtlMs),
+    reservationTtlMs: positive(Number(env.RESERVATION_TTL_MS), DEFAULT_ONLINE_CONFIG.reservationTtlMs),
+    metricsTtlMs: positive(Number(env.METRICS_TTL_MS), DEFAULT_ONLINE_CONFIG.metricsTtlMs),
     maxParticipants: 2,
   };
 }

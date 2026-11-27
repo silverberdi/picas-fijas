@@ -1,0 +1,10 @@
+{
+  "change": "req-10-pf-10-seguridad-operacional-validacion-i",
+  "status": "fallback_applied",
+  "blocking": false,
+  "stitch": { "project": "projects/7461201299918295899", "error": "No Stitch connector available in Apply" },
+  "referenceRoot": "assets/references",
+  "viewports": [[360, 640], [390, 844], [1280, 720]],
+  "themes": ["light", "dark"],
+  "note": "HTML local versionado es referencia; no es runtime ni prueba de ejecución. Playwright real debe producir las capturas del candidato."
+}
