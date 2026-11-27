@@ -1,16 +1,33 @@
 {
   "change": "req-10-pf-10-seguridad-operacional-validacion-i",
-  "status": "PASS",
+  "status": "BLOCKED",
   "frontend": {
     "staticBuild": "apps/web/dist/web/browser",
-    "bundleSecrets": false
+    "bundleSecrets": false,
+    "staticServer": "PASS",
+    "wssConfigurable": true
   },
   "backend": {
     "transport": "HTTP health + WebSocket-capable server",
     "health": 200,
     "config": 200,
     "wssUrl": "configurable via frontend runtime-config.js",
-    "docker": "NOT_VERIFIED: daemon no disponible en Apply"
+    "candidateProcess": "PASS",
+    "docker": "NOT_VERIFIED: Docker daemon unavailable"
   },
-  "logs": "sanitized: no payloads, credentials or complete IPs"
+  "dockerAttempt": {
+    "commands": [
+      "docker info",
+      "docker build",
+      "docker run",
+      "docker port",
+      "GET /health"
+    ],
+    "result": "NOT_VERIFIED: Docker daemon or candidate container unavailable",
+    "build": "NOT_RUN",
+    "container": "NOT_RUN",
+    "health": "NOT_RUN"
+  },
+  "logs": "sanitized: no payloads, credentials or complete IPs",
+  "task": "3.3 remains unchecked until a real Docker container startup is executed"
 }

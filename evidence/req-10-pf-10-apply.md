@@ -23,7 +23,7 @@
 - `npm run build --workspace=@picas-fijas/web` — PASS, exit 0.
 - `npm run check` — PASS, lint + 70 unit tests + build + 72 Playwright tests, exit 0.
 - `npx playwright test e2e/pf10-visual-evidence.spec.ts --workers=1` — PASS, 15 tests, exit 0; 18 annotated PNGs validated by `node evidence/visual/run-pf10-evidence.mjs`.
-- `node evidence/req-10-pf-10-startup.mjs` — PASS, static frontend build and configurable backend health/config startup; sanitized result in `evidence/req-10-pf-10-startup.json`.
+- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; the harness attempts `docker info`, image build, detached container, published port and `/health`, then cleanup when a daemon exists. Docker startup remains NOT_VERIFIED because neither the default daemon socket nor a disposable `/tmp` daemon was available; sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`.
 - `docker build --tag picas-fijas-pf10-candidate:local .` — NOT_VERIFIED: daemon ausente (`/var/run/docker.sock`).
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.

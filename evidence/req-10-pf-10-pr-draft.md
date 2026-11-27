@@ -16,7 +16,7 @@ Centraliza límites operacionales configurables y métricas anónimas en memoria
 - Unit/integration: API 25 tests PASS; web 22 tests PASS; game-core 23 tests PASS.
 - Build: frontend production PASS.
 - E2E real: `npm run check` PASS, 72/72 con dos contextos, offline, reconexión, accesibilidad, temas y viewports requeridos.
-- Startup candidato: frontend estático + backend health/config PASS; Docker NOT_VERIFIED por ausencia de daemon y fallo de namespace rootless, conservado explícitamente.
+- Startup candidato: frontend estático + backend health/config PASS; el criterio completo permanece BLOCKED porque Docker no tiene daemon disponible y rootless falla por `operation not permitted`, conservado explícitamente.
 - Harness de carga y auditoría: `evidence/req-10-pf-10-load.mjs`, `evidence/req-10-pf-10-audit.md`.
 - Fallback visual Stitch: `evidence/req-10-pf-10-visual-manifest.json`, `status: fallback_applied`, `blocking: false`, 18 PNG anotados y reporte reproducible.
 
