@@ -1,7 +1,7 @@
 # PF-09 Apply evidence
 
 - Base SHA: `274a168dbdb3e5f2b0e14666b3c5f8e32b84c163`.
-- Candidate head SHA: `unknown` until coordinator creates the immutable candidate after Apply.
+- Candidate head SHA: `c3730ecf03f77a7dc9c41f7b819315c47e4b4d8f`.
 - `npm run test --workspace=@picas-fijas/web`: PASS, exit 0 (21 tests), including atomic precache rejection and rollback unit coverage.
 - `npm run build --workspace=@picas-fijas/web`: PASS, exit 0.
 - `npx playwright test e2e/pf09-accessibility-offline.spec.ts e2e/pf08-local-progress.spec.ts --workers=1`: PASS, exit 0 (13 tests), including incomplete-update rollback coverage.

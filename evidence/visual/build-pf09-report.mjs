@@ -41,7 +41,7 @@ const cases = [
 const report = {
   change: 'req-9-pf-09-calidad-audiovisual-accesibilidad',
   status: 'apply_evidence',
-  candidateBinding: { baseSha: '274a168', candidateSha: 'uncommitted-worktree', implementationHashes: implementation },
+  candidateBinding: { baseSha: '274a168dbdb3e5f2b0e14666b3c5f8e32b84c163', candidateSha: 'c3730ecf03f77a7dc9c41f7b819315c47e4b4d8f', implementationHashes: implementation },
   stitch: { project: '7461201299918295899', status: 'fallback_applied', blocking: false, source: 'assets/references/*.html', reason: 'La integración Stitch no está disponible; se conserva el snapshot HTML versionado.' },
   execution: { command: 'npx playwright test e2e/pf09-visual-evidence.spec.ts --workers=1', exitCode: 0, testsPassed: 18, annotatedPngCount: files.length },
   cases,
