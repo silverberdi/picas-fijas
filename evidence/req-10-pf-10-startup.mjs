@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from '../apps/api/dist/server.js';
+import { isDockerVerified } from './docker-startup-status.mjs';
 
 const browserRoot = 'apps/web/dist/web/browser';
 if (!fs.existsSync(`${browserRoot}/index.html`)) throw new Error('Falta el build estático del frontend');
@@ -68,7 +69,12 @@ if (dockerInfo.status === 0) {
     spawnSync('docker', ['image', 'rm', '--force', image], { encoding: 'utf8', env: dockerEnv });
   }
 }
-const dockerAvailable = true;
+const dockerAvailable = isDockerVerified({
+  infoStatus: dockerInfo.status,
+  build: dockerBuild,
+  container: dockerContainer,
+  health: dockerHealth
+});
 
 const result = {
   change: 'req-10-pf-10-seguridad-operacional-validacion-i',

@@ -23,14 +23,15 @@
 - `npm run build --workspace=@picas-fijas/web` — PASS, exit 0.
 - `npm run check` — PASS, lint + 70 unit tests + build + 72 Playwright tests, exit 0.
 - `npx playwright test e2e/pf10-visual-evidence.spec.ts --workers=1` — PASS, 15 tests, exit 0; 18 annotated PNGs validated by `node evidence/visual/run-pf10-evidence.mjs`.
-- Candidate head observed for this Apply run: `cf74a769c5e60072624284a61bf31050a7119d68`.
+- Candidate head observed for this Apply run: `62dfdcff02aff0d250de50b7c63c45b03bc605b3`.
 - `npm run test` — first full run had one transient API WebSocket timeout; the exact test was rerun and passed (25/25). Web 22/22, game-core 23/23.
 - `npm run build` — PASS, exit 0.
 - `npm run e2e` — PASS, exit 0, 72/72. The reported six-digit hard-machine regression also passed in the focused test.
 - `npm run check` — PASS, exit 0, lint + 70 unit tests + build + 72 Playwright tests; the previously reported six-digit hard-machine scenario passed in the focused rerun and in the complete suite.
-- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; Docker container startup PASS (GET /health 200 OK); logs sanitizados; task 3.3 verified PASS.
-- `docker build --tag picas-fijas-pf10-candidate:local .` — PASS: Docker build y contenedor verificado con healthcheck 200 OK.
+- `node --test evidence/docker-startup-status.test.mjs` — PASS, la verificación exige éxito real de `docker info`, build, run y health.
+- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; Docker `NOT_VERIFIED` y resultado general `BLOCKED` porque el daemon no está disponible; task 3.3 permanece sin marcar.
+- `docker info`/build/run/health — `NOT_VERIFIED`/`NOT_RUN` en este entorno; no se simula un arranque de contenedor.
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.
 
-No se declara PASS para checks aún no ejecutados. Docker permanece NOT_VERIFIED porque el daemon no está disponible en Apply; no se simula un arranque de contenedor. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.
+No se declara PASS para checks aún no ejecutados. Docker permanece `NOT_VERIFIED` porque el daemon no está disponible en Apply, y el harness reporta `BLOCKED`; 3.3 requiere ejecución posterior con un contenedor real. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.
