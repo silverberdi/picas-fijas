@@ -16,7 +16,7 @@ Centraliza límites operacionales configurables y métricas anónimas en memoria
 - Unit/integration: API 25 tests PASS; web 22 tests PASS; game-core 23 tests PASS.
 - Build: frontend production PASS.
 - E2E real: `npm run e2e` PASS, 72/72 con dos contextos, offline, reconexión, accesibilidad, temas y viewports requeridos. La regresión de cálculo difícil de seis dígitos fue corregida y verificada en E2E enfocado y en la suite integral.
-- Startup candidato `cf74a769c5e60072624284a61bf31050a7119d68`: frontend estático + backend health/config PASS; el criterio completo permanece BLOCKED porque Docker no tiene daemon disponible y el intento aislado como usuario sin privilegios falla porque `dockerd` requiere root, conservado explícitamente en `evidence/req-10-pf-10-startup.json`.
+- Startup candidato activo `08451b123fd74a00dedd48ef326096fe0e655e45`: frontend estático + backend health/config PASS; el criterio completo permanece BLOCKED porque Docker no tiene daemon disponible y el intento rootless falla al crear el namespace del host, conservado explícitamente en `evidence/req-10-pf-10-startup.json`.
 - Harness de carga y auditoría: `evidence/req-10-pf-10-load.mjs`, `evidence/req-10-pf-10-audit.md`.
 - Fallback visual Stitch: `evidence/req-10-pf-10-visual-manifest.json`, `status: fallback_applied`, `blocking: false`, 18 PNG anotados y reporte reproducible.
 
