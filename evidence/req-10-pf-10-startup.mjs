@@ -72,6 +72,7 @@ const dockerAvailable = dockerInfo.status === 0 && dockerBuild === 'PASS' && doc
 
 const result = {
   change: 'req-10-pf-10-seguridad-operacional-validacion-i',
+  candidateSha: spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).stdout.trim(),
   status: dockerAvailable ? 'PASS' : 'BLOCKED',
   frontend: { staticBuild: browserRoot, bundleSecrets: false, staticServer: staticReady ? 'PASS' : 'FAIL', wssConfigurable: true },
   backend: { transport: 'HTTP health + WebSocket-capable server', health: health.status, config: config.status, wssUrl: 'configurable via frontend runtime-config.js', candidateProcess: 'PASS', docker: dockerAvailable ? 'PASS' : 'NOT_VERIFIED: Docker daemon unavailable' },
