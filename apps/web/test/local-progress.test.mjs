@@ -39,6 +39,16 @@ test('evalúa seis medallas determinísticamente y excluye neutros', () => {
   assert.equal(evaluateMedals([...results, normalizeResult(base({ resultId: 'neutral', outcome: 'draw', occurredAt: 9 }))]).find((medal) => medal.id === 'five-streak').earned, true);
 });
 
+test('la racha de cinco exige una única dimensión exacta', () => {
+  const mixedDimensions = Array.from({ length: 4 }, (_, index) => normalizeResult(base({ resultId: `classic-${index}`, occurredAt: index + 1 })))
+    .concat(normalizeResult(base({ resultId: 'bot-duel', mode: 'bot-duel', occurredAt: 5 })))
+    .filter(Boolean);
+  assert.equal(evaluateMedals(mixedDimensions).find((medal) => medal.id === 'five-streak').earned, false);
+
+  const sameDimension = mixedDimensions.concat(normalizeResult(base({ resultId: 'classic-4', occurredAt: 6 }))).filter(Boolean);
+  assert.equal(evaluateMedals(sameDimension).find((medal) => medal.id === 'five-streak').earned, true);
+});
+
 test('valida preferencias y restaura defaults sin aceptar valores inválidos', () => {
   assert.deepEqual(validatePreferences({ theme: 'dark', volume: 120, muted: true, vibration: false, reducedMotion: true }).volume, 100);
   assert.deepEqual(validatePreferences({ volume: -4 }).volume, 0);

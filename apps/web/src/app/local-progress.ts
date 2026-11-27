@@ -120,13 +120,28 @@ function firstAt(results: readonly StoredResult[], predicate: (result: StoredRes
   return results.find((result, index) => predicate(result, index))?.occurredAt ?? null;
 }
 
+function exactDimensionKey(result: StoredResult): string {
+  return JSON.stringify([result.mode, result.rules, result.difficulty, result.intelligence, result.assistance]);
+}
+
 export function evaluateMedals(results: readonly StoredResult[]): Medal[] {
   const ordered = [...results].filter((result) => isEligibleResult(result)).sort((a, b) => a.occurredAt - b.occurredAt || a.resultId.localeCompare(b.resultId));
   const wins = ordered.filter((result) => result.outcome === 'victory');
   const modes = new Set(wins.map((result) => result.mode));
   const approvedModes: GameMode[] = ['classic', 'bot-duel', 'bot-race', 'human-duel', 'human-race'];
-  let streak = 0;
-  const fiveStreakAt = firstAt(ordered, (result) => { streak = result.outcome === 'victory' ? streak + 1 : 0; return streak >= 5; });
+  const groupedResults = new Map<string, StoredResult[]>();
+  for (const result of ordered) {
+    const group = groupedResults.get(exactDimensionKey(result)) ?? [];
+    group.push(result);
+    groupedResults.set(exactDimensionKey(result), group);
+  }
+  const fiveStreakAt = [...groupedResults.values()]
+    .map((group) => {
+      let streak = 0;
+      return firstAt(group, (result) => { streak = result.outcome === 'victory' ? streak + 1 : 0; return streak >= 5; });
+    })
+    .filter((occurredAt): occurredAt is number => occurredAt !== null)
+    .sort((a, b) => a - b)[0] ?? null;
   const earnedAt = [
     firstAt(ordered, (result) => result.outcome === 'victory'),
     firstAt(ordered, (_result, index) => wins.length >= 3 && ordered[index].outcome === 'victory' && wins.indexOf(ordered[index]) === 2),
