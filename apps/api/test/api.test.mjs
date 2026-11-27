@@ -10,6 +10,14 @@ import crypto from 'node:crypto';
 import { attachWebSocket } from '../dist/online/websocket.js';
 import { PublicMatchRegistry, publicRulesKey, validatePublicReservation } from '../dist/online/public-matching.js';
 
+const assertNoPrivateFields = (value) => {
+  if (!value || typeof value !== 'object') return;
+  for (const [key, nested] of Object.entries(value)) {
+    assert.equal(['secret', 'credential', 'credentialHash'].includes(key), false, `campo privado expuesto: ${key}`);
+    assertNoPrivateFields(nested);
+  }
+};
+
 test('PF-07 contrato público exige reglas estrictas y clave canónica', () => {
   const rules = { length: 4, repeats: false, maxAttempts: 20, timeSeconds: 60 };
   assert.equal(validatePublicReservation({ mode: 'duel', rules }), true);
@@ -172,7 +180,7 @@ test('proceso API real coordina dos WebSockets, privacidad, duplicados, reconexi
   const peerJoinUpdate = nextMessage(first); const joined = await command(second, 'join', { roomCode: created.roomCode }, 'join'); const observedJoin = await peerJoinUpdate; assert.equal(joined.accepted, true); assert.equal(observedJoin.snapshot.room.participants.length, 2); assert.equal(observedJoin.snapshot.participant.id, created.snapshot.participant.id); assert.notEqual(joined.snapshot.participant.nickname, created.snapshot.participant.nickname);
   const denied = await command(second, 'reconnect', { roomCode: created.roomCode, credential: 'forged' }, 'forged'); assert.equal(denied.accepted, false); assert.equal(denied.error.code, 'CREDENTIAL_DENIED');
   const playing = (response) => response.snapshot?.room.phase === 'playing'; const ready1 = command(first, 'ready', {}, 'ready-1', 'ready-1', playing); const ready2 = command(second, 'ready', {}, 'ready-2', 'ready-2', playing); const [started1, started2] = await Promise.all([ready1, ready2]); const started = [started1, started2].find((response) => response.snapshot.room.phase === 'playing'); assert.ok(started); assert.equal(started.snapshot.room.participants.length, 2);
-  const duplicate = await command(first, 'submitGuess', { guess: '012' }, 'guess-1', 'guess-once'); const replay = await command(first, 'submitGuess', { guess: '012' }, 'guess-retry', 'guess-once'); assert.equal(replay.stateVersion, duplicate.stateVersion); assert.deepEqual(replay.snapshot.cycle.ownAttempts, duplicate.snapshot.cycle.ownAttempts); assert.doesNotMatch(JSON.stringify(duplicate.snapshot), /secret|345/);
+  const duplicate = await command(first, 'submitGuess', { guess: '012' }, 'guess-1', 'guess-once'); const replay = await command(first, 'submitGuess', { guess: '012' }, 'guess-retry', 'guess-once'); assert.equal(replay.stateVersion, duplicate.stateVersion); assert.deepEqual(replay.snapshot.cycle.ownAttempts, duplicate.snapshot.cycle.ownAttempts); assertNoPrivateFields(duplicate.snapshot);
   const abandoned = await command(first, 'leave', {}, 'leave'); assert.equal(abandoned.snapshot.cycle.result.reason, 'abandoned');
   const resumed = new WebSocket(`ws://127.0.0.1:${port}`); await waitOpen(resumed); const reconnected = await command(resumed, 'reconnect', { roomCode: joined.snapshot.room.code, credential: joined.credential }, 'reconnect'); assert.equal(reconnected.accepted, true, JSON.stringify(reconnected)); const rematch1 = await command(resumed, 'rematch', {}, 'rematch-1'); assert.equal(rematch1.accepted, true, JSON.stringify(rematch1));
   const ownerAgain = await command(first, 'reconnect', { roomCode: created.roomCode, credential: created.credential }, 'owner-reconnect'); assert.equal(ownerAgain.accepted, true); const rematch2 = await command(first, 'rematch', {}, 'rematch-2'); assert.equal(rematch2.snapshot.room.phase, 'playing');

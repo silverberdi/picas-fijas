@@ -131,11 +131,18 @@ export function chooseMachineGuess(input: MachineDecisionInput): MachineDecision
 
 export interface MachineDecisionProgress { status: CalculationStatus; progress: number; decision?: MachineDecision; }
 export function calculateMachineGuess(input: MachineDecisionInput, options: { signal?: AbortSignal; onProgress?: (progress: MachineDecisionProgress) => void; delayMs?: number } = {}): Promise<MachineDecision> {
-  const decision = chooseMachineGuess(input);
-  const delay = options.delayMs ?? decision.latencyMs;
   options.onProgress?.({ status: 'calculating', progress: 0 });
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => { if (options.signal?.aborted) return; options.onProgress?.({ status: 'complete', progress: 1, decision }); resolve(decision); }, delay);
+    let timer: ReturnType<typeof setTimeout>;
+    timer = setTimeout(() => {
+      if (options.signal?.aborted) return;
+      const decision = chooseMachineGuess(input);
+      timer = setTimeout(() => {
+        if (options.signal?.aborted) return;
+        options.onProgress?.({ status: 'complete', progress: 1, decision });
+        resolve(decision);
+      }, options.delayMs ?? decision.latencyMs);
+    }, 0);
     options.signal?.addEventListener('abort', () => { clearTimeout(timer); options.onProgress?.({ status: 'cancelled', progress: 0 }); reject(new DOMException('Cálculo cancelado', 'AbortError')); }, { once: true });
   });
 }

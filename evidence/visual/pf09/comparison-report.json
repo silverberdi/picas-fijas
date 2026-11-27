@@ -1,0 +1,278 @@
+{
+  "change": "req-9-pf-09-calidad-audiovisual-accesibilidad",
+  "status": "apply_evidence",
+  "candidateBinding": {
+    "baseSha": "274a168dbdb3e5f2b0e14666b3c5f8e32b84c163",
+    "candidateSha": "155f9cd5135993df53cb115c29a754997713e125",
+    "implementationHashes": {
+      "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+      "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+      "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+    }
+  },
+  "stitch": {
+    "project": "7461201299918295899",
+    "status": "fallback_applied",
+    "blocking": false,
+    "source": "assets/references/*.html",
+    "reason": "La integración Stitch no está disponible; se conserva el snapshot HTML versionado."
+  },
+  "execution": {
+    "command": "npx playwright test e2e/pf09-visual-evidence.spec.ts --workers=1",
+    "exitCode": 0,
+    "testsPassed": 18,
+    "annotatedPngCount": 18
+  },
+  "cases": [
+    {
+      "screen": "offline.html",
+      "state": "offline-fallback",
+      "theme": "light",
+      "viewports": [
+        "360x640",
+        "390x844",
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/offline.html",
+        "sha256": "1198b97d32174b1886aff9bb0bd762ec",
+        "snapshotSha256": "d30e97f318c2603953a3890c5b6eef81babf6a715655d5bec0dd200b9feb2561"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/offline-360x640-annotated.png",
+          "sha256": "626875634df14662b232ff917ee40fab16d681d2c8b7b08a0ce9a3821fe3a055",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/offline-390x844-annotated.png",
+          "sha256": "35cde9d2a54624a5e5894c59943be895d3b731033c2438ea9733016e373a79f0",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/offline-1280x720-annotated.png",
+          "sha256": "a4e5f914819296d2d36cd527612aab75afc23452628c75b6c4e872ab493164d4",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "settings.html",
+      "state": "audiovisual-preferences",
+      "theme": "light",
+      "viewports": [
+        "360x640",
+        "390x844",
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/settings.html",
+        "sha256": "7f2012d3be454c1e9cfd58203b1f4b87",
+        "snapshotSha256": "4f5805bf2ad79164c9297c99c5114a7d26aef8009c02fac3485afad13e038af6"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/settings-light-360x640-annotated.png",
+          "sha256": "cd8d2e628ebac39921d214c96ec2bbfaaf4e40d49dad78ba7455c2ca6046f1c6",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/settings-light-390x844-annotated.png",
+          "sha256": "a1d5bbd1e20040ba637e2cd5dd09935b3b22edf99c6eb947d719f2e6b0c148aa",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/settings-light-1280x720-annotated.png",
+          "sha256": "4f284621e41c56aeebf49f1514322e15a18def6ccb4c0dfc8079659a57e30b03",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "settings.html",
+      "state": "audiovisual-preferences",
+      "theme": "dark",
+      "viewports": [
+        "360x640",
+        "390x844",
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/settings.html",
+        "sha256": "7f2012d3be454c1e9cfd58203b1f4b87",
+        "snapshotSha256": "4f5805bf2ad79164c9297c99c5114a7d26aef8009c02fac3485afad13e038af6"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/settings-dark-360x640-annotated.png",
+          "sha256": "b8e586a229657e03aa09f695e0ae5404bdcd849a0fb1eb50b45ee10be5deda76",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/settings-dark-390x844-annotated.png",
+          "sha256": "d981dcc1a570206a3c159bc84d4aa856953b3cbb42c6934887834e3d8e1199e0",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/settings-dark-1280x720-annotated.png",
+          "sha256": "79341bfa6b1640c5f7f7c19ed475ceb529946c05eca93512a374bedd89432ae5",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "classic-mobile.html",
+      "state": "local-game",
+      "theme": "light",
+      "viewports": [
+        "360x640",
+        "390x844"
+      ],
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "33843df735c643be803a75a306f180e6",
+        "snapshotSha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/classic-360x640-annotated.png",
+          "sha256": "411404b27822b15f1a193b9604b1f4085097b5e7642438d6d6d2049ae126c8f9",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/classic-390x844-annotated.png",
+          "sha256": "0fd0dd5d818bc5c0ba1d18b13e93287561c14326136a98bc3bea0851dbcd9b26",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "classic-desktop.html",
+      "state": "local-game",
+      "theme": "light",
+      "viewports": [
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/classic-desktop.html",
+        "sha256": "6bc36b0f150544e998215a212a026e4e",
+        "snapshotSha256": "e912b18b7a745d9ce5ef18255619f86f4529889d851408af1e351261ed8d25db"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/classic-1280x720-annotated.png",
+          "sha256": "1bf23d4bfbf8c5214d9a3af8b0715a1dbbff5a9e315204fe25d78c0de383a6e5",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "results.html",
+      "state": "local-result",
+      "theme": "light",
+      "viewports": [
+        "360x640",
+        "390x844",
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "72765bd741154a1c8fbf4728f8a655dd",
+        "snapshotSha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/results-light-360x640-annotated.png",
+          "sha256": "aa49d5d34c112262aa6331b2906fd58423bb9f99ac285e6f42d462a538668c1b",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/results-light-390x844-annotated.png",
+          "sha256": "d43cdc5f130b7e85bc38b657b958bba38e9ff9f47289e303df2e5c315fc8f558",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/results-light-1280x720-annotated.png",
+          "sha256": "9250ff1cc1a0bc169ed1d46157ca888b6ff207eafe49e2aaf714132e3149ea1c",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    },
+    {
+      "screen": "results.html",
+      "state": "local-result",
+      "theme": "dark",
+      "viewports": [
+        "360x640",
+        "390x844",
+        "1280x720"
+      ],
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "72765bd741154a1c8fbf4728f8a655dd",
+        "snapshotSha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "implementation": {
+        "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
+        "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+        "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850"
+      },
+      "evidence": [
+        {
+          "path": "evidence/visual/pf09/results-dark-360x640-annotated.png",
+          "sha256": "80b9607f66f008fb7a80d4edc126c398fca8af22dcaee18eb0f8d2f9c2c3ec76",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/results-dark-390x844-annotated.png",
+          "sha256": "30b98d4f2961515b796e471a48da7c02e62e0071629e02c0fb5d0660137a07a2",
+          "annotated": true
+        },
+        {
+          "path": "evidence/visual/pf09/results-dark-1280x720-annotated.png",
+          "sha256": "a1cdf05203d15acdc40276f1392e8dfe3152fa2c01432f767771d129871f6ab5",
+          "annotated": true
+        }
+      ],
+      "difference": "La captura es de la aplicación ejecutada por Playwright y está anotada con pantalla, estado, tema y viewport; la referencia Stitch es sólo el snapshot HTML local. La implementación conserva recursos locales, nombres accesibles y scroll interno de historial; estas diferencias son intencionales por el contrato offline y accesible de PF-09."
+    }
+  ],
+  "differencePolicy": "La referencia Stitch no es prueba de la aplicación. Cada PNG es una captura de la aplicación real, anotada y ligada a hashes de referencia e implementación; diferencias justificadas por caso.",
+  "video": "not_required_for_static_reference"
+}

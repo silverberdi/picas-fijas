@@ -78,12 +78,20 @@ export function chooseMachineGuess(input) {
     return chooseHardGuess(input);
 }
 export function calculateMachineGuess(input, options = {}) {
-    const decision = chooseMachineGuess(input);
-    const delay = options.delayMs ?? decision.latencyMs;
     options.onProgress?.({ status: 'calculating', progress: 0 });
     return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => { if (options.signal?.aborted)
-            return; options.onProgress?.({ status: 'complete', progress: 1, decision }); resolve(decision); }, delay);
+        let timer;
+        timer = setTimeout(() => {
+            if (options.signal?.aborted)
+                return;
+            const decision = chooseMachineGuess(input);
+            timer = setTimeout(() => {
+                if (options.signal?.aborted)
+                    return;
+                options.onProgress?.({ status: 'complete', progress: 1, decision });
+                resolve(decision);
+            }, options.delayMs ?? decision.latencyMs);
+        }, 0);
         options.signal?.addEventListener('abort', () => { clearTimeout(timer); options.onProgress?.({ status: 'cancelled', progress: 0 }); reject(new DOMException('Cálculo cancelado', 'AbortError')); }, { once: true });
     });
 }

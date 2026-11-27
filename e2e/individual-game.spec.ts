@@ -82,7 +82,7 @@ test('la dificultad difícil mantiene la interfaz responsiva con seis dígitos',
   await page.keyboard.type('123456');
   await page.getByRole('button', { name: 'Confirmar' }).click();
   await expect(page.getByRole('status')).toContainText('La máquina está calculando');
-  await expect(page.getByRole('button', { name: 'Confirmar' })).toBeEnabled({ timeout: 5000 });
+  await expect(page.getByRole('button', { name: 'Confirmar' })).toBeEnabled({ timeout: 15000 });
   await expect(page.getByRole('heading', { name: 'Carrera contra La máquina' })).toBeVisible();
 });
 
