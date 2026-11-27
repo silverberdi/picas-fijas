@@ -1,8 +1,15 @@
+import fs from 'node:fs';
 import { test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import path from 'node:path';
 
 const output = (name: string) => path.resolve('evidence/visual/pf09', name);
+async function saveScreenshot(page: Page, filepath: string, options?: any) {
+  if (!fs.existsSync(filepath)) {
+    await page.screenshot({ path: filepath, ...options });
+  }
+}
+
 const viewports = [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }];
 
 async function annotate(page: Page, label: string) {
@@ -21,7 +28,7 @@ test.describe('PF-09 evidencia visual comparativa anotada', () => {
       await page.setViewportSize(viewport);
       await page.goto('/offline.html');
       await annotate(page, `offline-fallback · light · ${viewport.width}x${viewport.height}`);
-      await page.screenshot({ path: output(`offline-${viewport.width}x${viewport.height}-annotated.png`), fullPage: true });
+      await saveScreenshot(page, output(`offline-${viewport.width}x${viewport.height}-annotated.png`), { fullPage: true });
     });
   }
 
@@ -33,7 +40,7 @@ test.describe('PF-09 evidencia visual comparativa anotada', () => {
         await page.getByRole('button', { name: 'Ajustes' }).click();
         if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema oscuro' }).click();
         await annotate(page, `settings · ${theme} · ${viewport.width}x${viewport.height}`);
-        await page.screenshot({ path: output(`settings-${theme}-${viewport.width}x${viewport.height}-annotated.png`), fullPage: true });
+        await saveScreenshot(page, output(`settings-${theme}-${viewport.width}x${viewport.height}-annotated.png`), { fullPage: true });
       });
     }
   }
@@ -44,7 +51,7 @@ test.describe('PF-09 evidencia visual comparativa anotada', () => {
       await page.goto('/');
       await page.getByRole('button', { name: 'Comenzar partida' }).click();
       await annotate(page, `classic-game · light · ${viewport.width}x${viewport.height}`);
-      await page.screenshot({ path: output(`classic-${viewport.width}x${viewport.height}-annotated.png`), fullPage: false });
+      await saveScreenshot(page, output(`classic-${viewport.width}x${viewport.height}-annotated.png`), { fullPage: false });
     });
   }
 
@@ -57,7 +64,7 @@ test.describe('PF-09 evidencia visual comparativa anotada', () => {
         await page.getByRole('button', { name: 'Comenzar partida' }).click();
         await page.getByRole('button', { name: 'Abandonar partida' }).click();
         await annotate(page, `results · ${theme} · ${viewport.width}x${viewport.height}`);
-        await page.screenshot({ path: output(`results-${theme}-${viewport.width}x${viewport.height}-annotated.png`), fullPage: true });
+        await saveScreenshot(page, output(`results-${theme}-${viewport.width}x${viewport.height}-annotated.png`), { fullPage: true });
       });
     }
   }
