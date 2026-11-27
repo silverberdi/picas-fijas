@@ -33,6 +33,17 @@ test.describe('PF-09 accesibilidad, preferencias y offline', () => {
     }
   });
 
+  test('conserva la versión activa si una actualización no puede precachear un recurso', async ({ page, context }) => {
+    await page.goto('/');
+    const activeBefore = await page.evaluate(async () => (await navigator.serviceWorker.ready).active?.scriptURL);
+    expect(activeBefore).toMatch(/pf-sw\.js$/);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.getByRole('navigation', { name: 'Navegación principal' })).toBeVisible();
+    const activeAfter = await page.evaluate(async () => (await navigator.serviceWorker.ready).active?.scriptURL);
+    expect(activeAfter).toBe(activeBefore);
+  });
+
   for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }, { width: 1280, height: 720 }]) {
     test(`captura estado de ajustes y juego en ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
       await page.setViewportSize(viewport);
