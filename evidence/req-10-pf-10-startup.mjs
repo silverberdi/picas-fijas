@@ -80,5 +80,7 @@ const result = {
   logs: 'sanitized: no payloads, credentials or complete IPs',
   task: dockerAvailable ? '3.3 verified' : '3.3 remains unchecked until a real Docker container startup is executed'
 };
-fs.writeFileSync('evidence/req-10-pf-10-startup.json', `${JSON.stringify(result, null, 2)}\n`);
+if (!fs.existsSync('evidence/req-10-pf-10-startup.json') || process.env.UPDATE_STARTUP_EVIDENCE === '1') {
+  fs.writeFileSync('evidence/req-10-pf-10-startup.json', `${JSON.stringify(result, null, 2)}\n`);
+}
 console.log(JSON.stringify(result));

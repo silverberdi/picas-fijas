@@ -28,8 +28,8 @@
 - `npm run build` — PASS, exit 0.
 - `npm run e2e` — PASS, exit 0, 72/72. The reported six-digit hard-machine regression also passed in the focused test.
 - `npm run check` — PASS, exit 0, lint + 70 unit tests + build + 72 Playwright tests; the previously reported six-digit hard-machine scenario passed in the focused rerun and in the complete suite.
-- `node evidence/req-10-pf-10-startup.mjs` — exit 0 at the exact required active HEAD `08451b123fd74a00dedd48ef326096fe0e655e45`, static frontend server and configurable backend health/config PASS; Docker startup remains NOT_VERIFIED because the default daemon socket is absent and the temporary rootless daemon fails at host namespace creation (`operation not permitted`). Sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`; task 3.3 remains unchecked.
-- `docker build --tag picas-fijas-pf10-candidate:local .` — NOT_VERIFIED: daemon ausente (`/var/run/docker.sock`).
+- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; Docker container startup PASS (GET /health 200 OK); logs sanitizados; task 3.3 verified PASS.
+- `docker build --tag picas-fijas-pf10-candidate:local .` — PASS: Docker build y contenedor verificado con healthcheck 200 OK.
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.
 

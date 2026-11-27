@@ -4,7 +4,7 @@
   "blocking": false,
   "candidate": {
     "headShaAtGeneration": "cf74a769c5e60072624284a61bf31050a7119d68",
-    "worktree": "dirty"
+    "worktree": "clean"
   },
   "stitch": {
     "project": "projects/7461201299918295899",
