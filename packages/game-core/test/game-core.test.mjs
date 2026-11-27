@@ -51,6 +51,9 @@ test('cálculo asíncrono informa progreso, respeta cancelación y simulación n
   const progress = [];
   const decision = await calculateMachineGuess({ config, history: [], seed: 3, difficulty: 'hard' }, { delayMs: 1, onProgress: (value) => progress.push(value.status) });
   assert.equal(decision.guess.length, 6); assert.deepEqual(progress, ['calculating', 'complete']);
+  const sixDigitStart = Date.now();
+  const sixDigitDecision = await calculateMachineGuess({ config, history: [], seed: 41, difficulty: 'hard' }, { delayMs: 0 });
+  assert.equal(sixDigitDecision.guess.length, 6); assert.ok(Date.now() - sixDigitStart < 1000);
   const metrics = simulateMachine(config, 'hard', 3, '012345');
   assert.equal(metrics.seed, 3); assert.ok(metrics.latencyMs > 0); assert.equal(Object.hasOwn(metrics, 'secret'), false);
   const controller = new AbortController(); const cancelled = calculateMachineGuess({ config, history: [], seed: 4, difficulty: 'hard' }, { signal: controller.signal, delayMs: 30 }); controller.abort(); await assert.rejects(cancelled, /cancelado|AbortError/);
