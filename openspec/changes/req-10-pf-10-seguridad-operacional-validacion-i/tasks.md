@@ -39,5 +39,5 @@
 
 - [x] 6.1 Ejecutar mediante el executor configurado los comandos declarados aplicables (`npm run test`, `npm run build`, `npm run e2e` o `npm run check`) y las pruebas de carga; conservar salida, fallos y correcciones, sin afirmar ejecución ausente.
 - [x] 6.2 Repetir la suite integral y las verificaciones de retiro después de integrar todos los componentes; verificar cobertura de cada escenario de las specs y ausencia de regresiones en PF-09.
-- [ ] 6.3 Preparar el PR obligatorio en `request-10-pf-10-seguridad-operacional-validacion-i` con SHA base/head, escenarios Gherkin, métricas, límites, logs sanitizados, manifiesto y evidencia visual; verificar que no se hace merge ni publicación automática.
+- [x] 6.3 Preparar el PR obligatorio en `request-10-pf-10-seguridad-operacional-validacion-i` con SHA base/head, escenarios Gherkin, métricas, límites, logs sanitizados, manifiesto y evidencia visual; verificar que no se hace merge ni publicación automática.
 - [x] 6.4 Solicitar validación explícita del propietario para despliegue y documentar cualquier seguimiento físico post-merge sin usarlo para bloquear las comprobaciones automatizables del navegador.
