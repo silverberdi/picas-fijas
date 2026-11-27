@@ -23,11 +23,11 @@
 - `npm run build --workspace=@picas-fijas/web` — PASS, exit 0.
 - `npm run check` — PASS, lint + 70 unit tests + build + 72 Playwright tests, exit 0.
 - `npx playwright test e2e/pf10-visual-evidence.spec.ts --workers=1` — PASS, 15 tests, exit 0; 18 annotated PNGs validated by `node evidence/visual/run-pf10-evidence.mjs`.
-- Candidate SHA: `c4f408feedf7d7a5a858f9164f37b3990bbfd075`.
+- Candidate head observed for this Apply run: `cf74a769c5e60072624284a61bf31050a7119d68`.
 - `npm run test` — first full run had one transient API WebSocket timeout; the exact test was rerun and passed (25/25). Web 22/22, game-core 23/23.
 - `npm run build` — PASS, exit 0.
 - `npm run e2e` — PASS, exit 0, 72/72. The reported six-digit hard-machine regression also passed in the focused test.
-- `node evidence/req-10-pf-10-startup.mjs` — exit 0 at candidate `c4f408feedf7d7a5a858f9164f37b3990bbfd075`, static frontend server and configurable backend health/config PASS; the harness attempts `docker info`, image build, detached container, published port and `/health`, then cleanup when a daemon exists. Docker startup remains NOT_VERIFIED because the default daemon socket is absent and the isolated rootless attempt fails with `operation not permitted`; sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`.
+- `node evidence/req-10-pf-10-startup.mjs` — exit 0 at candidate head `cf74a769c5e60072624284a61bf31050a7119d68`, static frontend server and configurable backend health/config PASS; Docker startup remains NOT_VERIFIED because the default daemon socket is absent and the isolated unprivileged daemon attempt fails because `dockerd` requires root. Sanitized result is `BLOCKED` in `evidence/req-10-pf-10-startup.json`.
 - `docker build --tag picas-fijas-pf10-candidate:local .` — NOT_VERIFIED: daemon ausente (`/var/run/docker.sock`).
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.
