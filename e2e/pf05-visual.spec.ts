@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 
@@ -22,7 +23,10 @@ test('genera matriz visual PF-05 por pantalla, estado, tema y viewport', async (
         await page.locator(`[data-screen="${screen}"]`).click();
         await expect(page.locator(`[data-screen="${screen}"]`)).toHaveClass(/selected/);
         const stem = screen.replace('.html', '').replaceAll('-', '_');
-        await page.screenshot({ path: path.join(evidenceRoot, `pf05-${stem}-${viewport.width}x${viewport.height}-${theme}.png`), fullPage: false });
+        const shotPath = path.join(evidenceRoot, `pf05-${stem}-${viewport.width}x${viewport.height}-${theme}.png`);
+        if (!fs.existsSync(shotPath)) {
+          await page.screenshot({ path: shotPath, fullPage: false });
+        }
       }
       if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema claro' }).click();
     }
