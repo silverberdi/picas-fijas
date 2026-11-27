@@ -3,7 +3,7 @@
   "status": "fallback_applied",
   "blocking": false,
   "candidate": {
-    "headShaAtGeneration": "4b9a65e7c5681d28edefbdab4914b7b810ef5d39",
+    "headShaAtGeneration": "c4f408feedf7d7a5a858f9164f37b3990bbfd075",
     "worktree": "dirty"
   },
   "stitch": {
@@ -159,7 +159,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-dark-1280x720-annotated.png",
-      "sha256": "d84f17d97bc1952f1ea0deaad3e4ce671640af4515b6d248e377bcacd7a5b3eb",
+      "sha256": "19ef29618c64bba9a656512bfe2dbcc3df4b96f3b78dccc4a66b5c23e61f11ac",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "dark",
@@ -172,7 +172,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-dark-360x640-annotated.png",
-      "sha256": "770fd0bddd865489f1268f7a1b7671c38806c82ec4c3f433b028a9c89bb3d313",
+      "sha256": "ec0d6420c5e7c82d07ef68979612d39ef40721ac6e2f27dc79ffafb80ebaf2e5",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "dark",
@@ -185,7 +185,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-dark-390x844-annotated.png",
-      "sha256": "8545fda62cc39d795981f43de8551ee484085271c7e7ede9ac1304698768db2b",
+      "sha256": "8f932557460e9792fd84983ce42c620e476db1d090ce6126c43d640f98da9e2e",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "dark",
@@ -198,7 +198,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-light-1280x720-annotated.png",
-      "sha256": "123b544b1b863543982201ac422517aed713e0f812b48daeac33b67949cd21cd",
+      "sha256": "901356d6ac9c99993a3f545bf6ca55657fb942f156b4ce7194c41c9f51898635",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "light",
@@ -211,7 +211,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-light-360x640-annotated.png",
-      "sha256": "ccb8bb3b6b22acc7be18871196d78105af6c4e8fa463ef21e4705cd1bbb93a72",
+      "sha256": "13f9e5fd5a7e70eee1823174ad7629f9576169b765096d8d55b42e4a987f8395",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "light",
@@ -224,7 +224,7 @@
     },
     {
       "path": "evidence/visual/pf10/results-light-390x844-annotated.png",
-      "sha256": "d104b97bba367e174e0fc264274f6385e004ad0531d4af18f79fa84ca190ba15",
+      "sha256": "25bce53c263077eeeca3000033604c493f143c8844cf149c1eb1402a6bbf3919",
       "screen": "results.html",
       "state": "technical-interruption",
       "theme": "light",
