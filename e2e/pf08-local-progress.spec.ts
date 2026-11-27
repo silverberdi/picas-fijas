@@ -65,4 +65,22 @@ test.describe('PF-08 memoria local', () => {
       testInfo.attach('state', { body: `stats-light/settings-dark ${viewport.width}x${viewport.height}`, contentType: 'text/plain' });
     });
   }
+
+  for (const viewport of viewports) {
+    test(`genera captura comparativa de results.html en ${viewport.width}x${viewport.height}`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.goto('/');
+      await page.getByRole('button', { name: /Duelo humano 1v1/ }).click();
+      await page.getByRole('button', { name: 'Comenzar partida' }).click();
+      await expect(page.locator('[data-screen="results.html"]')).toBeVisible();
+
+      for (const theme of ['light', 'dark'] as const) {
+        if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema oscuro' }).click();
+        await page.locator('[data-screen="results.html"]').click();
+        await expect(page.locator('[data-route-screen="results.html"]')).toBeVisible();
+        await page.screenshot({ path: path.join(evidenceRoot, `pf08-results-${theme}-${viewport.width}x${viewport.height}.png`), fullPage: true });
+        if (theme === 'dark') await page.getByRole('button', { name: 'Activar tema claro' }).click();
+      }
+    });
+  }
 });
