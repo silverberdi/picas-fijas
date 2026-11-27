@@ -1,4 +1,5 @@
 node_modules/
+apps/web/test/.compiled/
 apps/*/dist/
 playwright-report/
 test-results/
