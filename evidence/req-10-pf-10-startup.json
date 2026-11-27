@@ -1,0 +1,16 @@
+{
+  "change": "req-10-pf-10-seguridad-operacional-validacion-i",
+  "status": "PASS",
+  "frontend": {
+    "staticBuild": "apps/web/dist/web/browser",
+    "bundleSecrets": false
+  },
+  "backend": {
+    "transport": "HTTP health + WebSocket-capable server",
+    "health": 200,
+    "config": 200,
+    "wssUrl": "configurable via frontend runtime-config.js",
+    "docker": "NOT_VERIFIED: daemon no disponible en Apply"
+  },
+  "logs": "sanitized: no payloads, credentials or complete IPs"
+}

@@ -2,9 +2,277 @@
   "change": "req-10-pf-10-seguridad-operacional-validacion-i",
   "status": "fallback_applied",
   "blocking": false,
-  "stitch": { "project": "projects/7461201299918295899", "error": "No Stitch connector available in Apply" },
-  "referenceRoot": "assets/references",
-  "viewports": [[360, 640], [390, 844], [1280, 720]],
-  "themes": ["light", "dark"],
-  "note": "HTML local versionado es referencia; no es runtime ni prueba de ejecución. Playwright real debe producir las capturas del candidato."
+  "candidate": {
+    "headShaAtGeneration": "4b9a65e7c5681d28edefbdab4914b7b810ef5d39",
+    "worktree": "dirty"
+  },
+  "stitch": {
+    "project": "projects/7461201299918295899",
+    "status": "fallback_applied",
+    "blocking": false,
+    "error": "No Stitch connector available in Apply",
+    "source": "assets/references/*.html"
+  },
+  "matrix": {
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "viewports": [
+      [
+        360,
+        640
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        1280,
+        720
+      ]
+    ],
+    "captureCount": 18
+  },
+  "implementation": {
+    "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
+    "styles": "fa56c557e5048d0a12b4b1b6da11d78f1fc49b1dfd2a801aad03d5de93f7c850",
+    "runtimeConfig": "5a050fdf59c489973ccb86d2e7c26cff295f0ccb9ba5e67cc18fada36fa937cc"
+  },
+  "cases": [
+    {
+      "path": "evidence/visual/pf10/classic-dark-1280x720-annotated.png",
+      "sha256": "4a2e236f6615edb687562def65f1018236bdbec9dc9bae77cd1b310573ae2590",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "dark",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/classic-dark-360x640-annotated.png",
+      "sha256": "ef8d9282c5c51040bc302b696dd4d1d0ee6144a24718dda19ea4daa3dd875305",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "dark",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/classic-dark-390x844-annotated.png",
+      "sha256": "917d958013c450dcb92ab4874951a08d14de2141f013716be037d1b765972c4a",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "dark",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/classic-light-1280x720-annotated.png",
+      "sha256": "7dcbe510ae9c1c7c06c53f47cbcaa3ffd28b469de8fd35b1e3e9cca585a02ff4",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "light",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/classic-light-360x640-annotated.png",
+      "sha256": "6fd1add39d10d442bcad8d84031eb106d1803663d2bf7c4e186deed9870d9db3",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "light",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/classic-light-390x844-annotated.png",
+      "sha256": "d20873f31ecdf946f39a90044c5fa1b0fec6782f269a4566e0bf548bba48cc2e",
+      "screen": "classic.html",
+      "state": "local-game",
+      "theme": "light",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/classic-mobile.html",
+        "sha256": "7c561981abbce5fc209549dd6fc2f848f2b6391dfec7beb86868d64a7ee9de6d"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/offline-1280x720-annotated.png",
+      "sha256": "6b6f9869ab831961f7c635d92b269adc742e17274a5bd3856bbadc16375d6625",
+      "screen": "offline.html",
+      "state": "offline-fallback",
+      "theme": "light",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/offline.html",
+        "sha256": "d30e97f318c2603953a3890c5b6eef81babf6a715655d5bec0dd200b9feb2561"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/offline-360x640-annotated.png",
+      "sha256": "f780731eaccdf1665bd4b89e519972f60289e516ac41df5cdd849cea460e20bf",
+      "screen": "offline.html",
+      "state": "offline-fallback",
+      "theme": "light",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/offline.html",
+        "sha256": "d30e97f318c2603953a3890c5b6eef81babf6a715655d5bec0dd200b9feb2561"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/offline-390x844-annotated.png",
+      "sha256": "0431d53d06ab634d33bd4d64ba19106ccca6029d74d31f21585a68e4f82f958c",
+      "screen": "offline.html",
+      "state": "offline-fallback",
+      "theme": "light",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/offline.html",
+        "sha256": "d30e97f318c2603953a3890c5b6eef81babf6a715655d5bec0dd200b9feb2561"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-dark-1280x720-annotated.png",
+      "sha256": "d84f17d97bc1952f1ea0deaad3e4ce671640af4515b6d248e377bcacd7a5b3eb",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "dark",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-dark-360x640-annotated.png",
+      "sha256": "770fd0bddd865489f1268f7a1b7671c38806c82ec4c3f433b028a9c89bb3d313",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "dark",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-dark-390x844-annotated.png",
+      "sha256": "8545fda62cc39d795981f43de8551ee484085271c7e7ede9ac1304698768db2b",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "dark",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-light-1280x720-annotated.png",
+      "sha256": "123b544b1b863543982201ac422517aed713e0f812b48daeac33b67949cd21cd",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "light",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-light-360x640-annotated.png",
+      "sha256": "ccb8bb3b6b22acc7be18871196d78105af6c4e8fa463ef21e4705cd1bbb93a72",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "light",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/results-light-390x844-annotated.png",
+      "sha256": "d104b97bba367e174e0fc264274f6385e004ad0531d4af18f79fa84ca190ba15",
+      "screen": "results.html",
+      "state": "technical-interruption",
+      "theme": "light",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/results.html",
+        "sha256": "c4f9b7c15cee8b290a5cdb7a30a25d7e5d2bf988c6cbfcfcea31834f1e6790ad"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/settings-1280x720-annotated.png",
+      "sha256": "31da6afe93242b25a6be8971598704766df60c428e6ab6c7dc23a55206de7430",
+      "screen": "settings.html",
+      "state": "settings-offline",
+      "theme": "light",
+      "viewport": "1280x720",
+      "reference": {
+        "path": "assets/references/settings.html",
+        "sha256": "4f5805bf2ad79164c9297c99c5114a7d26aef8009c02fac3485afad13e038af6"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/settings-360x640-annotated.png",
+      "sha256": "93faa5ad4e2a0c8ace5214029d9783ed94ec70ba4bf0b6bd5be31baaf084f8e3",
+      "screen": "settings.html",
+      "state": "settings-offline",
+      "theme": "light",
+      "viewport": "360x640",
+      "reference": {
+        "path": "assets/references/settings.html",
+        "sha256": "4f5805bf2ad79164c9297c99c5114a7d26aef8009c02fac3485afad13e038af6"
+      },
+      "annotated": true
+    },
+    {
+      "path": "evidence/visual/pf10/settings-390x844-annotated.png",
+      "sha256": "8f9456606bd9cb63b93a21bd74bbfecdcb76b90528c99f96fb8f4a87c31d5acf",
+      "screen": "settings.html",
+      "state": "settings-offline",
+      "theme": "light",
+      "viewport": "390x844",
+      "reference": {
+        "path": "assets/references/settings.html",
+        "sha256": "4f5805bf2ad79164c9297c99c5114a7d26aef8009c02fac3485afad13e038af6"
+      },
+      "annotated": true
+    }
+  ]
 }

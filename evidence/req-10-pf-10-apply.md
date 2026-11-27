@@ -21,9 +21,11 @@
 - `npm run lint --workspace=@picas-fijas/api` — PASS, exit 0.
 - `npm test --workspace=@picas-fijas/api` — PASS, 25 tests, exit 0.
 - `npm run build --workspace=@picas-fijas/web` — PASS, exit 0.
-- `npm run e2e` — PASS, 57 tests, exit 0.
+- `npm run check` — PASS, lint + 70 unit tests + build + 72 Playwright tests, exit 0.
+- `npx playwright test e2e/pf10-visual-evidence.spec.ts --workers=1` — PASS, 15 tests, exit 0; 18 annotated PNGs validated by `node evidence/visual/run-pf10-evidence.mjs`.
+- `node evidence/req-10-pf-10-startup.mjs` — PASS, static frontend build and configurable backend health/config startup; sanitized result in `evidence/req-10-pf-10-startup.json`.
 - `docker build --tag picas-fijas-pf10-candidate:local .` — NOT_VERIFIED: daemon ausente (`/var/run/docker.sock`).
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.
 
-No se declara PASS para checks aún no ejecutados. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.
+No se declara PASS para checks aún no ejecutados. Docker permanece NOT_VERIFIED porque el daemon no está disponible en Apply; no se simula un arranque de contenedor. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.

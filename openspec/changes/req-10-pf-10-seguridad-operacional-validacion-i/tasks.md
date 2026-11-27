@@ -32,12 +32,12 @@
 - [x] 5.1 Preparar fixtures deterministas de dos contextos, códigos de 3–6 dígitos, temas claro/oscuro, offline, reconexión, accesibilidad y viewports 360×640, 390×844 y 1280×720; verificar que cada fixture puede ser ejecutado por el executor configurado.
 - [x] 5.2 Ejecutar Playwright real para arranque WSS, salas, búsquedas, reconexión, reinicio neutral, offline, accesibilidad y límites; verificar resultado observable por escenario y no delegar navegación, asincronía, viewport o concurrencia a operador/human_validation.
 - [x] 5.3 Consultar Stitch por los IDs exactos aplicables o registrar error, snapshot HTML local, `status: fallback_applied` y `blocking: false`; verificar que Stitch no aparece como dependencia de runtime.
-- [ ] 5.4 Generar capturas PNG comparativas anotadas de cada pantalla/estado/tema/viewport aplicable, diferencias justificadas, reporte, scripts y manifiesto; verificar trazabilidad a SHA y ausencia de scroll general durante partidas.
-- [ ] 5.5 Conservar resultados, logs sanitizados y artefactos pesados en PR o CI con ubicación/retención documentadas; verificar que ningún check no ejecutado se declara PASS.
+- [x] 5.4 Generar capturas PNG comparativas anotadas de cada pantalla/estado/tema/viewport aplicable, diferencias justificadas, reporte, scripts y manifiesto; verificar trazabilidad a SHA y ausencia de scroll general durante partidas.
+- [x] 5.5 Conservar resultados, logs sanitizados y artefactos pesados en PR o CI con ubicación/retención documentadas; verificar que ningún check no ejecutado se declara PASS.
 
 ## 6. Cierre y entrega
 
 - [x] 6.1 Ejecutar mediante el executor configurado los comandos declarados aplicables (`npm run test`, `npm run build`, `npm run e2e` o `npm run check`) y las pruebas de carga; conservar salida, fallos y correcciones, sin afirmar ejecución ausente.
 - [x] 6.2 Repetir la suite integral y las verificaciones de retiro después de integrar todos los componentes; verificar cobertura de cada escenario de las specs y ausencia de regresiones en PF-09.
 - [ ] 6.3 Preparar el PR obligatorio en `request-10-pf-10-seguridad-operacional-validacion-i` con SHA base/head, escenarios Gherkin, métricas, límites, logs sanitizados, manifiesto y evidencia visual; verificar que no se hace merge ni publicación automática.
-- [ ] 6.4 Solicitar validación explícita del propietario para despliegue y documentar cualquier seguimiento físico post-merge sin usarlo para bloquear las comprobaciones automatizables del navegador.
+- [x] 6.4 Solicitar validación explícita del propietario para despliegue y documentar cualquier seguimiento físico post-merge sin usarlo para bloquear las comprobaciones automatizables del navegador.
