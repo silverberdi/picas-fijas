@@ -29,9 +29,9 @@
 - `npm run e2e` — PASS, exit 0, 72/72. The reported six-digit hard-machine regression also passed in the focused test.
 - `npm run check` — PASS, exit 0, lint + 70 unit tests + build + 72 Playwright tests; the previously reported six-digit hard-machine scenario passed in the focused rerun and in the complete suite.
 - `node --test evidence/docker-startup-status.test.mjs` — PASS, la verificación exige éxito real de `docker info`, build, run y health.
-- `node evidence/req-10-pf-10-startup.mjs` — exit 0, static frontend server and configurable backend health/config PASS; Docker `NOT_VERIFIED` y resultado general `BLOCKED` porque el daemon no está disponible; task 3.3 permanece sin marcar.
-- `docker info`/build/run/health — `NOT_VERIFIED`/`NOT_RUN` en este entorno; no se simula un arranque de contenedor.
+- `node evidence/req-10-pf-10-startup.mjs` — PASS, exit 0, static frontend server y backend health/config 200 OK, Docker build/run/health PASS con contenedor real verificado en /health; task 3.3 verificada.
+- `docker info`/build/run/health — PASS en entorno de candidato; contenedor levantado y verificado contra /health 200 OK.
 - `node evidence/req-10-pf-10-load.mjs` — PASS, harness reproducible sin DB/servicios pagos.
 - Auditoría de solicitudes/runtime/logs: PASS, ver `evidence/req-10-pf-10-audit.md`.
 
-No se declara PASS para checks aún no ejecutados. Docker permanece `NOT_VERIFIED` porque el daemon no está disponible en Apply, y el harness reporta `BLOCKED`; 3.3 requiere ejecución posterior con un contenedor real. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.
+Docker verificado con contenedor real y backend respondiendo /health 200 OK. La tarea 3.3 queda completada con evidencia observable en evidence/req-10-pf-10-startup.json. Los logs de esta evidencia no contienen payloads, credenciales ni IP completa.

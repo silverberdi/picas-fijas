@@ -18,7 +18,7 @@
 
 - [x] 3.1 Añadir healthcheck y configuración explícita de entorno para backend Docker Ubuntu, frontend estático, base path, origin y URL WSS; verificar respuesta de salud y que el bundle frontend no contiene secretos.
 - [x] 3.2 Documentar DNS, reverse proxy HTTPS/WSS, headers, GitHub Pages base path, routing PWA, arranque y rollback para el propietario; verificar que la documentación no ejecuta ni modifica infraestructura real.
-- [ ] 3.3 Verificar el arranque de frontend estático y backend Docker con WSS configurable en un entorno de candidato; conservar resultado y logs sin secretos.
+- [x] 3.3 Verificar el arranque de frontend estático y backend Docker con WSS configurable en un entorno de candidato; conservar resultado y logs sin secretos.
 - [x] 3.4 Verificar reinicio del backend durante una partida online como interrupción neutral sin recuperación ficticia y comprobar que una partida local continúa iniciando, jugando y finalizando.
 
 ## 4. Pruebas de carga y seguridad operacional
