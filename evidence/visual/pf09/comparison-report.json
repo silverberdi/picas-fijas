@@ -3,7 +3,7 @@
   "status": "apply_evidence",
   "candidateBinding": {
     "baseSha": "274a168dbdb3e5f2b0e14666b3c5f8e32b84c163",
-    "candidateSha": "c3730ecf03f77a7dc9c41f7b819315c47e4b4d8f",
+    "candidateSha": "155f9cd5135993df53cb115c29a754997713e125",
     "implementationHashes": {
       "serviceWorker": "ac621608b982723610517d8e0758d092711b30f24d4402b22e002ddac6e513a4",
       "app": "0fd5b9eb301da341ad2c223ba4d663b4d280aa64cbf7a9e0ec8c9eea10357423",
@@ -218,17 +218,17 @@
       "evidence": [
         {
           "path": "evidence/visual/pf09/results-light-360x640-annotated.png",
-          "sha256": "b38bd374d8a837560e42c89dad65f08ea526ddb4da50602644c6d4bd81ae1987",
+          "sha256": "aa49d5d34c112262aa6331b2906fd58423bb9f99ac285e6f42d462a538668c1b",
           "annotated": true
         },
         {
           "path": "evidence/visual/pf09/results-light-390x844-annotated.png",
-          "sha256": "a4ca5383fb358b0b3c72274a5e58be89005f1f903a4cd689c3e42f256a38aa6f",
+          "sha256": "d43cdc5f130b7e85bc38b657b958bba38e9ff9f47289e303df2e5c315fc8f558",
           "annotated": true
         },
         {
           "path": "evidence/visual/pf09/results-light-1280x720-annotated.png",
-          "sha256": "0b126a0b3161741d90e4c56b19b5d5f2adf64f6593d7b1bd9d9434f1e927f2ec",
+          "sha256": "9250ff1cc1a0bc169ed1d46157ca888b6ff207eafe49e2aaf714132e3149ea1c",
           "annotated": true
         }
       ],
@@ -256,17 +256,17 @@
       "evidence": [
         {
           "path": "evidence/visual/pf09/results-dark-360x640-annotated.png",
-          "sha256": "ecd7b67e2b2e87b099214f30c5db1625d01b0b234a769644d99f61075e89ec8e",
+          "sha256": "80b9607f66f008fb7a80d4edc126c398fca8af22dcaee18eb0f8d2f9c2c3ec76",
           "annotated": true
         },
         {
           "path": "evidence/visual/pf09/results-dark-390x844-annotated.png",
-          "sha256": "2bbb937c57122325c48f228657b5fbd21037edb9ebe3c4514e3dbccd719f8f9e",
+          "sha256": "30b98d4f2961515b796e471a48da7c02e62e0071629e02c0fb5d0660137a07a2",
           "annotated": true
         },
         {
           "path": "evidence/visual/pf09/results-dark-1280x720-annotated.png",
-          "sha256": "e945e9d49c38df7d6f8115ed9ed54cd353d2706d56077b76797531b768d0797b",
+          "sha256": "a1cdf05203d15acdc40276f1392e8dfe3152fa2c01432f767771d129871f6ab5",
           "annotated": true
         }
       ],
