@@ -10,6 +10,7 @@
 - `npm run test`: PASS, exit 0 (66 tests across web/api/game-core).
 - `npm run build`: PASS, exit 0 (web/api/game-core).
 - `npm run e2e -- --workers=1`: PASS, exit 0 (57 Playwright tests).
+- Correction rerun: `npm run e2e -- --grep "la dificultad difícil mantiene"` PASS, exit 0 (1 test), including `Confirmar` re-enabled after the six-digit hard machine calculation; the same scenario also passed in the full 57-test suite.
 - `apps/web/src/pf-sw.js`: required resources stage in `pf09-shell-v3-staging`; failures reject install and remove staging, while activation copies the complete staging cache before retiring the previous version.
 - Stitch contingency: `status: fallback_applied`, `blocking: false`, source `assets/references/` and IDs in `evidence/req-9-pf-09-resource-manifest.json`.
 - Published evidence: none used.
