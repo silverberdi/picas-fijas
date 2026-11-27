@@ -1,0 +1,77 @@
+{
+  "change": "req-9-pf-09-calidad-audiovisual-accesibilidad",
+  "generatedAt": "deterministic-apply",
+  "remoteRequestsInShell": 0,
+  "resources": [
+    {
+      "path": "assets/audio/key.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:key",
+      "sha256": "316816f7d0f1eff96e50f6ba4fc53102fa7589c0a3417812f9d7b239fe9448e7"
+    },
+    {
+      "path": "assets/audio/validate.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:validate",
+      "sha256": "7e81ffb616f6b2a914c7730278e6c1fd0f39e93b04b6761b79bcea9e4025be67"
+    },
+    {
+      "path": "assets/audio/feedback.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:feedback",
+      "sha256": "e5df3e96102eac1861e4134e9428ea4bfcdb07a321efd25d41bc5c6f8e70bae8"
+    },
+    {
+      "path": "assets/audio/win.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:win",
+      "sha256": "ce2895662c7cb29a25693464b3a6813a746be6d0c97cf65440d365ca489e5a50"
+    },
+    {
+      "path": "assets/audio/lose.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:lose",
+      "sha256": "8a577d95e994b04bf9b32bfd9690daac4a1edf9527887ffdc29869ccc88a8de9"
+    },
+    {
+      "path": "assets/audio/offer.wav",
+      "format": "WAV",
+      "license": "ORIGINAL",
+      "consumer": "audiovisual-policy:offer",
+      "sha256": "d2a7d3e304a440d34c8cc5a985cf99efb46195412202fd21f26a52599a2b6a94"
+    },
+    {
+      "path": "assets/icons/favicon.svg",
+      "format": "SVG",
+      "license": "ORIGINAL",
+      "consumer": "index.html",
+      "sha256": "34c06d94a7ee952d8ec5cbb197441e213c3bf02b3c84286dac0a4f584166e216"
+    },
+    {
+      "path": "assets/icons/icon-192.svg",
+      "format": "SVG",
+      "license": "ORIGINAL",
+      "consumer": "manifest.webmanifest",
+      "sha256": "dccdac6fd299b4e6346de42a98bb1a289bfa5612d24c2a7a52f8a8664fec1080"
+    },
+    {
+      "path": "assets/icons/icon-512.svg",
+      "format": "SVG",
+      "license": "ORIGINAL",
+      "consumer": "manifest.webmanifest",
+      "sha256": "ba2753d65fb27e07754651940e0b85a2b6da65d47392225f0ac9b25fe644b907"
+    },
+    {
+      "path": "offline.html",
+      "format": "HTML",
+      "license": "ORIGINAL",
+      "consumer": "pf-sw.js:fallback",
+      "sha256": "2ba0e1afa8bbcdd13e7410d498dae11c715298cff8f6099dee3f46c8d8d61ab4"
+    }
+  ]
+}

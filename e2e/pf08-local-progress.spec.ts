@@ -6,7 +6,7 @@ const evidenceRoot = path.resolve('evidence/visual/pf08');
 
 async function seedLocalResult(page: Page) {
   await page.evaluate(() => new Promise<void>((resolve, reject) => {
-    const request = indexedDB.open('picas-fijas-local', 2);
+    const request = indexedDB.open('picas-fijas-local', 3);
     request.onupgradeneeded = () => { const db = request.result; if (!db.objectStoreNames.contains('game-results')) db.createObjectStore('game-results', { keyPath: 'resultId' }); if (!db.objectStoreNames.contains('preferences')) db.createObjectStore('preferences', { keyPath: 'id' }); };
     request.onerror = () => reject(request.error); request.onsuccess = () => { const db = request.result; const transaction = db.transaction('game-results', 'readwrite'); transaction.objectStore('game-results').put({ resultId: 'e2e-win', schemaVersion: 2, mode: 'classic', rules: '3-unique-10', difficulty: 'classic', intelligence: 'human', assistance: 'none', outcome: 'victory', durationMs: 12_000, attempts: 1, minAttempts: 1, occurredAt: 1_000 }); transaction.oncomplete = () => { db.close(); resolve(); }; transaction.onerror = () => reject(transaction.error); };
   }));
@@ -16,7 +16,7 @@ test.describe('PF-08 memoria local', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => new Promise<void>((resolve, reject) => {
-      const request = indexedDB.open('picas-fijas-local', 2);
+      const request = indexedDB.open('picas-fijas-local', 3);
       request.onupgradeneeded = () => { const db = request.result; if (!db.objectStoreNames.contains('game-results')) db.createObjectStore('game-results', { keyPath: 'resultId' }); if (!db.objectStoreNames.contains('preferences')) db.createObjectStore('preferences', { keyPath: 'id' }); };
       request.onerror = () => reject(request.error); request.onsuccess = () => { const db = request.result; const transaction = db.transaction(['game-results', 'preferences'], 'readwrite'); transaction.objectStore('game-results').clear(); transaction.objectStore('preferences').clear(); transaction.oncomplete = () => { db.close(); resolve(); }; transaction.onerror = () => reject(transaction.error); };
     }));
@@ -45,6 +45,7 @@ test.describe('PF-08 memoria local', () => {
     await page.getByRole('button', { name: 'Restablecer preferencias' }).click();
     await page.getByRole('button', { name: 'Confirmar restablecimiento' }).click();
     await expect(page.locator('#settings-theme')).toHaveValue('light');
+    await page.evaluate(() => navigator.serviceWorker.ready);
     await context.setOffline(true);
     await page.reload();
     await page.getByRole('button', { name: 'Estadísticas' }).click();

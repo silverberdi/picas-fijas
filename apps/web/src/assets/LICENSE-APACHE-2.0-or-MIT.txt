@@ -1,0 +1,4 @@
+Copyright 2026 Beastie Studio
+
+Los archivos de audio, iconos e ilustraciones de este directorio son originales
+de este repositorio y se distribuyen bajo licencia dual MIT o Apache-2.0.

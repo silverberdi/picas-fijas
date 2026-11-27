@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "license": "LICENSE-APACHE-2.0-or-MIT.txt",
+  "runtimePolicy": "Todos los recursos son locales; no se cargan CDN, fuentes, audio o imagen remotos.",
+  "resources": [
+    {"path":"assets/audio/key.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:key"},
+    {"path":"assets/audio/validate.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:validate"},
+    {"path":"assets/audio/feedback.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:feedback"},
+    {"path":"assets/audio/win.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:win"},
+    {"path":"assets/audio/lose.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:lose"},
+    {"path":"assets/audio/offer.wav","format":"WAV","license":"ORIGINAL","consumer":"audiovisual-policy:offer"},
+    {"path":"assets/icons/favicon.svg","format":"SVG","license":"ORIGINAL","consumer":"index.html"},
+    {"path":"assets/icons/icon-192.svg","format":"SVG","license":"ORIGINAL","consumer":"manifest.webmanifest"},
+    {"path":"assets/icons/icon-512.svg","format":"SVG","license":"ORIGINAL","consumer":"manifest.webmanifest"},
+    {"path":"offline.html","format":"HTML","license":"ORIGINAL","consumer":"pf-sw.js:fallback"}
+  ]
+}

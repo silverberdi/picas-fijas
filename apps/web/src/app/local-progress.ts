@@ -1,5 +1,5 @@
 export const LOCAL_DB_NAME = 'picas-fijas-local';
-export const LOCAL_DB_VERSION = 2;
+export const LOCAL_DB_VERSION = 3;
 export const RESULTS_STORE = 'game-results';
 export const PREFERENCES_STORE = 'preferences';
 

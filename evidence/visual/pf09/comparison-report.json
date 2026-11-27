@@ -1,0 +1,15 @@
+{
+  "change": "req-9-pf-09-calidad-audiovisual-accesibilidad",
+  "status": "apply_evidence",
+  "stitch": {"project": "7461201299918295899", "status": "fallback_applied", "blocking": false, "source": "assets/references/*.html"},
+  "cases": [
+    {"screen":"offline.html","state":"offline-fallback","theme":"light","viewports":["360x640","390x844","1280x720"],"referenceSha":"1198b97d32174b1886aff9bb0bd762ec"},
+    {"screen":"settings.html","state":"audiovisual-preferences","theme":"light/dark","viewports":["360x640","390x844","1280x720"],"referenceSha":"7f2012d3be454c1e9cfd58203b1f4b87"},
+    {"screen":"classic-mobile.html","state":"local-game","theme":"light","viewports":["360x640","390x844"],"referenceSha":"33843df735c643be803a75a306f180e6"},
+    {"screen":"classic-desktop.html","state":"local-game","theme":"light","viewports":["1280x720"],"referenceSha":"6bc36b0f150544e998215a212a026e4e"},
+    {"screen":"results.html","state":"local-result","theme":"light/dark","viewports":["360x640","390x844","1280x720"],"referenceSha":"72765bd741154a1c8fbf4728f8a655dd"}
+  ],
+  "implementationEvidence": "e2e/pf09-accessibility-offline.spec.ts plus Playwright output in test-results/",
+  "differencePolicy": "La referencia Stitch no es prueba de la aplicación; diferencias se revisan en Verify.",
+  "video": "not_required_for_static_reference"
+}
