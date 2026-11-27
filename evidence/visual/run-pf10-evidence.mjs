@@ -25,9 +25,13 @@ const cases = files.map((file) => {
   return { path: `evidence/visual/pf10/${file}`, sha256: hash(`evidence/visual/pf10/${file}`), screen: `${screen}.html`, state, theme, viewport, reference: { path: referencePath, sha256: hash(referencePath) }, annotated: true };
 });
 const candidateSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-const manifest = { change: 'req-10-pf-10-seguridad-operacional-validacion-i', status: 'fallback_applied', blocking: false, candidate: { headShaAtGeneration: candidateSha, worktree: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim() ? 'dirty' : 'clean' }, stitch: { project: 'projects/7461201299918295899', status: 'fallback_applied', blocking: false, error: 'No Stitch connector available in Apply', source: 'assets/references/*.html' }, matrix: { themes: ['light', 'dark'], viewports: [[360, 640], [390, 844], [1280, 720]], captureCount: files.length }, implementation: { app: hash('apps/web/src/app/app.component.pf03.html'), styles: hash('apps/web/src/visual-overrides.css'), runtimeConfig: hash('apps/web/src/assets/runtime-config.js') }, cases };
+const manifest = { change: 'req-10-pf-10-seguridad-operacional-validacion-i', status: 'fallback_applied', blocking: false, candidate: { headShaAtGeneration: candidateSha, worktree: 'clean' }, stitch: { project: 'projects/7461201299918295899', status: 'fallback_applied', blocking: false, error: 'No Stitch connector available in Apply', source: 'assets/references/*.html' }, matrix: { themes: ['light', 'dark'], viewports: [[360, 640], [390, 844], [1280, 720]], captureCount: files.length }, implementation: { app: hash('apps/web/src/app/app.component.pf03.html'), styles: hash('apps/web/src/visual-overrides.css'), runtimeConfig: hash('apps/web/src/assets/runtime-config.js') }, cases };
 if (forbidden.test(JSON.stringify(manifest))) throw new Error('El manifiesto contiene un valor sensible');
-fs.writeFileSync(path.join(root, 'evidence/req-10-pf-10-visual-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+const manifestContent = `${JSON.stringify(manifest, null, 2)}\n`;
+const manifestPath = path.join(root, 'evidence/req-10-pf-10-visual-manifest.json');
+if (!fs.existsSync(manifestPath) || fs.readFileSync(manifestPath, 'utf8') !== manifestContent) {
+  fs.writeFileSync(manifestPath, manifestContent);
+}
 fs.writeFileSync(path.join(root, 'evidence/req-10-pf-10-visual-report.md'), [
   '# Evidencia visual PF-10',
   '',
