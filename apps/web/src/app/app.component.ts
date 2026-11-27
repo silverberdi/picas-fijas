@@ -14,6 +14,8 @@ export class AppComponent {
   onlineMode: 'duel'|'race' = 'duel'; onlineRoomCode = ''; onlineCredential = ''; onlineStatus: OnlineClientState = 'closed'; onlinePhase: 'waiting'|'ready'|'playing'|'reconnecting'|'finished' = 'waiting'; onlineScreen: OnlineScreen = 'create-room.html'; onlineError = ''; onlineGuess = ''; onlineResult: { outcome?: string; reason?: string } | undefined; onlineGraceExpiresAt?: number; onlineClient: OnlineClient | null = null;
   publicSearching = false; publicReservationId = ''; publicOfferId = ''; publicOfferDeadline?: number; publicOfferAccepted = false; publicSound = true; private pendingPublicSearch = false; publicRules = { length: 3, repeats: false, maxAttempts: null as number | null, timeSeconds: 60 as number | null };
   preferences: Preferences = { ...DEFAULT_PREFERENCES }; localResults: Awaited<ReturnType<typeof listResults>> = []; statistics: Statistics = calculateStatistics([]); medals: Medal[] = evaluateMedals([]); resultSaved = false; resultFilter: ResultFilter = {}; resetRequested = false;
+  readonly intelligenceOptions: readonly ResultFilter['intelligence'][] = ['human', 'machine'];
+  readonly assistanceOptions: readonly ResultFilter['assistance'][] = ['none', 'guided'];
   readonly onlineScreenCatalog: readonly OnlineScreen[] = ['create-room.html', 'join-room.html', 'waiting.html', 'duel-online-mobile.html', 'race-online-mobile.html', 'duel-desktop.html', 'race-desktop.html', 'reconnect.html', 'results.html'];
   readonly publicScreenCatalog: readonly OnlineScreen[] = ['public-list.html', 'public-queue.html', 'public-offer.html'];
   constructor() {
@@ -36,7 +38,9 @@ export class AppComponent {
   cancelReset() { this.resetRequested = false; }
   async confirmReset() { this.preferences = await resetPreferences(); this.theme = this.preferences.theme; this.resetRequested = false; this.persist(); }
   filterResults(filter: ResultFilter) { this.resultFilter = filter; this.statistics = calculateStatistics(this.localResults, filter); }
-  filterByMode(mode: string) { this.filterResults({ mode: mode as GameMode }); }
+  filterByMode(mode: string) { this.setResultFilter('mode', mode as GameMode); }
+  filterValues(dimension: 'rules' | 'difficulty') { return [...new Set(this.localResults.map((result) => result[dimension]))].sort(); }
+  setResultFilter<K extends keyof ResultFilter>(dimension: K, value: ResultFilter[K] | '') { const next = { ...this.resultFilter }; if (value === '') delete next[dimension]; else next[dimension] = value; this.filterResults(next); }
   private async refreshLocalProgress() { try { this.localResults = await listResults(); this.statistics = calculateStatistics(this.localResults, this.resultFilter); this.medals = evaluateMedals(this.localResults); } catch {} }
   private resultMode(): GameMode { return this.mode as GameMode; }
   saveFinishedResult() { if (this.resultSaved) return; const result = this.competitive?.result ?? this.game?.result; if (!result) return; const nonPersistableReasons = new Set(['abandoned', 'resignation', 'technical-interruption', 'restart', 'grace-expired']); if (result.outcome === 'abandoned' || nonPersistableReasons.has(result.reason ?? '')) return; const outcome = result.outcome === 'win' ? 'victory' : result.outcome === 'loss' ? 'defeat' : result.outcome === 'draw' ? 'draw' : 'technical-interruption'; const config = this.activeConfig(); if (!config) return; this.resultSaved = true; void acceptResult({ resultId: undefined, outcome, mode: this.resultMode(), rules: `${config.length}-${config.repeats ? 'repeats' : 'unique'}-${config.maxAttempts ?? 'unlimited'}`, difficulty: this.selectedLevel, intelligence: this.competitive ? 'machine' : 'human', assistance: this.helpsUsed ? 'guided' : 'none', durationMs: this.elapsed * 1000, attempts: this.activeHistory().length, minAttempts: config.length, occurredAt: result.at ?? Date.now() }).then(() => this.refreshLocalProgress()).catch(() => {}); }

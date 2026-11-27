@@ -127,7 +127,7 @@ function exactDimensionKey(result: StoredResult): string {
 export function evaluateMedals(results: readonly StoredResult[]): Medal[] {
   const ordered = [...results].filter((result) => isEligibleResult(result)).sort((a, b) => a.occurredAt - b.occurredAt || a.resultId.localeCompare(b.resultId));
   const wins = ordered.filter((result) => result.outcome === 'victory');
-  const modes = new Set(wins.map((result) => result.mode));
+  const versatileModes = new Set<GameMode>();
   const approvedModes: GameMode[] = ['classic', 'bot-duel', 'bot-race', 'human-duel', 'human-race'];
   const groupedResults = new Map<string, StoredResult[]>();
   for (const result of ordered) {
@@ -146,7 +146,10 @@ export function evaluateMedals(results: readonly StoredResult[]): Medal[] {
     firstAt(ordered, (result) => result.outcome === 'victory'),
     firstAt(ordered, (_result, index) => wins.length >= 3 && ordered[index].outcome === 'victory' && wins.indexOf(ordered[index]) === 2),
     fiveStreakAt,
-    approvedModes.every((mode) => modes.has(mode)) ? wins.reduce((date, result) => Math.max(date, result.occurredAt), 0) || null : null,
+    firstAt(wins, (result) => {
+      versatileModes.add(result.mode);
+      return approvedModes.every((mode) => versatileModes.has(mode));
+    }),
     firstAt(ordered, (result) => result.outcome === 'victory' && result.attempts === result.minAttempts),
     firstAt(ordered, (result) => result.outcome === 'victory' && result.durationMs <= 30_000),
   ];
