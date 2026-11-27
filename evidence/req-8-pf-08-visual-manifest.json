@@ -1,0 +1,21 @@
+{
+  "change": "req-8-pf-08-estadisticas-locales-medallas-y-pr",
+  "project": "7461201299918295899",
+  "status": "fallback_applied",
+  "blocking": false,
+  "stitch": {
+    "screens": [
+      { "file": "stats.html", "id": "90ce202387c8418aafd3e5d829061065", "response": "UNAUTHORIZED: This app connection requires reauthentication.", "fallback": "assets/references/stats.html" },
+      { "file": "settings.html", "id": "7f2012d3be454c1e9cfd58203b1f4b87", "response": "UNAUTHORIZED: This app connection requires reauthentication.", "fallback": "assets/references/settings.html" },
+      { "file": "results.html", "id": "72765bd741154a1c8fbf4728f8a655dd", "response": "UNAUTHORIZED: This app connection requires reauthentication.", "fallback": "assets/references/results.html" }
+    ]
+  },
+  "implementationEvidence": [
+    { "state": "stats-empty-and-filtered", "theme": "light", "viewport": "360x640", "path": "evidence/visual/pf08/pf08-stats-light-360x640.png", "sha256": "85c0a6c87712b51907b09706dcfade47b27ea48a9d1bc3af33322de848edda3b" },
+    { "state": "stats-empty-and-filtered", "theme": "light", "viewport": "390x844", "path": "evidence/visual/pf08/pf08-stats-light-390x844.png", "sha256": "7c590d944a0e7e634cec7352d1a93c855359a9b70ea6f852f5dc9244f42a370c" },
+    { "state": "stats-empty-and-filtered", "theme": "light", "viewport": "1280x720", "path": "evidence/visual/pf08/pf08-stats-light-1280x720.png", "sha256": "8dac39952f36dafd9d3a6f83ee6e94f31f1a275f86b2f24b9f9f27706315fa93" },
+    { "state": "settings-reset-controls", "theme": "dark", "viewport": "360x640", "path": "evidence/visual/pf08/pf08-settings-dark-360x640.png", "sha256": "e71f9e9b8b985bbe150da928a42efe8bdd1b236080ec61b07d9abbfa4eb43bf7" },
+    { "state": "settings-reset-controls", "theme": "dark", "viewport": "390x844", "path": "evidence/visual/pf08/pf08-settings-dark-390x844.png", "sha256": "7b38e32baec278c0da9dc2d6fac160836b9f0faec3288bf671f86d264d68abc5" },
+    { "state": "settings-reset-controls", "theme": "dark", "viewport": "1280x720", "path": "evidence/visual/pf08/pf08-settings-dark-1280x720.png", "sha256": "eae0c112f6bca3bb49ec091704ff5fc3018b6cb72f2a3e02f031a2b3f6166d06" }
+  ]
+}
